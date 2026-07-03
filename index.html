@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>FinanceVault — Synced Family Vault</title>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<title>FinanceVault — Kat & Steve's Family Vault</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
@@ -15,619 +14,567 @@
   --card2:   #fdf8f2;
   --border:  #1a1a1a;
   --border2: #333333;
-  --accent:  #b8860b;
-  --glow:    rgba(184,134,11,0.12);
   --gold:    #c9920a;
   --gold2:   #e6a817;
-  --gold3:   #ffd700;
-  --green:   #2d7a4f;
-  --green2:  #3a9960;
-  --red:     #c0392b;
-  --purple:  #7b4fa6;
-  --teal:    #1a7a6e;
-  --orange:  #c0641a;
+  --gold3:   #fef3c7;
+  --green:   #15803d;
+  --green2:  #dcfce7;
+  --red:     #dc2626;
+  --red2:    #fee2e2;
+  --blue:    #2563eb;
+  --blue2:   #dbeafe;
+  --purple:  #7c3aed;
+  --purple2: #ede9fe;
+  --orange:  #ea580c;
+  --orange2: #ffedd5;
+  --teal:    #0d9488;
+  --teal2:   #ccfbf1;
   --text:    #1a1a1a;
-  --text2:   #2c2c2c;
-  --muted:   #666666;
-  --muted2:  #888888;
+  --text2:   #374151;
+  --muted:   #6b7280;
+  --muted2:  #9ca3af;
   --radius:  12px;
   --rsm:     8px;
-  --shadow:  0 2px 16px rgba(0,0,0,0.12);
-  --shadowl: 0 6px 32px rgba(0,0,0,0.18);
+  --shadow:  0 2px 8px rgba(0,0,0,0.08);
+  --shadow2: 0 4px 16px rgba(0,0,0,0.12);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
-  background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;
-  -webkit-font-smoothing:antialiased;min-height:100vh;
-  background-image:radial-gradient(ellipse at 20% 0%,rgba(184,134,11,0.06) 0%,transparent 60%),
-                   radial-gradient(ellipse at 80% 100%,rgba(184,134,11,0.04) 0%,transparent 60%);
+  background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;
+  font-weight:600;-webkit-font-smoothing:antialiased;min-height:100vh;
 }
 
-/* ── AUTH SCREEN ── */
-#authScreen{
+/* ══ SCROLLBAR ══ */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}
+
+/* ══ PIN SCREEN ══ */
+#pinScreen{
   position:fixed;inset:0;z-index:9999;
   background:var(--bg);
-  background-image:radial-gradient(ellipse at 50% 0%,rgba(184,134,11,0.1) 0%,transparent 70%);
+  background-image:radial-gradient(ellipse at 50% 0%,rgba(201,146,10,0.08) 0%,transparent 70%);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:20px;
 }
-.auth-logo{font-size:52px;margin-bottom:14px;filter:drop-shadow(0 0 20px rgba(184,134,11,0.4))}
-.auth-title{font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;color:#1a1a1a}
-.auth-title span{color:var(--gold)}
-.auth-sub{font-size:13px;color:var(--muted);margin-bottom:32px;text-align:center}
-.auth-box{
-  background:var(--card);border:2px solid var(--border);
-  border-radius:16px;padding:28px;width:100%;max-width:360px;
-  box-shadow:6px 6px 0px #1a1a1a;
+.pin-badge-wrap{margin-bottom:16px;filter:drop-shadow(3px 3px 0px rgba(0,0,0,0.12));animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.pin-title-wrap{text-align:center;margin-bottom:24px}
+.pin-title-main{font-size:28px;font-weight:900;font-family:Georgia,serif;color:#1a1a1a;line-height:1.2}
+.pin-title-sub{font-size:22px;font-weight:900;font-family:Georgia,serif;color:var(--gold);line-height:1.2}
+.pin-title-stars{font-size:13px;font-weight:700;color:#1a1a1a;margin-top:6px;letter-spacing:2px}
+.pin-prompt{font-size:16px;font-weight:800;color:var(--gold);margin-bottom:20px;text-align:center}
+.pin-dots{display:flex;gap:16px;margin-bottom:24px}
+.pin-dot{width:18px;height:18px;border-radius:50%;border:3px solid #1a1a1a;background:transparent;transition:all .15s}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold);transform:scale(1.15)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:255px}
+.pin-key{
+  background:var(--card);border:3px solid #1a1a1a;border-radius:var(--radius);
+  padding:18px 0;font-size:24px;font-weight:900;cursor:pointer;text-align:center;
+  box-shadow:4px 4px 0px #1a1a1a;transition:transform .1s,box-shadow .1s;color:#1a1a1a;
 }
-.auth-box h3{font-size:16px;font-weight:800;margin-bottom:20px;text-align:center;color:var(--text)}
-.auth-field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
-.auth-field label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.pin-key:active{transform:translate(2px,2px);box-shadow:2px 2px 0px #1a1a1a}
+.pin-zero{grid-column:2}
+.pin-del{font-size:18px;color:var(--muted)}
+.pin-err{color:var(--red);font-size:14px;font-weight:800;min-height:22px;margin-top:14px;text-align:center}
+.pin-switch{margin-top:18px;background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;text-decoration:underline}
+
+/* ══ AUTH SCREEN ══ */
+#authScreen{
+  position:fixed;inset:0;z-index:9998;
+  background:var(--bg);
+  background-image:radial-gradient(ellipse at 50% 0%,rgba(201,146,10,0.08) 0%,transparent 70%);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;overflow-y:auto;
+}
+.auth-badge-wrap{margin-bottom:12px;filter:drop-shadow(3px 3px 0px rgba(0,0,0,0.12));animation:float 4s ease-in-out infinite}
+.auth-title-wrap{text-align:center;margin-bottom:16px}
+.auth-title-main{font-size:26px;font-weight:900;font-family:Georgia,serif;color:#1a1a1a;line-height:1.2}
+.auth-title-sub{font-size:22px;font-weight:900;font-family:Georgia,serif;color:var(--gold);line-height:1.2}
+.auth-title-stars{font-size:12px;font-weight:700;color:#1a1a1a;margin-top:5px;letter-spacing:2px}
+.auth-box{
+  background:var(--card);border:3px solid #1a1a1a;border-radius:16px;
+  padding:24px;width:100%;max-width:360px;box-shadow:5px 5px 0px #1a1a1a;
+}
+.auth-box h3{font-size:17px;font-weight:900;margin-bottom:18px;text-align:center;color:#1a1a1a}
+.auth-field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.auth-field label{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px}
 .auth-field input{
-  background:var(--bg2);border:2px solid var(--border);
-  color:var(--text);padding:11px 14px;border-radius:var(--rsm);
-  font-size:14px;outline:none;transition:border-color .2s;
+  background:var(--bg2);border:2px solid #1a1a1a;color:#1a1a1a;
+  padding:10px 12px;border-radius:var(--rsm);font-size:15px;font-weight:700;outline:none;
+  transition:border-color .2s;
 }
 .auth-field input:focus{border-color:var(--gold)}
-.auth-field input::placeholder{color:var(--muted2)}
-.auth-msg{font-size:12px;min-height:18px;margin-bottom:10px;text-align:center}
+.auth-msg{font-size:13px;min-height:18px;margin-bottom:10px;text-align:center;font-weight:700}
 .auth-msg.err{color:var(--red)}
 .auth-msg.ok{color:var(--green)}
-.auth-switch{text-align:center;margin-top:16px;font-size:12px;color:var(--muted)}
-.auth-switch button{background:none;border:none;color:var(--gold);font-weight:700;cursor:pointer;font-size:12px}
-.auth-switch button:hover{text-decoration:underline}
-.fv-badge{
-  margin-bottom:12px;
-  filter:drop-shadow(4px 4px 0px rgba(0,0,0,0.15));
-  animation:badge-float 4s ease-in-out infinite;
-}
-@keyframes badge-float{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-6px)}
-}
-.vault-title-wrap{
-  text-align:center;margin-bottom:16px;
-}
-.vault-title-main{
-  font-size:30px;font-weight:900;
-  font-family:Georgia,serif;
-  color:#1a1a1a;
-  letter-spacing:-0.5px;
-  line-height:1.2;
-}
-.vault-title-sub{
-  font-size:26px;font-weight:900;
-  font-family:Georgia,serif;
-  color:#c9920a;
-  letter-spacing:-0.3px;
-  line-height:1.2;
-}
-.vault-title-stars{
-  font-size:14px;font-weight:700;
-  color:#1a1a1a;
-  margin-top:6px;
-  letter-spacing:2px;
-  text-transform:uppercase;
-}
+.auth-switch{text-align:center;margin-top:14px;font-size:13px;color:var(--muted);font-weight:700}
+.auth-switch button{background:none;border:none;color:var(--blue);font-weight:800;cursor:pointer;font-size:13px}
 
-/* ── APP ── */
+/* ══ APP ══ */
 #app{display:none;flex-direction:column;min-height:100vh}
 #app.show{display:flex}
 
-/* ── HEADER ── */
+/* ══ HEADER ══ */
 header{
-  background:var(--surface);
-  border-bottom:2px solid var(--border);
-  padding:0 20px;height:58px;
-  display:flex;align-items:center;gap:14px;
+  background:var(--surface);border-bottom:3px solid #1a1a1a;
+  padding:0 16px;height:58px;
+  display:flex;align-items:center;gap:12px;
   position:sticky;top:0;z-index:200;
-  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  box-shadow:0 2px 0px #1a1a1a;
 }
-.logo{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.logo{display:flex;align-items:center;gap:8px;white-space:nowrap}
 .logo-icon{
-  width:34px;height:34px;
-  background:linear-gradient(135deg,var(--gold),#8B6914);
+  width:34px;height:34px;background:linear-gradient(135deg,var(--gold),#8B6914);
   border-radius:9px;display:flex;align-items:center;justify-content:center;
-  font-size:18px;box-shadow:0 2px 8px rgba(184,134,11,0.4);
-  border:2px solid var(--border);
+  font-size:18px;border:2px solid #1a1a1a;box-shadow:2px 2px 0px #1a1a1a;
 }
-.logo-text{font-size:17px;font-weight:800;letter-spacing:-0.5px;color:var(--text)}
+.logo-text{font-size:17px;font-weight:900;color:#1a1a1a;font-family:Georgia,serif}
 .logo-text em{font-style:normal;color:var(--gold)}
-.hdr-search{flex:1;max-width:400px;position:relative}
+.hdr-search{flex:1;max-width:380px;position:relative}
 .hdr-search input{
-  width:100%;background:var(--bg2);border:2px solid var(--border);
-  border-radius:var(--rsm);padding:8px 12px 8px 34px;
-  color:var(--text);font-size:13px;outline:none;transition:border-color .2s;
+  width:100%;background:var(--bg2);border:2px solid #1a1a1a;
+  border-radius:var(--rsm);padding:7px 12px 7px 34px;
+  color:#1a1a1a;font-size:13px;font-weight:700;outline:none;
 }
 .hdr-search input:focus{border-color:var(--gold)}
-.hdr-search input::placeholder{color:var(--muted2)}
-.hdr-search .si{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
+.hdr-search .si{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
 .hdr-right{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
 .user-pill{
-  background:var(--bg2);border:2px solid var(--border);
-  border-radius:99px;padding:5px 12px;font-size:12px;font-weight:700;
-  display:flex;align-items:center;gap:6px;color:var(--text);
+  background:var(--bg2);border:2px solid #1a1a1a;border-radius:99px;
+  padding:5px 12px;font-size:12px;font-weight:800;color:#1a1a1a;
+  display:flex;align-items:center;gap:6px;
 }
-.user-pill .sync-indicator{width:8px;height:8px;border-radius:50%;background:var(--green);border:1px solid #1a1a1a}
-.user-pill .sync-indicator.syncing{background:var(--gold);animation:blink .8s infinite}
-.user-pill .sync-indicator.err{background:var(--red)}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--green);border:1px solid #1a1a1a}
+.sync-dot.syncing{background:var(--gold);animation:blink .8s infinite}
+.sync-dot.err{background:var(--red)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .hdr-btn{
-  background:var(--gold);border:2px solid var(--border);
-  border-radius:var(--rsm);padding:6px 12px;
-  color:#fff;font-size:12px;font-weight:700;cursor:pointer;
-  transition:all .15s;white-space:nowrap;
-  box-shadow:2px 2px 0px var(--border);
+  background:var(--gold);border:2px solid #1a1a1a;border-radius:var(--rsm);
+  padding:6px 12px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;
+  box-shadow:2px 2px 0px #1a1a1a;transition:all .12s;white-space:nowrap;
 }
-.hdr-btn:hover{background:var(--gold2);transform:translate(-1px,-1px);box-shadow:3px 3px 0px var(--border)}
+.hdr-btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0px #1a1a1a}
+.hdr-btn.ghost{background:var(--bg2);color:#1a1a1a}
 
-/* ── NAV ── */
+/* ══ NAV ══ */
 nav{
-  background:var(--surface);border-bottom:2px solid var(--border);
-  display:flex;overflow-x:auto;scrollbar-width:none;padding:0 8px;
+  background:var(--surface);border-bottom:3px solid #1a1a1a;
+  display:flex;overflow-x:auto;scrollbar-width:none;
 }
 nav::-webkit-scrollbar{display:none}
 .nav-btn{
-  padding:13px 16px;border:none;background:transparent;
-  color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;
+  padding:12px 14px;border:none;background:transparent;
+  color:var(--muted);font-size:13px;font-weight:800;cursor:pointer;
   border-bottom:3px solid transparent;white-space:nowrap;
-  display:flex;align-items:center;gap:6px;
   transition:color .15s,border-color .15s;
+  display:flex;align-items:center;gap:5px;
 }
-.nav-btn:hover{color:var(--text)}
+.nav-btn:hover{color:#1a1a1a}
 .nav-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
-.nav-badge{
-  background:var(--gold);color:#fff;
-  font-size:10px;font-weight:700;
-  padding:1px 6px;border-radius:99px;min-width:18px;text-align:center;
-}
+.nav-badge{background:var(--red);color:#fff;font-size:10px;font-weight:900;padding:1px 6px;border-radius:99px}
 
-/* ── MAIN ── */
-main{flex:1;padding:22px 20px;max-width:1040px;margin:0 auto;width:100%}
+/* ══ MAIN ══ */
+main{flex:1;padding:20px 16px;max-width:1040px;margin:0 auto;width:100%}
 .tab{display:none}
 .tab.active{display:block}
 
-/* ── DASHBOARD ── */
-.dash-hero{
-  background:linear-gradient(135deg,#fffdf9 0%,#fdf5e4 100%);
-  border:2px solid var(--border);border-radius:16px;padding:24px 28px;
-  margin-bottom:22px;position:relative;overflow:hidden;
-  box-shadow:4px 4px 0px var(--border);
+/* ══ SECTION HEADER ══ */
+.sec-head{
+  font-size:11px;font-weight:900;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.6px;margin:22px 0 12px;
+  display:flex;align-items:center;gap:8px;
 }
-.dash-hero::before{content:'🔐';font-size:130px;position:absolute;right:-10px;top:-20px;opacity:0.06;pointer-events:none}
-.dash-hero h2{font-size:21px;font-weight:800;margin-bottom:4px;color:var(--text)}
-.dash-hero h2 span{color:var(--gold)}
-.dash-hero p{font-size:13px;color:var(--muted);max-width:480px;line-height:1.7}
-.dash-hero .hw{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+.sec-head::after{content:'';flex:1;height:2px;background:#1a1a1a}
+
+/* ══ CARDS ══ */
+.card{
+  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
+  padding:18px;box-shadow:3px 3px 0px #1a1a1a;margin-bottom:14px;
+}
+.card-title{font-size:15px;font-weight:900;color:#1a1a1a;margin-bottom:14px}
+
+/* ══ KPI GRID ══ */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
 .kpi{
-  background:var(--card);border:2px solid var(--border);
-  border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;
-  transition:transform .2s,box-shadow .2s;cursor:default;
-  box-shadow:3px 3px 0px var(--border);
+  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
+  padding:16px;box-shadow:3px 3px 0px #1a1a1a;
+  transition:transform .15s,box-shadow .15s;
 }
-.kpi:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0px var(--border)}
-.kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:700}
-.kpi-val{font-size:28px;font-weight:800;line-height:1;margin-bottom:4px}
-.kpi-sub{font-size:11px;color:var(--muted2);margin-top:2px}
-.kpi-icon{position:absolute;right:14px;top:14px;font-size:22px;opacity:0.25}
-.ds-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.ds-title{font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
-.ds-link{font-size:12px;color:var(--accent);cursor:pointer;background:none;border:none;font-weight:600}
-.ds-link:hover{text-decoration:underline}
+.kpi:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0px #1a1a1a}
+.kpi-icon{font-size:24px;margin-bottom:8px}
+.kpi-val{font-size:26px;font-weight:900;line-height:1;margin-bottom:4px}
+.kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:800}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:3px;font-weight:700}
 
-/* ── SCAN ── */
-.scan-hero{
-  background:linear-gradient(135deg,#fffdf9 0%,#fdf5e4 100%);
-  border:2px solid var(--border);border-radius:16px;
-  padding:38px 24px;text-align:center;margin-bottom:18px;
-  position:relative;overflow:hidden;
-  box-shadow:4px 4px 0px var(--border);
+/* ══ BUTTONS ══ */
+.btn{
+  padding:9px 18px;border:2px solid #1a1a1a;border-radius:var(--rsm);
+  font-size:13px;font-weight:900;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;
+  transition:transform .1s,box-shadow .1s;white-space:nowrap;
+  box-shadow:3px 3px 0px #1a1a1a;
 }
-.scan-hero::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 0%,rgba(184,134,11,0.08) 0%,transparent 70%);
-  pointer-events:none;
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0px #1a1a1a}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0px #1a1a1a}
+.btn-gold{background:var(--gold);color:#fff}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-green{background:var(--green);color:#fff}
+.btn-red{background:var(--red);color:#fff}
+.btn-ghost{background:var(--bg2);color:#1a1a1a}
+.btn-sm{padding:6px 12px;font-size:12px;box-shadow:2px 2px 0px #1a1a1a}
+.btn-sm:hover{box-shadow:3px 3px 0px #1a1a1a}
+.icon-btn{
+  width:32px;height:32px;border:2px solid #1a1a1a;border-radius:var(--rsm);
+  background:var(--bg2);color:var(--muted);cursor:pointer;font-size:14px;
+  display:inline-flex;align-items:center;justify-content:center;
+  box-shadow:2px 2px 0px #1a1a1a;transition:all .12s;
 }
-.scan-orb{
-  width:116px;height:116px;margin:0 auto 20px;border-radius:50%;
-  background:radial-gradient(circle,rgba(184,134,11,0.12) 0%,transparent 70%);
-  border:3px dashed var(--gold);
-  display:flex;align-items:center;justify-content:center;
-  font-size:48px;cursor:pointer;position:relative;
-  transition:transform .2s;box-shadow:4px 4px 0px var(--border);
-}
-.scan-orb:hover{transform:scale(1.05)}
-.scan-orb::before{content:'';position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(184,134,11,0.2)}
-.scan-orb::after{content:'';position:absolute;inset:-16px;border-radius:50%;border:1px solid rgba(184,134,11,0.1)}
-.scan-orb.active{animation:orb-pulse 1.4s ease-in-out infinite;border-style:solid}
-@keyframes orb-pulse{
-  0%,100%{box-shadow:0 0 0 0 rgba(184,134,11,0.5),4px 4px 0px var(--border)}
-  50%{box-shadow:0 0 0 20px rgba(184,134,11,0),4px 4px 0px var(--border)}
-}
-.scan-hero h2{font-size:21px;font-weight:800;margin-bottom:8px;position:relative;color:var(--text)}
-.scan-hero p{font-size:13px;color:var(--muted);max-width:360px;margin:0 auto;position:relative;line-height:1.7}
-.scan-btns{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;position:relative}
+.icon-btn:hover{background:var(--gold);color:#fff;border-color:var(--gold)}
 
-/* ── PROGRESS ── */
-.ocr-prog{
-  background:var(--card);border:2px solid var(--border);
-  border-radius:var(--radius);padding:16px 18px;margin-bottom:14px;display:none;
-  box-shadow:3px 3px 0px var(--border);
-}
-.ocr-prog.show{display:block}
-.op-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.op-label{font-size:13px;font-weight:600;flex:1}
-.op-pct{font-size:13px;font-weight:700;color:var(--accent)}
-.prog-bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden}
-.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .3s}
-.op-step{font-size:11px;color:var(--muted2);margin-top:6px}
-
-/* ── MESSAGES ── */
-.msg{border-radius:var(--rsm);padding:11px 14px;font-size:13px;margin-bottom:12px;display:none;align-items:center;gap:8px;border:1px solid transparent}
-.msg.show{display:flex}
-.msg.ok{background:rgba(52,211,153,0.08);border-color:rgba(52,211,153,0.3);color:var(--green2)}
-.msg.err{background:rgba(248,113,113,0.08);border-color:rgba(248,113,113,0.3);color:var(--red)}
-.msg.info{background:rgba(79,142,247,0.08);border-color:rgba(79,142,247,0.3);color:#93c5fd}
-
-/* ── PANELS ── */
-.panel{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;display:none;box-shadow:3px 3px 0px var(--border)}
-.panel.show{display:block}
-.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.panel-hdr h3{font-size:14px;font-weight:800;color:#1a1a1a}
-.panel-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:10px}
-.preview-img{max-width:100%;max-height:280px;object-fit:contain;border-radius:var(--rsm);display:block;margin:0 auto;box-shadow:var(--shadow);border:2px solid var(--border)}
-.ocr-box{
-  background:var(--bg2);border:2px solid var(--border);border-radius:var(--rsm);padding:13px;
-  font-size:12px;line-height:1.9;white-space:pre-wrap;max-height:200px;overflow-y:auto;
-  color:#1a1a1a;font-family:'SF Mono',Monaco,Consolas,monospace;
-}
-.detected-chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
-.chip{
-  background:rgba(240,180,41,0.12);border:1px solid rgba(240,180,41,0.25);
-  border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;color:var(--gold2);
-}
-
-/* ── SAVE FORM ── */
-.save-panel{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:20px;display:none;margin-bottom:14px;box-shadow:3px 3px 0px var(--border)}
-.save-panel.show{display:block}
-.save-panel h3{font-size:15px;font-weight:800;margin-bottom:16px;color:var(--text)}
-.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:11px}
+/* ══ FORMS ══ */
 .field{display:flex;flex-direction:column;gap:4px}
-.field label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.field label{font-size:11px;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.3px}
 .field input,.field select,.field textarea{
-  background:var(--bg2);border:2px solid var(--border);color:var(--text);
-  padding:9px 12px;border-radius:var(--rsm);font-size:13px;outline:none;
-  transition:border-color .2s;font-family:inherit;
+  background:var(--bg2);border:2px solid #1a1a1a;color:#1a1a1a;
+  padding:9px 12px;border-radius:var(--rsm);font-size:14px;font-weight:700;
+  outline:none;transition:border-color .2s;font-family:inherit;
 }
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold)}
 .field input::placeholder{color:var(--muted2)}
-.field textarea{resize:vertical;min-height:62px}
+.field textarea{resize:vertical;min-height:60px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
 .factions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center}
 
-/* ── BUTTONS ── */
-.btn{
-  padding:9px 18px;border:none;border-radius:var(--rsm);
-  font-size:13px;font-weight:700;cursor:pointer;
-  display:inline-flex;align-items:center;gap:6px;
-  transition:filter .15s,transform .1s;white-space:nowrap;
+/* ══ BADGES ══ */
+.badge{
+  display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;
+  font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.3px;
+  border:1.5px solid;white-space:nowrap;
 }
-.btn:active{transform:scale(0.96)}
-.btn:hover{filter:brightness(1.12)}
-.btn-primary{background:var(--gold);color:#fff;border:2px solid var(--border);box-shadow:3px 3px 0px var(--border);}
-.btn-primary:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0px var(--border)}
-.btn-green{background:var(--green);color:#fff;border:2px solid var(--border);box-shadow:3px 3px 0px var(--border)}
-.btn-green:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0px var(--border)}
-.btn-ghost{background:var(--card);color:var(--text);border:2px solid var(--border);box-shadow:2px 2px 0px var(--border)}
-.btn-ghost:hover{background:var(--bg2);transform:translate(-1px,-1px);box-shadow:3px 3px 0px var(--border)}
-.btn-danger{background:var(--red);color:#fff;border:2px solid var(--border);box-shadow:2px 2px 0px var(--border)}
-.btn-sm{padding:6px 12px;font-size:12px}
-.icon-btn{
-  width:30px;height:30px;border-radius:var(--rsm);
-  background:var(--bg2);border:2px solid var(--border);
-  color:var(--muted);cursor:pointer;font-size:13px;
-  display:inline-flex;align-items:center;justify-content:center;
-  transition:all .15s;box-shadow:2px 2px 0px var(--border);
-}
-.icon-btn:hover{background:var(--gold);border-color:var(--border);color:#fff}
+.b-bill    {background:#fee2e2;color:#991b1b;border-color:#dc2626}
+.b-ins     {background:#dbeafe;color:#1e40af;border-color:#2563eb}
+.b-receipt {background:#dcfce7;color:#14532d;border-color:#15803d}
+.b-bank    {background:#fef3c7;color:#92400e;border-color:#d97706}
+.b-medical {background:#ede9fe;color:#4c1d95;border-color:#7c3aed}
+.b-tax     {background:#ffedd5;color:#9a3412;border-color:#ea580c}
+.b-warranty{background:#ccfbf1;color:#134e4a;border-color:#0d9488}
+.b-debt    {background:#fce7f3;color:#831843;border-color:#db2777}
+.b-other   {background:#f3f4f6;color:#374151;border-color:#6b7280}
 
-/* ── VAULT ── */
+/* ══ PROGRESS BARS ══ */
+.prog-wrap{margin-top:6px}
+.prog-track{height:10px;background:var(--bg2);border-radius:99px;overflow:hidden;border:1.5px solid #1a1a1a}
+.prog-fill{height:100%;border-radius:99px;transition:width .5s}
+
+/* ══ SCAN TAB ══ */
+.scan-hero{
+  background:linear-gradient(135deg,#fffdf9,#fdf5e4);
+  border:3px solid #1a1a1a;border-radius:16px;
+  padding:36px 24px;text-align:center;margin-bottom:18px;
+  box-shadow:5px 5px 0px #1a1a1a;position:relative;overflow:hidden;
+}
+.scan-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,146,10,0.07) 0%,transparent 70%);pointer-events:none}
+.scan-orb{
+  width:120px;height:120px;margin:0 auto 20px;border-radius:50%;
+  background:rgba(201,146,10,0.1);border:3px dashed var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-size:50px;cursor:pointer;position:relative;
+  box-shadow:4px 4px 0px #1a1a1a;transition:transform .2s;
+}
+.scan-orb:hover{transform:scale(1.04)}
+.scan-orb.active{animation:orb-pulse 1.2s ease-in-out infinite;border-style:solid}
+@keyframes orb-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(201,146,10,0.5),4px 4px 0px #1a1a1a}
+  50%{box-shadow:0 0 0 18px rgba(201,146,10,0),4px 4px 0px #1a1a1a}
+}
+.scan-hero h2{font-size:22px;font-weight:900;color:#1a1a1a;margin-bottom:8px;position:relative}
+.scan-hero p{font-size:14px;color:var(--text2);max-width:360px;margin:0 auto;position:relative;font-weight:700;line-height:1.7}
+.scan-btns{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;position:relative}
+
+/* ══ AI STATUS ══ */
+.ai-status{
+  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
+  padding:16px;margin-bottom:14px;display:none;box-shadow:3px 3px 0px #1a1a1a;
+}
+.ai-status.show{display:block}
+.ai-status-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ai-status-label{font-size:14px;font-weight:800;color:#1a1a1a;flex:1}
+.ai-status-pct{font-size:14px;font-weight:900;color:var(--gold)}
+.ai-prog{height:8px;background:var(--bg2);border-radius:99px;overflow:hidden;border:1.5px solid #1a1a1a}
+.ai-prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--orange));border-radius:99px;transition:width .4s}
+.ai-step{font-size:12px;color:var(--muted);margin-top:6px;font-weight:700}
+
+/* ══ MSG ══ */
+.msg{border-radius:var(--rsm);padding:12px 14px;font-size:14px;margin-bottom:12px;display:none;align-items:center;gap:8px;border:2px solid;font-weight:700}
+.msg.show{display:flex}
+.msg.ok{background:var(--green2);border-color:var(--green);color:#14532d}
+.msg.err{background:var(--red2);border-color:var(--red);color:#7f1d1d}
+.msg.info{background:var(--blue2);border-color:var(--blue);color:#1e3a8a}
+.msg.warn{background:var(--orange2);border-color:var(--orange);color:#7c2d12}
+
+/* ══ PANELS ══ */
+.panel{background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);padding:18px;margin-bottom:14px;display:none;box-shadow:3px 3px 0px #1a1a1a}
+.panel.show{display:block}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.panel-hdr h3{font-size:15px;font-weight:900;color:#1a1a1a}
+.panel-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:900;letter-spacing:.4px;margin-bottom:10px}
+.preview-img{max-width:100%;max-height:260px;object-fit:contain;border-radius:var(--rsm);display:block;margin:0 auto;border:2px solid #1a1a1a;box-shadow:3px 3px 0px #1a1a1a}
+.ocr-box{
+  background:var(--bg2);border:2px solid #1a1a1a;border-radius:var(--rsm);padding:14px;
+  font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:220px;overflow-y:auto;
+  color:#1a1a1a;font-family:'SF Mono',Monaco,Consolas,monospace;font-weight:600;
+}
+
+/* ══ AI EXTRACTED CHIPS ══ */
+.ai-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ai-chip{
+  background:var(--gold3);border:2px solid var(--gold);border-radius:99px;
+  padding:4px 12px;font-size:12px;font-weight:800;color:#92400e;
+  display:flex;align-items:center;gap:4px;
+}
+.ai-chip.cat{background:var(--blue2);border-color:var(--blue);color:#1e40af}
+.ai-chip.date{background:var(--green2);border-color:var(--green);color:#14532d}
+.ai-chip.flag{background:var(--red2);border-color:var(--red);color:#7f1d1d}
+
+/* ══ SAVE PANEL ══ */
+.save-panel{background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);padding:20px;display:none;margin-bottom:14px;box-shadow:3px 3px 0px #1a1a1a}
+.save-panel.show{display:block}
+.save-panel h3{font-size:16px;font-weight:900;margin-bottom:16px;color:#1a1a1a}
+
+/* ══ VAULT ══ */
 .vault-bar{display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
 .vault-bar select{
-  background:var(--card);border:2px solid var(--border);
-  color:var(--text);padding:8px 10px;border-radius:var(--rsm);font-size:13px;outline:none;cursor:pointer;
-  font-weight:600;box-shadow:2px 2px 0px var(--border);
+  background:var(--card);border:2px solid #1a1a1a;color:#1a1a1a;
+  padding:8px 10px;border-radius:var(--rsm);font-size:13px;font-weight:700;
+  outline:none;cursor:pointer;box-shadow:2px 2px 0px #1a1a1a;
 }
 .spacer{flex:1}
 .view-grp{display:flex;gap:4px}
 .vbtn{
-  background:var(--card);border:2px solid var(--border);
-  color:var(--muted);padding:7px 10px;border-radius:var(--rsm);cursor:pointer;font-size:15px;transition:all .15s;
-  box-shadow:2px 2px 0px var(--border);
+  background:var(--bg2);border:2px solid #1a1a1a;color:var(--muted);
+  padding:7px 10px;border-radius:var(--rsm);cursor:pointer;font-size:15px;
+  box-shadow:2px 2px 0px #1a1a1a;transition:all .12s;
 }
-.vbtn.on{background:var(--gold);border-color:var(--border);color:#fff}
+.vbtn.on{background:var(--gold);color:#fff}
 
-/* GRID */
-.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:13px}
+/* ══ DOC GRID ══ */
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
 .doc-card{
-  background:var(--card);border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;
-  transition:transform .2s,box-shadow .2s;
-  box-shadow:3px 3px 0px var(--border);
-}
-.doc-card:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0px var(--border)}
-.doc-thumb{height:105px;display:flex;align-items:center;justify-content:center;font-size:48px;border-bottom:1px solid var(--border)}
-.doc-body{padding:11px 13px}
-.doc-name{font-size:13px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#1a1a1a}
-.doc-date{font-size:11px;color:var(--muted)}
-.doc-foot{padding:8px 13px;border-top:2px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:6px}
-.doc-amt{font-size:12px;font-weight:700;color:var(--gold)}
-.doc-owner{font-size:10px;color:var(--muted);font-weight:600}
-
-/* LIST */
-.doc-list{display:flex;flex-direction:column;gap:7px}
-.doc-row{
-  background:var(--card);border:2px solid var(--border);border-radius:var(--radius);
-  padding:13px 15px;display:flex;align-items:center;gap:13px;cursor:pointer;
+  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
+  overflow:hidden;cursor:pointer;box-shadow:3px 3px 0px #1a1a1a;
   transition:transform .15s,box-shadow .15s;
-  box-shadow:3px 3px 0px var(--border);
 }
-.doc-row:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0px var(--border)}
-.row-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0}
+.doc-card:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0px #1a1a1a}
+.doc-thumb{height:100px;display:flex;align-items:center;justify-content:center;font-size:44px;border-bottom:2px solid #1a1a1a;position:relative}
+.doc-overdue{position:absolute;top:6px;right:6px;background:var(--red);color:#fff;font-size:9px;font-weight:900;padding:2px 6px;border-radius:99px;border:1px solid #1a1a1a}
+.doc-body{padding:10px 12px}
+.doc-name{font-size:13px;font-weight:900;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#1a1a1a}
+.doc-date{font-size:11px;color:var(--muted);font-weight:700}
+.doc-foot{padding:8px 12px;border-top:2px solid #1a1a1a;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.doc-amt{font-size:13px;font-weight:900;color:var(--gold)}
+
+/* ══ DOC LIST ══ */
+.doc-list{display:flex;flex-direction:column;gap:8px}
+.doc-row{
+  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
+  padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;
+  box-shadow:3px 3px 0px #1a1a1a;transition:transform .12s,box-shadow .12s;
+}
+.doc-row:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0px #1a1a1a}
+.row-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:2px solid #1a1a1a}
 .row-body{flex:1;min-width:0}
-.row-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#1a1a1a}
-.row-meta{font-size:12px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.row-preview{font-size:11px;color:var(--muted2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row-amt{font-size:15px;font-weight:800;color:var(--gold);white-space:nowrap;flex-shrink:0}
+.row-name{font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#1a1a1a}
+.row-meta{font-size:12px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-weight:700}
+.row-preview{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.row-amt{font-size:15px;font-weight:900;color:var(--gold);white-space:nowrap;flex-shrink:0}
 .row-actions{display:flex;gap:5px;flex-shrink:0}
 
-/* ── BADGES ── */
-.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
-.b-bill    {background:rgba(248,113,113,.15);color:#fca5a5;border:1px solid rgba(248,113,113,.2)}
-.b-ins     {background:rgba(79,142,247,.15);color:#93c5fd;border:1px solid rgba(79,142,247,.2)}
-.b-receipt {background:rgba(52,211,153,.15);color:#6ee7b7;border:1px solid rgba(52,211,153,.2)}
-.b-bank    {background:rgba(240,180,41,.15);color:#fcd34d;border:1px solid rgba(240,180,41,.2)}
-.b-medical {background:rgba(167,139,250,.15);color:#c4b5fd;border:1px solid rgba(167,139,250,.2)}
-.b-tax     {background:rgba(251,146,60,.15);color:#fdba74;border:1px solid rgba(251,146,60,.2)}
-.b-warranty{background:rgba(45,212,191,.15);color:#99f6e4;border:1px solid rgba(45,212,191,.2)}
-.b-other   {background:rgba(90,106,133,.15);color:#94a3b8;border:1px solid rgba(90,106,133,.2)}
+/* ══ BILL ROWS ══ */
+.bill-item{
+  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
+  padding:14px 16px;display:flex;align-items:center;gap:14px;
+  box-shadow:3px 3px 0px #1a1a1a;margin-bottom:8px;
+}
+.bill-due-box{
+  min-width:50px;text-align:center;
+  background:var(--gold3);border:2px solid var(--gold);border-radius:8px;
+  padding:6px 4px;
+}
+.bill-due-day{font-size:22px;font-weight:900;color:#1a1a1a;line-height:1}
+.bill-due-mo{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase}
+.bill-info{flex:1;min-width:0}
+.bill-name{font-size:14px;font-weight:900;color:#1a1a1a}
+.bill-meta{font-size:12px;color:var(--muted);font-weight:700;margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
+.bill-amt{font-size:18px;font-weight:900;color:#1a1a1a;flex-shrink:0}
+.bill-actions{display:flex;gap:6px;flex-shrink:0}
+.bill-item.overdue{border-color:var(--red);box-shadow:3px 3px 0px var(--red)}
+.bill-item.overdue .bill-due-box{background:var(--red2);border-color:var(--red)}
+.bill-item.due-soon{border-color:var(--orange);box-shadow:3px 3px 0px var(--orange)}
+.bill-item.paid{opacity:0.6}
 
-/* ── MODAL ── */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(2px)}
+/* ══ BUDGET ROWS ══ */
+.budget-row{
+  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
+  padding:14px 16px;margin-bottom:8px;box-shadow:3px 3px 0px #1a1a1a;
+}
+.budget-row-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.budget-cat{font-size:14px;font-weight:900;color:#1a1a1a;display:flex;align-items:center;gap:8px}
+.budget-amts{font-size:13px;font-weight:800;color:var(--muted)}
+.budget-pct{font-size:12px;font-weight:900}
+
+/* ══ DEBT CARDS ══ */
+.debt-card{
+  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
+  padding:16px;margin-bottom:10px;box-shadow:3px 3px 0px #1a1a1a;
+}
+.debt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.debt-name{font-size:16px;font-weight:900;color:#1a1a1a}
+.debt-type{font-size:11px;color:var(--muted);font-weight:800;margin-top:2px}
+.debt-balance{font-size:24px;font-weight:900;color:var(--red)}
+.debt-info{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
+.debt-stat label{font-size:10px;color:var(--muted);font-weight:900;text-transform:uppercase;display:block;margin-bottom:2px}
+.debt-stat span{font-size:15px;font-weight:900;color:#1a1a1a}
+
+/* ══ MODAL ══ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(3px)}
 .overlay.show{display:flex}
-.modal{background:var(--surface);border:2px solid var(--border);border-radius:16px;width:100%;max-width:650px;margin:auto;box-shadow:6px 6px 0px var(--border);overflow:hidden}
-.modal-head{padding:17px 22px;border-bottom:2px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;background:var(--card)}
-.modal-head h3{font-size:17px;font-weight:800;line-height:1.3;color:#1a1a1a}
-.modal-body{padding:20px 22px;max-height:65vh;overflow-y:auto;background:var(--surface)}
-.modal-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:13px}
-.modal-text{background:var(--bg2);border:2px solid var(--border);border-radius:var(--rsm);padding:13px;font-size:12px;line-height:1.9;white-space:pre-wrap;max-height:320px;overflow-y:auto;color:#1a1a1a;font-family:'SF Mono',Monaco,Consolas,monospace}
-.modal-notes{margin-top:11px;font-size:13px;color:#1a1a1a;background:var(--card);border:2px solid var(--border);border-radius:var(--rsm);padding:10px 12px;display:none}
+.modal{background:var(--surface);border:3px solid #1a1a1a;border-radius:16px;width:100%;max-width:660px;margin:auto;box-shadow:6px 6px 0px #1a1a1a;overflow:hidden}
+.modal-head{padding:16px 20px;border-bottom:2px solid #1a1a1a;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;background:var(--card)}
+.modal-head h3{font-size:17px;font-weight:900;color:#1a1a1a;line-height:1.3}
+.modal-body{padding:18px 20px;max-height:65vh;overflow-y:auto}
+.modal-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.modal-text{background:var(--bg2);border:2px solid #1a1a1a;border-radius:var(--rsm);padding:14px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:300px;overflow-y:auto;color:#1a1a1a;font-family:'SF Mono',Monaco,Consolas,monospace;font-weight:600}
+.modal-notes{margin-top:10px;font-size:14px;color:#1a1a1a;background:var(--card);border:2px solid #1a1a1a;border-radius:var(--rsm);padding:10px 12px;display:none;font-weight:700}
 .modal-notes.show{display:block}
-.modal-foot{padding:13px 22px;border-top:2px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--card)}
+.modal-foot{padding:13px 20px;border-top:2px solid #1a1a1a;display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--card)}
 
-/* ── STATS ── */
-.skpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin-bottom:24px}
-.sk{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;box-shadow:3px 3px 0px var(--border)}
+/* ══ STATS ══ */
+.stats-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:22px}
+.sk{background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);padding:16px;text-align:center;box-shadow:3px 3px 0px #1a1a1a}
 .sk-icon{font-size:26px;margin-bottom:6px}
-.sk-val{font-size:26px;font-weight:800;margin-bottom:2px}
-.sk-label{font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:.4px;font-weight:600}
-.cat-row{margin-bottom:11px}
-.cat-row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:13px}
-.bar-track{height:7px;background:var(--border);border-radius:99px;overflow:hidden}
-.bar-fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.sk-val{font-size:26px;font-weight:900;margin-bottom:2px}
+.sk-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:800}
+.cat-bar-row{margin-bottom:10px}
+.cat-bar-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;font-weight:800}
+.cat-bar-track{height:10px;background:var(--bg2);border-radius:99px;overflow:hidden;border:1.5px solid #1a1a1a}
+.cat-bar-fill{height:100%;border-radius:99px}
 
-/* ── TIPS ── */
-.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:11px;margin-bottom:22px}
-.tip{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:15px;transition:transform .2s,box-shadow .2s;box-shadow:3px 3px 0px var(--border)}
-.tip:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0px var(--border)}
-.tip-icon{font-size:24px;margin-bottom:9px}
-.tip h4{font-size:13px;font-weight:700;margin-bottom:3px}
-.tip p{font-size:12px;color:var(--text2);line-height:1.6}
+/* ══ EMPTY ══ */
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty h3{font-size:17px;font-weight:900;color:#1a1a1a;margin-bottom:6px}
+.empty p{font-size:14px;font-weight:700;line-height:1.6}
 
-/* ── SECTION HEAD ── */
-.sec-head{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:22px 0 11px;display:flex;align-items:center;gap:8px}
-.sec-head::after{content:'';flex:1;height:2px;background:var(--border)}
-
-/* ── EMPTY ── */
-.empty{text-align:center;padding:56px 22px;color:var(--muted)}
-.empty-icon{font-size:50px;margin-bottom:13px}
-.empty h3{font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
-.empty p{font-size:13px;line-height:1.6;color:var(--muted)}
-.tip h4{font-size:13px;font-weight:700;margin-bottom:3px;color:#1a1a1a}
-.tip p{font-size:12px;color:#333;line-height:1.6}
-
-/* ── SPINNER ── */
-.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--bg2);border-top-color:var(--gold);border-radius:50%;animation:sp .6s linear infinite;flex-shrink:0}
+/* ══ SPINNER ══ */
+.spin{display:inline-block;width:16px;height:16px;border:2.5px solid var(--bg2);border-top-color:var(--gold);border-radius:50%;animation:sp .65s linear infinite;flex-shrink:0}
 @keyframes sp{to{transform:rotate(360deg)}}
 
-/* ── TOAST ── */
+/* ══ TOAST ══ */
 #toast{
-  position:fixed;bottom:26px;left:50%;
+  position:fixed;bottom:24px;left:50%;
   transform:translateX(-50%) translateY(14px);
-  background:var(--card);border:2px solid var(--border);
-  color:var(--text);padding:10px 20px;border-radius:99px;
-  font-size:13px;font-weight:700;opacity:0;
-  transition:opacity .25s,transform .25s;
-  z-index:9998;pointer-events:none;white-space:nowrap;
-  box-shadow:3px 3px 0px var(--border);
+  background:var(--card);border:2px solid #1a1a1a;color:#1a1a1a;
+  padding:10px 20px;border-radius:99px;font-size:14px;font-weight:900;
+  opacity:0;transition:opacity .25s,transform .25s;
+  z-index:9997;pointer-events:none;white-space:nowrap;box-shadow:3px 3px 0px #1a1a1a;
 }
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-#toast.ok{background:#f0fdf4;border-color:var(--green);color:var(--green)}
-#toast.err{background:#fef2f2;border-color:var(--red);color:var(--red)}
+#toast.ok{background:var(--green2);border-color:var(--green);color:#14532d}
+#toast.err{background:var(--red2);border-color:var(--red);color:#7f1d1d}
 
-/* ── PIN PAD ── */
-.pin-dot{
-  width:18px;height:18px;border-radius:50%;
-  border:3px solid #1a1a1a;background:transparent;
-  transition:background .15s,transform .1s;
-}
-.pin-dot.filled{background:var(--gold);border-color:var(--gold);transform:scale(1.15)}
-.pin-pad{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:12px;width:260px;
-}
-.pin-key{
-  background:var(--card);border:3px solid #1a1a1a;
-  border-radius:var(--radius);padding:20px 0;
-  font-size:24px;font-weight:900;cursor:pointer;text-align:center;
-  box-shadow:4px 4px 0px #1a1a1a;
-  transition:transform .1s,box-shadow .1s;
-  color:#1a1a1a;
-}
-.pin-key:active{transform:translate(2px,2px);box-shadow:2px 2px 0px #1a1a1a}
-.pin-zero{grid-column:2}
-.pin-del{font-size:20px;color:var(--muted)}
-.pin-del:hover{color:var(--red)}
-body{font-weight:600}
-p,span,div,label,select,input,textarea,button,a{font-weight:600}
-.muted,.muted2,.text2,.doc-date,.row-meta,.row-preview,.doc-owner,.op-step,.auth-sub,.kpi-sub,.kpi-label,.sec-head,.panel-lbl,.field label,.factions span,.tip p,.dash-hero p,.scan-hero p{font-weight:700!important;color:#333!important}
-.nav-btn{font-weight:700}
-.badge{font-weight:800}
-.doc-name,.row-name,.kpi-val,.auth-title,.logo-text,.modal-head h3,.save-panel h3,.panel-hdr h3,.ds-title,.vault-title-main,.vault-title-sub{font-weight:900!important}
-.auth-field input,.field input,.field select,.field textarea{font-weight:700;color:#1a1a1a!important}
-.auth-field input::placeholder,.field input::placeholder{font-weight:600;color:#555!important}
-.ocr-box,.modal-text{font-weight:700;color:#1a1a1a!important}
-.tip h4,.tip p{color:#1a1a1a!important}
-.doc-date,.row-meta,.row-preview{color:#444!important}
-.sk-label,.cat-row-top{font-weight:700;color:#333!important}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+mark{background:rgba(201,146,10,0.2);color:#92400e;border-radius:2px;padding:0 1px;font-weight:800}
 
+/* ══ ALERTS BOX ══ */
+.alert-box{
+  background:var(--red2);border:2px solid var(--red);border-radius:var(--radius);
+  padding:14px 16px;margin-bottom:16px;
+}
+.alert-title{font-size:13px;font-weight:900;color:var(--red);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
+.alert-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(220,38,38,0.2);font-size:13px;font-weight:700;color:#7f1d1d}
+.alert-item:last-child{border-bottom:none}
+
+/* ══ TIPS ══ */
+.tip{background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);padding:16px;box-shadow:3px 3px 0px #1a1a1a;transition:transform .15s,box-shadow .15s}
+.tip:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0px #1a1a1a}
+.tip-icon{font-size:24px;margin-bottom:8px}
+.tip h4{font-size:14px;font-weight:900;color:#1a1a1a;margin-bottom:4px}
+.tip p{font-size:13px;color:var(--text2);font-weight:700;line-height:1.6}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+
+/* ══ RESPONSIVE ══ */
 @media(max-width:640px){
-  header{padding:0 12px;gap:8px}
+  header{padding:0 10px;gap:8px}
   .logo-text{display:none}
-  main{padding:14px 12px}
-  .kpi-grid,.skpi{grid-template-columns:1fr 1fr}
+  main{padding:14px 10px}
+  .kpi-grid,.stats-kpi{grid-template-columns:1fr 1fr}
   .doc-grid{grid-template-columns:1fr 1fr}
   .fgrid{grid-template-columns:1fr}
-  .hdr-right .hdr-btn:first-child{display:none}
+  .hdr-right .hdr-btn.ghost{display:none}
+  .debt-info{grid-template-columns:1fr 1fr}
 }
 @media(max-width:380px){.doc-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- ══ AUTH SCREEN ══ -->
-<div id="authScreen">
-  <div class="auth-logo" style="display:none">🔐</div>
-  <div class="auth-title" style="display:none">Finance<span>Vault</span></div>
-  <div class="auth-sub" style="display:none">Gus & Kat's Family FinanceVault</div>
-
-  <!-- BADGE EMBLEM inspired by Kathy's design -->
-  <div class="fv-badge">
-    <svg viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg" width="300" height="300">
-
-      <!-- Light lavender fill -->
-      <circle cx="170" cy="170" r="165" fill="#ede8f5"/>
-      <!-- Outer black ring -->
-      <circle cx="170" cy="170" r="165" fill="none" stroke="#1a1a1a" stroke-width="5"/>
-      <!-- Gold ring -->
-      <circle cx="170" cy="170" r="156" fill="none" stroke="#c9920a" stroke-width="3.5"/>
-      <!-- Inner black ring -->
-      <circle cx="170" cy="170" r="148" fill="none" stroke="#1a1a1a" stroke-width="2"/>
-
-      <!-- ═══ LEFT FLORAL SPRIG ═══ -->
-      <path d="M 76,224 Q 83,196 79,166 Q 77,144 84,116" fill="none" stroke="#9b7eb8" stroke-width="2.2"/>
-      <ellipse cx="65" cy="208" rx="15" ry="7" fill="#c4aee0" opacity="0.9" transform="rotate(-35 65 208)"/>
-      <ellipse cx="59" cy="188" rx="14" ry="6" fill="#d4c2e8" opacity="0.85" transform="rotate(-48 59 188)"/>
-      <ellipse cx="62" cy="168" rx="15" ry="6" fill="#c4aee0" opacity="0.9" transform="rotate(-25 62 168)"/>
-      <ellipse cx="67" cy="148" rx="13" ry="6" fill="#ddd0f0" opacity="0.85" transform="rotate(-38 67 148)"/>
-      <ellipse cx="92" cy="204" rx="14" ry="6" fill="#b8c9a8" opacity="0.9" transform="rotate(22 92 204)"/>
-      <ellipse cx="95" cy="182" rx="13" ry="6" fill="#c8d5b9" opacity="0.85" transform="rotate(32 95 182)"/>
-      <ellipse cx="92" cy="161" rx="14" ry="6" fill="#b8c9a8" opacity="0.9" transform="rotate(18 92 161)"/>
-      <circle cx="82" cy="122" r="9" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="1.2"/>
-      <circle cx="72" cy="134" r="6.5" fill="#f9c4d4" stroke="#1a1a1a" stroke-width="1"/>
-      <circle cx="92" cy="130" r="6" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="1"/>
-      <path d="M 79,166 Q 63,154 65,140 Q 67,126 79,134" fill="none" stroke="#9b7eb8" stroke-width="1.4"/>
-      <path d="M 79,186 Q 95,173 93,159 Q 91,145 81,153" fill="none" stroke="#9b7eb8" stroke-width="1.4"/>
-      <circle cx="67" cy="141" r="3.5" fill="#c9920a"/>
-      <circle cx="60" cy="134" r="2.5" fill="#c9920a"/>
-      <circle cx="75" cy="128" r="3" fill="#f4a7c0"/>
-
-      <!-- ═══ RIGHT FLORAL SPRIG ═══ -->
-      <path d="M 264,224 Q 257,196 261,166 Q 263,144 256,116" fill="none" stroke="#9b7eb8" stroke-width="2.2"/>
-      <ellipse cx="275" cy="208" rx="15" ry="7" fill="#c4aee0" opacity="0.9" transform="rotate(35 275 208)"/>
-      <ellipse cx="281" cy="188" rx="14" ry="6" fill="#d4c2e8" opacity="0.85" transform="rotate(48 281 188)"/>
-      <ellipse cx="278" cy="168" rx="15" ry="6" fill="#c4aee0" opacity="0.9" transform="rotate(25 278 168)"/>
-      <ellipse cx="273" cy="148" rx="13" ry="6" fill="#ddd0f0" opacity="0.85" transform="rotate(38 273 148)"/>
-      <ellipse cx="248" cy="204" rx="14" ry="6" fill="#b8c9a8" opacity="0.9" transform="rotate(-22 248 204)"/>
-      <ellipse cx="245" cy="182" rx="13" ry="6" fill="#c8d5b9" opacity="0.85" transform="rotate(-32 245 182)"/>
-      <ellipse cx="248" cy="161" rx="14" ry="6" fill="#b8c9a8" opacity="0.9" transform="rotate(-18 248 161)"/>
-      <circle cx="258" cy="122" r="9" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="1.2"/>
-      <circle cx="268" cy="134" r="6.5" fill="#f9c4d4" stroke="#1a1a1a" stroke-width="1"/>
-      <circle cx="248" cy="130" r="6" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="1"/>
-      <path d="M 261,166 Q 277,154 275,140 Q 273,126 261,134" fill="none" stroke="#9b7eb8" stroke-width="1.4"/>
-      <path d="M 261,186 Q 245,173 247,159 Q 249,145 259,153" fill="none" stroke="#9b7eb8" stroke-width="1.4"/>
-      <circle cx="273" cy="141" r="3.5" fill="#c9920a"/>
-      <circle cx="280" cy="134" r="2.5" fill="#c9920a"/>
-      <circle cx="265" cy="128" r="3" fill="#f4a7c0"/>
-
-      <!-- ═══ CENTER CONTENT ═══ -->
-      <circle cx="170" cy="100" r="34" fill="#fdf5e4" stroke="#1a1a1a" stroke-width="3"/>
-      <circle cx="170" cy="100" r="27" fill="none" stroke="#c9920a" stroke-width="2.5"/>
-      <text x="170" y="110" text-anchor="middle" font-size="26" fill="#1a1a1a">🔐</text>
-
-      <text x="170" y="175" text-anchor="middle" font-size="38" font-weight="900" fill="#1a1a1a" font-family="Georgia,serif">Finance</text>
-      <text x="170" y="215" text-anchor="middle" font-size="38" font-weight="900" fill="#c9920a" font-family="Georgia,serif">Vault</text>
-
-      <text x="114" y="244" text-anchor="middle" font-size="18" fill="#c9920a">★</text>
-      <text x="170" y="246" text-anchor="middle" font-size="18" fill="#c9920a">★</text>
-      <text x="226" y="244" text-anchor="middle" font-size="18" fill="#c9920a">★</text>
-
-      <!-- Bottom ring dots -->
-      <circle cx="120" cy="326" r="4" fill="#c9920a"/>
-      <circle cx="170" cy="332" r="4" fill="#c9920a"/>
-      <circle cx="220" cy="326" r="4" fill="#c9920a"/>
+<!-- ════════════════════════════════════
+     PIN SCREEN
+════════════════════════════════════ -->
+<div id="pinScreen">
+  <div class="pin-badge-wrap">
+    <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" width="220" height="220">
+      <circle cx="140" cy="140" r="136" fill="#ede8f5"/>
+      <circle cx="140" cy="140" r="136" fill="none" stroke="#1a1a1a" stroke-width="4"/>
+      <circle cx="140" cy="140" r="128" fill="none" stroke="#c9920a" stroke-width="3"/>
+      <circle cx="140" cy="140" r="121" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+      <!-- Left sprig -->
+      <path d="M 58,186 Q 64,162 61,136 Q 59,118 65,96" fill="none" stroke="#9b7eb8" stroke-width="2"/>
+      <ellipse cx="49" cy="172" rx="13" ry="6" fill="#c4aee0" opacity="0.9" transform="rotate(-35 49 172)"/>
+      <ellipse cx="44" cy="155" rx="12" ry="5" fill="#d4c2e8" opacity="0.85" transform="rotate(-48 44 155)"/>
+      <ellipse cx="47" cy="138" rx="13" ry="5" fill="#c4aee0" opacity="0.9" transform="rotate(-25 47 138)"/>
+      <ellipse cx="73" cy="168" rx="12" ry="5" fill="#b8c9a8" opacity="0.9" transform="rotate(22 73 168)"/>
+      <ellipse cx="75" cy="150" rx="11" ry="5" fill="#c8d5b9" opacity="0.85" transform="rotate(32 75 150)"/>
+      <circle cx="63" cy="102" r="8" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="1"/>
+      <circle cx="54" cy="112" r="5.5" fill="#f9c4d4" stroke="#1a1a1a" stroke-width="0.8"/>
+      <circle cx="72" cy="108" r="5" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="0.8"/>
+      <!-- Right sprig -->
+      <path d="M 222,186 Q 216,162 219,136 Q 221,118 215,96" fill="none" stroke="#9b7eb8" stroke-width="2"/>
+      <ellipse cx="231" cy="172" rx="13" ry="6" fill="#c4aee0" opacity="0.9" transform="rotate(35 231 172)"/>
+      <ellipse cx="236" cy="155" rx="12" ry="5" fill="#d4c2e8" opacity="0.85" transform="rotate(48 236 155)"/>
+      <ellipse cx="233" cy="138" rx="13" ry="5" fill="#c4aee0" opacity="0.9" transform="rotate(25 233 138)"/>
+      <ellipse cx="207" cy="168" rx="12" ry="5" fill="#b8c9a8" opacity="0.9" transform="rotate(-22 207 168)"/>
+      <ellipse cx="205" cy="150" rx="11" ry="5" fill="#c8d5b9" opacity="0.85" transform="rotate(-32 205 150)"/>
+      <circle cx="217" cy="102" r="8" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="1"/>
+      <circle cx="226" cy="112" r="5.5" fill="#f9c4d4" stroke="#1a1a1a" stroke-width="0.8"/>
+      <circle cx="208" cy="108" r="5" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="0.8"/>
+      <!-- Lock coin -->
+      <circle cx="140" cy="84" r="28" fill="#fdf5e4" stroke="#1a1a1a" stroke-width="2.5"/>
+      <circle cx="140" cy="84" r="22" fill="none" stroke="#c9920a" stroke-width="2"/>
+      <text x="140" y="92" text-anchor="middle" font-size="20" fill="#1a1a1a">🔐</text>
+      <!-- Text -->
+      <text x="140" y="150" text-anchor="middle" font-size="30" font-weight="900" fill="#1a1a1a" font-family="Georgia,serif">Finance</text>
+      <text x="140" y="182" text-anchor="middle" font-size="30" font-weight="900" fill="#c9920a" font-family="Georgia,serif">Vault</text>
+      <text x="92" y="206" text-anchor="middle" font-size="14" fill="#c9920a">★</text>
+      <text x="140" y="208" text-anchor="middle" font-size="14" fill="#c9920a">★</text>
+      <text x="188" y="206" text-anchor="middle" font-size="14" fill="#c9920a">★</text>
     </svg>
   </div>
-
-  <!-- TITLE ABOVE SIGN IN BOX -->
-  <div class="vault-title-wrap">
-    <div class="vault-title-main">Kat & Steve's</div>
-    <div class="vault-title-sub">Family FinanceVault</div>
-    <div class="vault-title-stars">★ &nbsp; Private & Secure &nbsp; ★</div>
+  <div class="pin-title-wrap">
+    <div class="pin-title-main">Kat & Steve's</div>
+    <div class="pin-title-sub">Family FinanceVault</div>
+    <div class="pin-title-stars">★ &nbsp; Private & Secure &nbsp; ★</div>
   </div>
-
-  <div class="auth-box">
-    <h3 id="authTitle">Sign In to Your Vault</h3>
-    <div class="auth-field">
-      <label>Email</label>
-      <input type="email" id="authEmail" placeholder="your@email.com" autocomplete="email"/>
-    </div>
-    <div class="auth-field">
-      <label>Password</label>
-      <input type="password" id="authPass" placeholder="••••••••" autocomplete="current-password"/>
-    </div>
-    <div class="auth-msg" id="authMsg"></div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center;background:#2563eb;border-color:#1a1a1a;box-shadow:3px 3px 0px #1a1a1a" id="authBtn">Sign In</button>
-    <div class="auth-switch">
-      <span id="authSwitchTxt">Don't have an account?</span>
-      <button id="authSwitchBtn">Create Account</button>
-    </div>
-    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);text-align:center;line-height:1.7">
-      🔒 100% private — only Kat & Steve can access this vault.<br/>Data stored securely in your own Supabase account.
-    </div>
-  </div>
-</div>
-
-<!-- ══ PIN SCREEN ══ -->
-<div id="pinScreen" style="display:none;position:fixed;inset:0;z-index:9998;background:var(--bg);background-image:radial-gradient(ellipse at 50% 0%,rgba(184,134,11,0.1) 0%,transparent 70%);flex-direction:column;align-items:center;justify-content:center;padding:20px">
-  <div style="font-size:48px;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(184,134,11,0.4))">🔐</div>
-  <div style="font-size:26px;font-weight:900;font-family:Georgia,serif;color:#1a1a1a;margin-bottom:4px">FinanceVault</div>
-  <div style="font-size:15px;font-weight:700;color:var(--gold);margin-bottom:28px">Enter your PIN</div>
-
-  <!-- PIN dots -->
-  <div style="display:flex;gap:16px;margin-bottom:28px" id="pinDots">
+  <div class="pin-prompt">Enter your PIN</div>
+  <div class="pin-dots" id="pinDots">
     <div class="pin-dot" id="pd0"></div>
     <div class="pin-dot" id="pd1"></div>
     <div class="pin-dot" id="pd2"></div>
     <div class="pin-dot" id="pd3"></div>
   </div>
-
-  <!-- PIN pad -->
-  <div class="pin-pad">
+  <div class="pin-pad" id="pinPad">
     <button class="pin-key" data-n="1">1</button>
     <button class="pin-key" data-n="2">2</button>
     <button class="pin-key" data-n="3">3</button>
@@ -640,12 +587,70 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
     <button class="pin-key pin-zero" data-n="0">0</button>
     <button class="pin-key pin-del" id="pinDelBtn">⌫</button>
   </div>
-
-  <div id="pinErr" style="color:var(--red);font-size:14px;font-weight:800;min-height:22px;margin-top:16px;text-align:center"></div>
-  <button onclick="showEmailLogin()" style="margin-top:20px;background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;text-decoration:underline">Use email & password instead</button>
+  <div class="pin-err" id="pinErr"></div>
+  <button class="pin-switch" id="pinSwitchBtn">Use email & password instead</button>
 </div>
 
-<!-- ══ APP ══ -->
+<!-- ════════════════════════════════════
+     AUTH SCREEN
+════════════════════════════════════ -->
+<div id="authScreen">
+  <div class="auth-badge-wrap">
+    <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" width="180" height="180">
+      <circle cx="140" cy="140" r="136" fill="#ede8f5"/>
+      <circle cx="140" cy="140" r="136" fill="none" stroke="#1a1a1a" stroke-width="4"/>
+      <circle cx="140" cy="140" r="128" fill="none" stroke="#c9920a" stroke-width="3"/>
+      <circle cx="140" cy="140" r="121" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+      <path d="M 58,186 Q 64,162 61,136 Q 59,118 65,96" fill="none" stroke="#9b7eb8" stroke-width="2"/>
+      <ellipse cx="49" cy="172" rx="13" ry="6" fill="#c4aee0" opacity="0.9" transform="rotate(-35 49 172)"/>
+      <ellipse cx="44" cy="155" rx="12" ry="5" fill="#d4c2e8" opacity="0.85" transform="rotate(-48 44 155)"/>
+      <ellipse cx="73" cy="168" rx="12" ry="5" fill="#b8c9a8" opacity="0.9" transform="rotate(22 73 168)"/>
+      <circle cx="63" cy="102" r="8" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="1"/>
+      <path d="M 222,186 Q 216,162 219,136 Q 221,118 215,96" fill="none" stroke="#9b7eb8" stroke-width="2"/>
+      <ellipse cx="231" cy="172" rx="13" ry="6" fill="#c4aee0" opacity="0.9" transform="rotate(35 231 172)"/>
+      <ellipse cx="236" cy="155" rx="12" ry="5" fill="#d4c2e8" opacity="0.85" transform="rotate(48 236 155)"/>
+      <ellipse cx="207" cy="168" rx="12" ry="5" fill="#b8c9a8" opacity="0.9" transform="rotate(-22 207 168)"/>
+      <circle cx="217" cy="102" r="8" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="1"/>
+      <circle cx="140" cy="84" r="28" fill="#fdf5e4" stroke="#1a1a1a" stroke-width="2.5"/>
+      <circle cx="140" cy="84" r="22" fill="none" stroke="#c9920a" stroke-width="2"/>
+      <text x="140" y="92" text-anchor="middle" font-size="20" fill="#1a1a1a">🔐</text>
+      <text x="140" y="150" text-anchor="middle" font-size="30" font-weight="900" fill="#1a1a1a" font-family="Georgia,serif">Finance</text>
+      <text x="140" y="182" text-anchor="middle" font-size="30" font-weight="900" fill="#c9920a" font-family="Georgia,serif">Vault</text>
+      <text x="92" y="206" text-anchor="middle" font-size="14" fill="#c9920a">★</text>
+      <text x="140" y="208" text-anchor="middle" font-size="14" fill="#c9920a">★</text>
+      <text x="188" y="206" text-anchor="middle" font-size="14" fill="#c9920a">★</text>
+    </svg>
+  </div>
+  <div class="auth-title-wrap">
+    <div class="auth-title-main">Kat & Steve's</div>
+    <div class="auth-title-sub">Family FinanceVault</div>
+    <div class="auth-title-stars">★ &nbsp; Private & Secure &nbsp; ★</div>
+  </div>
+  <div class="auth-box">
+    <h3 id="authTitle">Sign In to Your Vault</h3>
+    <div class="auth-field">
+      <label>Email</label>
+      <input type="email" id="authEmail" placeholder="your@email.com" autocomplete="email"/>
+    </div>
+    <div class="auth-field">
+      <label>Password</label>
+      <input type="password" id="authPass" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <div class="auth-msg" id="authMsg"></div>
+    <button class="btn btn-blue" style="width:100%;justify-content:center" id="authBtn">Sign In</button>
+    <div class="auth-switch">
+      <span id="authSwitchTxt">Don't have an account?</span>
+      <button id="authSwitchBtn">Create Account</button>
+    </div>
+    <div style="margin-top:12px;padding-top:12px;border-top:2px solid #1a1a1a;font-size:12px;color:var(--muted);text-align:center;line-height:1.7;font-weight:700">
+      🔒 100% private — only Kat & Steve can access this vault.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     MAIN APP
+════════════════════════════════════ -->
 <div id="app">
   <header>
     <div class="logo">
@@ -654,14 +659,15 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
     </div>
     <div class="hdr-search">
       <span class="si">🔍</span>
-      <input id="gSearch" placeholder="Search all documents…" oninput="onSearch()" autocomplete="off"/>
+      <input id="gSearch" placeholder="Search everything…" oninput="onSearch()" autocomplete="off"/>
     </div>
     <div class="hdr-right">
       <div class="user-pill">
-        <div class="sync-indicator" id="syncDot"></div>
+        <div class="sync-dot" id="syncDot"></div>
         <span id="userLabel">…</span>
       </div>
-      <button class="hdr-btn" onclick="signOut()">🚪 Sign Out</button>
+      <button class="hdr-btn ghost" onclick="lockVault()">🔒 Lock</button>
+      <button class="hdr-btn" onclick="signOut()">🚪 Out</button>
     </div>
   </header>
 
@@ -669,38 +675,34 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
     <button class="nav-btn active" id="nb-dash" onclick="switchTab('dash',this)">🏠 Home</button>
     <button class="nav-btn" id="nb-scan" onclick="switchTab('scan',this)">📷 Scan</button>
     <button class="nav-btn" id="nb-vault" onclick="switchTab('vault',this)">🗄️ Vault <span class="nav-badge" id="navCount">0</span></button>
+    <button class="nav-btn" id="nb-bills" onclick="switchTab('bills',this)">🔔 Bills</button>
+    <button class="nav-btn" id="nb-budget" onclick="switchTab('budget',this)">📋 Budget</button>
+    <button class="nav-btn" id="nb-debt" onclick="switchTab('debt',this)">💳 Debt</button>
     <button class="nav-btn" id="nb-stats" onclick="switchTab('stats',this)">📊 Stats</button>
     <button class="nav-btn" id="nb-tips" onclick="switchTab('tips',this)">💡 Tips</button>
   </nav>
 
   <main>
 
-    <!-- DASHBOARD -->
+    <!-- ════ DASHBOARD ════ -->
     <div id="tab-dash" class="tab active">
-      <div class="dash-hero">
-        <h2>Welcome to <span>FinanceVault</span> 👋</h2>
-        <p>Kat & Steve's shared family document vault — synced between both phones in real time. Scan any bill, insurance card, or receipt and it instantly appears for both of you.</p>
-        <div class="hw">
-          <button class="btn btn-primary" onclick="switchTab('scan',document.getElementById('nb-scan'))">📷 Scan a Document</button>
-          <button class="btn btn-ghost" onclick="switchTab('vault',document.getElementById('nb-vault'))">🗄️ Open Vault</button>
-        </div>
-      </div>
+      <div id="alertsBox"></div>
       <div class="kpi-grid" id="dashKPIs"></div>
-      <div class="sec-head">📅 Recently Scanned</div>
+      <div class="sec-head">📅 Bills Due Soon</div>
+      <div id="dashBills"></div>
+      <div class="sec-head">📄 Recently Scanned</div>
       <div id="dashRecent"></div>
-      <div class="sec-head">🗂️ Browse by Category</div>
-      <div id="dashCats"></div>
     </div>
 
-    <!-- SCAN -->
+    <!-- ════ SCAN ════ -->
     <div id="tab-scan" class="tab">
       <div class="scan-hero">
-        <div class="scan-orb" id="scanOrb" onclick="document.getElementById('fCam').click()">📄</div>
+        <div class="scan-orb" id="scanOrb" onclick="triggerCamera()">📄</div>
         <h2>Scan Any Document</h2>
-        <p>Take a photo and text is extracted automatically — then saved and synced to both phones instantly.</p>
+        <p>Claude AI reads your document, extracts all text, automatically identifies the type, amount, due date, and organizes it for you — no manual entry needed.</p>
         <div class="scan-btns">
-          <button class="btn btn-primary" onclick="document.getElementById('fCam').click()">📷 Take Photo</button>
-          <button class="btn btn-ghost" onclick="document.getElementById('fGal').click()">🖼️ Choose Image</button>
+          <button class="btn btn-gold" onclick="triggerCamera()">📷 Take Photo</button>
+          <button class="btn btn-ghost" onclick="triggerGallery()">🖼️ Choose Image</button>
         </div>
         <input type="file" id="fCam" accept="image/*" capture="environment" style="display:none"/>
         <input type="file" id="fGal" accept="image/*" style="display:none"/>
@@ -708,14 +710,14 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
 
       <div class="msg" id="scanMsg"></div>
 
-      <div class="ocr-prog" id="ocrProg">
-        <div class="op-top">
+      <div class="ai-status" id="aiStatus">
+        <div class="ai-status-top">
           <div class="spin"></div>
-          <div class="op-label" id="opLabel">Initializing…</div>
-          <div class="op-pct" id="opPct">0%</div>
+          <div class="ai-status-label" id="aiLabel">Analyzing document…</div>
+          <div class="ai-status-pct" id="aiPct"></div>
         </div>
-        <div class="prog-bar"><div class="prog-fill" id="opFill" style="width:0%"></div></div>
-        <div class="op-step" id="opStep">Loading OCR engine</div>
+        <div class="ai-prog"><div class="ai-prog-fill" id="aiFill" style="width:0%"></div></div>
+        <div class="ai-step" id="aiStep">Claude AI is reading your document</div>
       </div>
 
       <div class="panel" id="previewPanel">
@@ -729,18 +731,18 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
           <button class="btn btn-ghost btn-sm" onclick="copyOcr()">📋 Copy</button>
         </div>
         <div class="ocr-box" id="ocrBox"></div>
-        <div class="detected-chips" id="detectedChips"></div>
+        <div class="ai-chips" id="aiChips"></div>
       </div>
 
       <div class="save-panel" id="savePanel">
-        <h3>💾 Save to Vault</h3>
+        <h3>💾 Auto-Organized — Review & Save</h3>
         <div class="fgrid">
           <div class="field" style="grid-column:1/-1">
             <label>Document Name *</label>
             <input id="fName" placeholder="e.g. NV Energy Bill – July 2025"/>
           </div>
           <div class="field">
-            <label>Category</label>
+            <label>Category (Auto-Set)</label>
             <select id="fCat">
               <option value="bill">📄 Bill</option>
               <option value="ins">🛡️ Insurance</option>
@@ -749,20 +751,27 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
               <option value="medical">🏥 Medical</option>
               <option value="tax">📋 Tax Document</option>
               <option value="warranty">🔧 Warranty</option>
+              <option value="debt">💳 Debt/Loan</option>
               <option value="other">📁 Other</option>
             </select>
           </div>
           <div class="field">
-            <label>Amount ($)</label>
+            <label>Amount (Auto-Detected)</label>
             <input id="fAmt" type="number" step="0.01" placeholder="0.00"/>
           </div>
           <div class="field">
-            <label>Due Date</label>
+            <label>Due Date (Auto-Found)</label>
             <input id="fDue" type="date"/>
           </div>
           <div class="field">
-            <label>Vendor / From</label>
+            <label>Vendor / Company</label>
             <input id="fVendor" placeholder="e.g. NV Energy"/>
+          </div>
+          <div class="field">
+            <label>Add to Budget Category</label>
+            <select id="fBudgetCat">
+              <option value="">— Don't add to budget —</option>
+            </select>
           </div>
           <div class="field" style="grid-column:1/-1">
             <label>Notes</label>
@@ -770,14 +779,14 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
           </div>
         </div>
         <div class="factions">
-          <button class="btn btn-primary" onclick="saveDoc()">✅ Save &amp; Sync</button>
+          <button class="btn btn-green" onclick="saveDoc()">✅ Save & Sync</button>
           <button class="btn btn-ghost" onclick="clearScan()">🗑 Clear</button>
-          <span style="font-size:11px;color:var(--muted)">Syncs to both phones instantly</span>
+          <span style="font-size:12px;color:var(--muted);font-weight:700">Syncs to both phones instantly</span>
         </div>
       </div>
     </div>
 
-    <!-- VAULT -->
+    <!-- ════ VAULT ════ -->
     <div id="tab-vault" class="tab">
       <div class="vault-bar">
         <select id="vCat" onchange="renderVault()">
@@ -789,6 +798,7 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
           <option value="medical">Medical</option>
           <option value="tax">Tax Documents</option>
           <option value="warranty">Warranties</option>
+          <option value="debt">Debt/Loans</option>
           <option value="other">Other</option>
         </select>
         <select id="vSort" onchange="renderVault()">
@@ -796,6 +806,7 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
           <option value="oldest">Oldest First</option>
           <option value="name">Name A–Z</option>
           <option value="amount">Highest Amount</option>
+          <option value="due">Due Date</option>
         </select>
         <div class="spacer"></div>
         <div class="view-grp">
@@ -806,34 +817,202 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
       <div id="vaultContent"></div>
     </div>
 
-    <!-- STATS -->
+    <!-- ════ BILLS ════ -->
+    <div id="tab-bills" class="tab">
+      <div class="card">
+        <div class="card-title">➕ Add a Bill</div>
+        <div class="fgrid">
+          <div class="field">
+            <label>Bill Name</label>
+            <input id="bl_name" placeholder="e.g. Electric Bill"/>
+          </div>
+          <div class="field">
+            <label>Amount ($)</label>
+            <input id="bl_amt" type="number" placeholder="0.00"/>
+          </div>
+          <div class="field">
+            <label>Due Day (1–31)</label>
+            <input id="bl_day" type="number" min="1" max="31" placeholder="15"/>
+          </div>
+          <div class="field">
+            <label>Category</label>
+            <select id="bl_cat">
+              <option>Utilities</option>
+              <option>Insurance</option>
+              <option>Subscription</option>
+              <option>Rent/Mortgage</option>
+              <option>Medical</option>
+              <option>Loan</option>
+              <option>Phone</option>
+              <option>Internet</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Auto-Pay?</label>
+            <select id="bl_auto">
+              <option value="no">No – Manual</option>
+              <option value="yes">Yes – Auto-Pay</option>
+            </select>
+          </div>
+        </div>
+        <div class="factions">
+          <button class="btn btn-gold" onclick="addBill()">+ Add Bill</button>
+        </div>
+      </div>
+      <div class="sec-head">🔴 Overdue</div>
+      <div id="billsOverdue"></div>
+      <div class="sec-head">🟡 Due Soon (Next 7 Days)</div>
+      <div id="billsSoon"></div>
+      <div class="sec-head">📋 All Bills</div>
+      <div id="billsAll"></div>
+    </div>
+
+    <!-- ════ BUDGET ════ -->
+    <div id="tab-budget" class="tab">
+      <div class="card">
+        <div class="card-title">➕ Add Budget Category</div>
+        <div class="fgrid">
+          <div class="field">
+            <label>Category Name</label>
+            <input id="bc_name" placeholder="e.g. Groceries"/>
+          </div>
+          <div class="field">
+            <label>Icon</label>
+            <input id="bc_icon" placeholder="🛒" maxlength="2"/>
+          </div>
+          <div class="field">
+            <label>Monthly Budget ($)</label>
+            <input id="bc_budget" type="number" placeholder="500"/>
+          </div>
+        </div>
+        <div class="factions">
+          <button class="btn btn-gold" onclick="addBudgetCat()">+ Add Category</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💸 Log an Expense</div>
+        <div class="fgrid">
+          <div class="field">
+            <label>Description</label>
+            <input id="be_desc" placeholder="e.g. Walmart groceries"/>
+          </div>
+          <div class="field">
+            <label>Amount ($)</label>
+            <input id="be_amt" type="number" placeholder="0.00"/>
+          </div>
+          <div class="field">
+            <label>Category</label>
+            <select id="be_cat"></select>
+          </div>
+          <div class="field">
+            <label>Date</label>
+            <input id="be_date" type="date"/>
+          </div>
+        </div>
+        <div class="factions">
+          <button class="btn btn-green" onclick="addExpense()">+ Log Expense</button>
+        </div>
+      </div>
+
+      <div class="sec-head">📊 This Month's Budget</div>
+      <div id="budgetList"></div>
+      <div class="sec-head">💸 Recent Expenses</div>
+      <div id="expenseList"></div>
+    </div>
+
+    <!-- ════ DEBT ════ -->
+    <div id="tab-debt" class="tab">
+      <div class="card">
+        <div class="card-title">➕ Add Debt Account</div>
+        <div class="fgrid">
+          <div class="field">
+            <label>Account Name</label>
+            <input id="d_name" placeholder="e.g. Chase Visa"/>
+          </div>
+          <div class="field">
+            <label>Type</label>
+            <select id="d_type">
+              <option>Credit Card</option>
+              <option>Auto Loan</option>
+              <option>Personal Loan</option>
+              <option>Medical</option>
+              <option>Mortgage</option>
+              <option>Student Loan</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Current Balance ($)</label>
+            <input id="d_bal" type="number" placeholder="0.00"/>
+          </div>
+          <div class="field">
+            <label>Interest Rate (%)</label>
+            <input id="d_rate" type="number" placeholder="19.99"/>
+          </div>
+          <div class="field">
+            <label>Min Payment ($)</label>
+            <input id="d_min" type="number" placeholder="0.00"/>
+          </div>
+        </div>
+        <div class="factions">
+          <button class="btn btn-gold" onclick="addDebt()">+ Add Debt</button>
+        </div>
+      </div>
+      <div class="sec-head">💳 Debt Accounts (Highest Rate First)</div>
+      <div id="debtList"></div>
+      <div id="paymentFormWrap" style="display:none">
+        <div class="sec-head">💰 Log a Payment</div>
+        <div class="card">
+          <div class="fgrid">
+            <div class="field">
+              <label>Account</label>
+              <select id="p_debt"></select>
+            </div>
+            <div class="field">
+              <label>Payment ($)</label>
+              <input id="p_amt" type="number" placeholder="0.00"/>
+            </div>
+            <div class="field">
+              <label>Date</label>
+              <input id="p_date" type="date"/>
+            </div>
+          </div>
+          <div class="factions">
+            <button class="btn btn-green" onclick="logPayment()">✅ Log Payment</button>
+            <button class="btn btn-ghost" onclick="document.getElementById('paymentFormWrap').style.display='none'">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ STATS ════ -->
     <div id="tab-stats" class="tab">
-      <div class="skpi" id="statsKPI"></div>
-      <div class="sec-head">By Category</div>
+      <div class="stats-kpi" id="statsKPI"></div>
+      <div class="sec-head">Documents by Category</div>
       <div id="statsCats"></div>
       <div class="sec-head">Monthly Activity</div>
       <div id="statsMonths"></div>
     </div>
 
-    <!-- TIPS -->
+    <!-- ════ TIPS ════ -->
     <div id="tab-tips" class="tab">
-      <div class="sec-head">📷 Scanning Tips</div>
+      <div class="sec-head">📷 Scanning Tips for Best Results</div>
       <div class="tips-grid">
         <div class="tip"><div class="tip-icon">☀️</div><h4>Good Lighting</h4><p>Scan near a bright window. Avoid shadows across the text.</p></div>
-        <div class="tip"><div class="tip-icon">📐</div><h4>Flat Surface</h4><p>Lay the document flat. Curved or folded paper reduces accuracy.</p></div>
+        <div class="tip"><div class="tip-icon">📐</div><h4>Lay It Flat</h4><p>Place document flat on a surface. Curved paper reduces accuracy.</p></div>
         <div class="tip"><div class="tip-icon">🔍</div><h4>Fill the Frame</h4><p>Get the document to fill most of your camera view.</p></div>
-        <div class="tip"><div class="tip-icon">🚫</div><h4>No Glare</h4><p>Tilt slightly to avoid shiny reflections on glossy paper.</p></div>
-        <div class="tip"><div class="tip-icon">📷</div><h4>Hold Steady</h4><p>Pause briefly after tapping — motion blur kills accuracy.</p></div>
-        <div class="tip"><div class="tip-icon">🔄</div><h4>Retry if Needed</h4><p>Not satisfied? Hit Clear and try again with better conditions.</p></div>
+        <div class="tip"><div class="tip-icon">🚫</div><h4>Avoid Glare</h4><p>Tilt slightly to avoid shiny reflections on glossy paper.</p></div>
+        <div class="tip"><div class="tip-icon">🤖</div><h4>Claude AI Reads It</h4><p>Claude AI extracts text, category, amount and due date automatically — much more accurate than standard OCR.</p></div>
+        <div class="tip"><div class="tip-icon">🔄</div><h4>Retry if Needed</h4><p>Not happy with results? Clear and try again with better lighting.</p></div>
       </div>
-
-      <div class="sec-head">🔄 How Sync Works</div>
+      <div class="sec-head">🔒 Privacy & Sync</div>
       <div class="tip" style="max-width:100%">
-        <div class="tip-icon">☁️</div>
-        <h4 style="margin-bottom:8px">Real-Time Sync Between Both Phones</h4>
-        <p style="margin-top:6px">When either of you scans a document, it saves to your private Supabase database and appears on the other phone within seconds. Both of you sign in with your own email and password — only accounts you authorize can see your vault. The OCR runs entirely in your browser, so only the final text (not the image) is stored.</p>
+        <div class="tip-icon">🔐</div>
+        <h4 style="margin-bottom:8px">100% Private — Real-Time Sync Between Both Phones</h4>
+        <p>All documents are stored in Kat & Steve's private Supabase database. Nobody else can see your vault. When either of you scans a document it appears on the other phone within seconds. The PIN 2580 gets you in instantly after the first login.</p>
       </div>
-
       <div class="sec-head">📱 Add to Home Screen</div>
       <div class="tips-grid">
         <div class="tip"><div class="tip-icon">🤖</div><h4>Android</h4><p>Open in Chrome → tap ⋮ → "Add to Home screen"</p></div>
@@ -844,12 +1023,12 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
   </main>
 </div>
 
-<!-- MODAL -->
+<!-- DOCUMENT MODAL -->
 <div class="overlay" id="docOverlay" onclick="overlayClick(event)">
   <div class="modal">
     <div class="modal-head">
       <div>
-        <div style="font-size:11px;color:var(--muted2);margin-bottom:4px" id="modalCat"></div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:800" id="modalCat"></div>
         <h3 id="modalTitle"></h3>
       </div>
       <button class="icon-btn" onclick="closeModal()">✕</button>
@@ -860,10 +1039,10 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
       <div class="modal-notes" id="modalNotes"></div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-ghost btn-sm" onclick="copyModal()">📋 Copy Text</button>
+      <button class="btn btn-ghost btn-sm" onclick="copyModal()">📋 Copy</button>
       <button class="btn btn-ghost btn-sm" onclick="editDocName()">✏️ Rename</button>
       <div style="flex:1"></div>
-      <button class="btn btn-danger btn-sm" id="modalDel">🗑 Delete</button>
+      <button class="btn btn-red btn-sm" id="modalDel">🗑 Delete</button>
       <button class="btn btn-ghost btn-sm" onclick="closeModal()">Close</button>
     </div>
   </div>
@@ -873,301 +1052,312 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
 
 <script>
 'use strict';
-/* ══ SUPABASE ══ */
-const SB_URL  = 'https://qfzbcidtsfjweyziowcq.supabase.co';
-const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmemJjaWR0c2Zqd2V5emlvd2NxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5ODkxMDEsImV4cCI6MjA5NzU2NTEwMX0.Kwrt9R1qfJ9-GtJl5WP4IVcO7V7sImr_hjRsD6kA5qo';
-const sb      = supabase.createClient(SB_URL, SB_KEY);
+/* ══════════════════════════════════════
+   SUPABASE
+══════════════════════════════════════ */
+const SB_URL = 'https://qfzbcidtsfjweyziowcq.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmemJjaWR0c2Zqd2V5emlvd2NxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5ODkxMDEsImV4cCI6MjA5NzU2NTEwMX0.Kwrt9R1qfJ9-GtJl5WP4IVcO7V7sImr_hjRsD6kA5qo';
+const sb = supabase.createClient(SB_URL, SB_KEY);
 
-/* ══ STATE ══ */
-let docs     = [];
-let ocrText  = '';
-let viewMode = 'grid';
-let searchQ  = '';
-let openId   = null;
-let authMode = 'signin'; // 'signin' | 'signup'
-let currentUser = null;
-
-/* ══ CAT CONFIG ══ */
-const CAT = {
-  bill:    {label:'Bill',      icon:'📄',color:'#f87171',bg:'rgba(248,113,113,.12)'},
-  ins:     {label:'Insurance', icon:'🛡️',color:'#60a5fa',bg:'rgba(96,165,250,.12)'},
-  receipt: {label:'Receipt',   icon:'🧾',color:'#34d399',bg:'rgba(52,211,153,.12)'},
-  bank:    {label:'Bank Stmt', icon:'🏦',color:'#fbbf24',bg:'rgba(251,191,36,.12)'},
-  medical: {label:'Medical',   icon:'🏥',color:'#a78bfa',bg:'rgba(167,139,250,.12)'},
-  tax:     {label:'Tax Doc',   icon:'📋',color:'#fb923c',bg:'rgba(251,146,60,.12)'},
-  warranty:{label:'Warranty',  icon:'🔧',color:'#2dd4bf',bg:'rgba(45,212,191,.12)'},
-  other:   {label:'Other',     icon:'📁',color:'#64748b',bg:'rgba(100,116,139,.12)'},
-};
-const BDGE = {bill:'b-bill',ins:'b-ins',receipt:'b-receipt',bank:'b-bank',medical:'b-medical',tax:'b-tax',warranty:'b-warranty',other:'b-other'};
-
-/* ══ PIN LOGIC ══ */
-const VAULT_PIN = '2580';
-const PIN_SAVED_KEY = 'fv_pin_user';
-let pinBuffer = '';
-
-function showPinScreen(){
-  document.getElementById('authScreen').style.display = 'none';
-  const ps = document.getElementById('pinScreen');
-  ps.style.display = 'flex';
-  pinBuffer = '';
-  updatePinDots();
-  document.getElementById('pinErr').textContent = '';
+/* ══════════════════════════════════════
+   CLAUDE API
+══════════════════════════════════════ */
+async function analyzeWithClaude(base64Image, mediaType) {
+  setAiStatus(true, 'Claude AI is reading your document…', 30, 'Sending image to Claude…');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64Image } },
+            { type: 'text', text: `You are a financial document analyzer. Extract ALL text from this document and analyze it. Return ONLY a JSON object with these exact fields:
+{
+  "text": "full extracted text from the document",
+  "name": "short descriptive name for this document (e.g. 'NV Energy Bill July 2025')",
+  "category": "one of: bill, ins, receipt, bank, medical, tax, warranty, debt, other",
+  "amount": null or number (the main dollar amount due or total),
+  "due_date": null or "YYYY-MM-DD" (payment due date if found),
+  "vendor": "company or organization name",
+  "is_overdue": false or true,
+  "notes": "any important details like account numbers (last 4 only), policy numbers, or key info"
 }
-
-function showEmailLogin(){
-  document.getElementById('pinScreen').style.display = 'none';
-  document.getElementById('authScreen').style.display = 'flex';
-}
-
-function showEmailLoginAndClear(){
-  localStorage.removeItem(PIN_SAVED_KEY);
-  showEmailLogin();
-}
-
-function updatePinDots(){
-  for(let i=0;i<4;i++){
-    const d = document.getElementById('pd'+i);
-    if(d) d.classList.toggle('filled', i < pinBuffer.length);
+Return ONLY the JSON, no other text.` }
+          ]
+        }]
+      })
+    });
+    setAiStatus(true, 'Processing results…', 80, 'Organizing your document…');
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || '';
+    const clean = raw.replace(/```json|```/g,'').trim();
+    return JSON.parse(clean);
+  } catch(e) {
+    console.error('Claude API error:', e);
+    return null;
   }
+}
+
+/* ══════════════════════════════════════
+   STATE
+══════════════════════════════════════ */
+const VAULT_PIN    = '2580';
+const PIN_USER_KEY = 'fv5_pin_user';
+const STORE_BILLS  = 'fv5_bills';
+const STORE_BCATS  = 'fv5_budgetcats';
+const STORE_BEXPS  = 'fv5_expenses';
+const STORE_DEBTS  = 'fv5_debts';
+const STORE_PAYMENTS = 'fv5_payments';
+
+let docs        = [];
+let bills       = JSON.parse(localStorage.getItem(STORE_BILLS)||'[]');
+let budgetCats  = JSON.parse(localStorage.getItem(STORE_BCATS)||'[]');
+let expenses    = JSON.parse(localStorage.getItem(STORE_BEXPS)||'[]');
+let debts       = JSON.parse(localStorage.getItem(STORE_DEBTS)||'[]');
+let payments    = JSON.parse(localStorage.getItem(STORE_PAYMENTS)||'[]');
+let currentUser = null;
+let ocrText     = '';
+let viewMode    = 'grid';
+let searchQ     = '';
+let openId      = null;
+let pinBuffer   = '';
+let authMode    = 'signin';
+
+/* ══════════════════════════════════════
+   CATEGORY CONFIG
+══════════════════════════════════════ */
+const CAT = {
+  bill:    {label:'Bill',      icon:'📄', color:var_('--red'),    bg:'var(--red2)'},
+  ins:     {label:'Insurance', icon:'🛡️', color:'#2563eb',        bg:'var(--blue2)'},
+  receipt: {label:'Receipt',   icon:'🧾', color:'var(--green)',   bg:'var(--green2)'},
+  bank:    {label:'Bank Stmt', icon:'🏦', color:'#d97706',        bg:'var(--gold3)'},
+  medical: {label:'Medical',   icon:'🏥', color:'var(--purple)',  bg:'var(--purple2)'},
+  tax:     {label:'Tax Doc',   icon:'📋', color:'var(--orange)',  bg:'var(--orange2)'},
+  warranty:{label:'Warranty',  icon:'🔧', color:'var(--teal)',    bg:'var(--teal2)'},
+  debt:    {label:'Debt/Loan', icon:'💳', color:'#db2777',        bg:'#fce7f3'},
+  other:   {label:'Other',     icon:'📁', color:'#6b7280',        bg:'#f3f4f6'},
+};
+const BDGE = {bill:'b-bill',ins:'b-ins',receipt:'b-receipt',bank:'b-bank',medical:'b-medical',tax:'b-tax',warranty:'b-warranty',debt:'b-debt',other:'b-other'};
+const CAT_COLORS = {bill:'#dc2626',ins:'#2563eb',receipt:'#15803d',bank:'#d97706',medical:'#7c3aed',tax:'#ea580c',warranty:'#0d9488',debt:'#db2777',other:'#6b7280'};
+
+function var_(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+/* ══════════════════════════════════════
+   PIN SYSTEM
+══════════════════════════════════════ */
+function initPinPad(){
+  document.querySelectorAll('.pin-key[data-n]').forEach(btn=>{
+    btn.addEventListener('click', ()=>pinPress(btn.getAttribute('data-n')));
+    btn.addEventListener('touchend', e=>{ e.preventDefault(); pinPress(btn.getAttribute('data-n')); });
+  });
+  document.getElementById('pinDelBtn').addEventListener('click', pinDel);
+  document.getElementById('pinDelBtn').addEventListener('touchend', e=>{ e.preventDefault(); pinDel(); });
+  document.getElementById('pinSwitchBtn').addEventListener('click', showEmailLogin);
+  document.addEventListener('keydown', e=>{
+    if(document.getElementById('pinScreen').style.display!=='none'){
+      if(e.key>='0'&&e.key<='9') pinPress(e.key);
+      if(e.key==='Backspace') pinDel();
+    }
+    if(e.key==='Escape') closeModal();
+  });
 }
 
 function pinPress(n){
-  if(pinBuffer.length >= 4) return;
-  pinBuffer += n;
+  if(pinBuffer.length>=4) return;
+  pinBuffer+=n;
   updatePinDots();
-  if(pinBuffer.length === 4) setTimeout(checkPin, 120);
+  if(pinBuffer.length===4) setTimeout(checkPin,120);
 }
-
 function pinDel(){
-  pinBuffer = pinBuffer.slice(0,-1);
-  document.getElementById('pinErr').textContent = '';
+  pinBuffer=pinBuffer.slice(0,-1);
+  document.getElementById('pinErr').textContent='';
   updatePinDots();
 }
-
+function updatePinDots(){
+  for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.toggle('filled',i<pinBuffer.length);
+}
 function checkPin(){
-  if(pinBuffer === VAULT_PIN){
-    // Restore saved session
-    const savedUser = JSON.parse(localStorage.getItem(PIN_SAVED_KEY)||'null');
-    if(savedUser){
-      currentUser = savedUser;
-      document.getElementById('pinScreen').style.display = 'none';
+  if(pinBuffer===VAULT_PIN){
+    const saved=JSON.parse(localStorage.getItem(PIN_USER_KEY)||'null');
+    if(saved){
+      currentUser=saved;
+      document.getElementById('pinScreen').style.display='none';
       launchApp();
-    } else {
-      showEmailLogin();
-    }
+    } else { showEmailLogin(); }
   } else {
-    document.getElementById('pinErr').textContent = '❌ Incorrect PIN';
-    const dots = document.querySelectorAll('.pin-dot');
-    dots.forEach(d=>{ d.style.background='#f87171'; d.style.borderColor='#f87171'; });
+    document.getElementById('pinErr').textContent='❌ Incorrect PIN — try again';
+    document.querySelectorAll('.pin-dot').forEach(d=>{ d.style.background='#dc2626'; d.style.borderColor='#dc2626'; });
     setTimeout(()=>{
-      pinBuffer = '';
-      updatePinDots();
-      dots.forEach(d=>{ d.style.background=''; d.style.borderColor=''; });
-      document.getElementById('pinErr').textContent = '';
-    }, 800);
+      pinBuffer=''; updatePinDots();
+      document.querySelectorAll('.pin-dot').forEach(d=>{ d.style.background=''; d.style.borderColor=''; });
+      document.getElementById('pinErr').textContent='';
+    },800);
   }
 }
+function showPinScreen(){
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('pinScreen').style.display='flex';
+  pinBuffer=''; updatePinDots();
+  document.getElementById('pinErr').textContent='';
+}
+function showEmailLogin(){
+  document.getElementById('pinScreen').style.display='none';
+  document.getElementById('authScreen').style.display='flex';
+}
+function lockVault(){
+  document.getElementById('app').classList.remove('show');
+  const saved=JSON.parse(localStorage.getItem(PIN_USER_KEY)||'null');
+  saved ? showPinScreen() : showEmailLogin();
+}
 
-// Wire up PIN pad buttons after DOM loads
-document.addEventListener('DOMContentLoaded', function(){
-  document.querySelectorAll('.pin-key[data-n]').forEach(function(btn){
-    btn.addEventListener('click', function(){ pinPress(this.getAttribute('data-n')); });
-    btn.addEventListener('touchend', function(e){ e.preventDefault(); pinPress(this.getAttribute('data-n')); });
+/* ══════════════════════════════════════
+   AUTH
+══════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', ()=>{
+  initPinPad();
+  document.getElementById('authBtn').addEventListener('click', doAuth);
+  document.getElementById('authPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doAuth(); });
+  document.getElementById('authEmail').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('authPass').focus(); });
+  document.getElementById('authSwitchBtn').addEventListener('click', ()=>{
+    authMode = authMode==='signin'?'signup':'signin';
+    document.getElementById('authTitle').textContent    = authMode==='signin'?'Sign In to Your Vault':'Create Your Account';
+    document.getElementById('authBtn').textContent      = authMode==='signin'?'Sign In':'Create Account';
+    document.getElementById('authSwitchTxt').textContent= authMode==='signin'?"Don't have an account?":'Already have an account?';
+    document.getElementById('authSwitchBtn').textContent= authMode==='signin'?'Create Account':'Sign In';
+    setAuthMsg('','');
   });
-  const delBtn = document.getElementById('pinDelBtn');
-  if(delBtn){
-    delBtn.addEventListener('click', pinDel);
-    delBtn.addEventListener('touchend', function(e){ e.preventDefault(); pinDel(); });
-  }
-  // Keyboard support
-  document.addEventListener('keydown', function(e){
-    if(document.getElementById('pinScreen').style.display === 'flex'){
-      if(e.key >= '0' && e.key <= '9') pinPress(e.key);
-      if(e.key === 'Backspace') pinDel();
-    }
-  });
+  document.getElementById('fCam').addEventListener('change', function(){ startScan(this); });
+  document.getElementById('fGal').addEventListener('change', function(){ startScan(this); });
+  document.getElementById('be_date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('p_date').value  = new Date().toISOString().split('T')[0];
+  checkSession();
 });
 
-/* ══ AUTH ══ */
-document.getElementById('authBtn').addEventListener('click', doAuth);
-document.getElementById('authPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doAuth(); });
-document.getElementById('authEmail').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('authPass').focus(); });
-
-document.getElementById('authSwitchBtn').addEventListener('click', ()=>{
-  authMode = authMode==='signin' ? 'signup' : 'signin';
-  document.getElementById('authTitle').textContent    = authMode==='signin' ? 'Sign In to Your Vault' : 'Create Your Account';
-  document.getElementById('authBtn').textContent      = authMode==='signin' ? 'Sign In' : 'Create Account';
-  document.getElementById('authSwitchTxt').textContent= authMode==='signin' ? "Don't have an account?" : 'Already have an account?';
-  document.getElementById('authSwitchBtn').textContent= authMode==='signin' ? 'Create Account' : 'Sign In';
-  setAuthMsg('','');
-});
+async function checkSession(){
+  const saved=JSON.parse(localStorage.getItem(PIN_USER_KEY)||'null');
+  const {data} = await sb.auth.getSession();
+  if(data.session){ currentUser=data.session.user; saved?showPinScreen():launchApp(); }
+  else if(saved){ showPinScreen(); }
+}
 
 async function doAuth(){
-  const email = document.getElementById('authEmail').value.trim();
-  const pass  = document.getElementById('authPass').value;
+  const email=document.getElementById('authEmail').value.trim();
+  const pass =document.getElementById('authPass').value;
   if(!email||!pass){ setAuthMsg('Please enter email and password','err'); return; }
-
-  document.getElementById('authBtn').textContent = authMode==='signin' ? 'Signing in…' : 'Creating…';
-  document.getElementById('authBtn').disabled = true;
-
+  const btn=document.getElementById('authBtn');
+  btn.textContent=authMode==='signin'?'Signing in…':'Creating…';
+  btn.disabled=true;
   try{
-    let res;
-    if(authMode==='signin'){
-      res = await sb.auth.signInWithPassword({email, password:pass});
-    } else {
-      res = await sb.auth.signUp({email, password:pass});
-    }
+    const res=authMode==='signin'
+      ? await sb.auth.signInWithPassword({email,password:pass})
+      : await sb.auth.signUp({email,password:pass});
     if(res.error) throw res.error;
-
-    if(authMode==='signup' && !res.data.session){
-      setAuthMsg('✅ Check your email to confirm your account, then sign in.','ok');
-    } else {
-      currentUser = res.data.user || res.data.session?.user;
-      launchApp();
-    }
-  }catch(e){
-    setAuthMsg(e.message||'Something went wrong','err');
-  }finally{
-    document.getElementById('authBtn').textContent = authMode==='signin' ? 'Sign In' : 'Create Account';
-    document.getElementById('authBtn').disabled = false;
-  }
+    if(authMode==='signup'&&!res.data.session){ setAuthMsg('✅ Check email to confirm, then sign in.','ok'); }
+    else { currentUser=res.data.user||res.data.session?.user; launchApp(); }
+  }catch(e){ setAuthMsg(e.message||'Something went wrong','err'); }
+  finally{ btn.textContent=authMode==='signin'?'Sign In':'Create Account'; btn.disabled=false; }
 }
-
-function setAuthMsg(msg, type){
-  const el = document.getElementById('authMsg');
-  el.textContent = msg;
-  el.className = 'auth-msg' + (type?' '+type:'');
+function setAuthMsg(msg,type){
+  const el=document.getElementById('authMsg');
+  el.textContent=msg; el.className='auth-msg'+(type?' '+type:'');
 }
-
 async function signOut(){
   await sb.auth.signOut();
-  currentUser = null; docs = [];
+  localStorage.removeItem(PIN_USER_KEY);
+  currentUser=null; docs=[];
   document.getElementById('app').classList.remove('show');
-  // Show PIN if we have a saved user
-  const savedUser = JSON.parse(localStorage.getItem(PIN_SAVED_KEY)||'null');
-  if(savedUser){
-    showPinScreen();
-  } else {
-    document.getElementById('authScreen').style.display='flex';
-  }
+  document.getElementById('authScreen').style.display='flex';
   document.getElementById('authPass').value='';
   setAuthMsg('','');
 }
-
 function launchApp(){
-  document.getElementById('authScreen').style.display='none';
   document.getElementById('pinScreen').style.display='none';
+  document.getElementById('authScreen').style.display='none';
   document.getElementById('app').classList.add('show');
-  // Save user for PIN access next time
-  localStorage.setItem(PIN_SAVED_KEY, JSON.stringify(currentUser));
-  const email = currentUser?.email || '';
-  document.getElementById('userLabel').textContent = email.split('@')[0];
+  localStorage.setItem(PIN_USER_KEY,JSON.stringify(currentUser));
+  document.getElementById('userLabel').textContent=(currentUser?.email||'').split('@')[0];
+  populateBudgetDropdowns();
+  populateDebtDropdown();
   loadDocs();
   setupRealtime();
 }
 
-/* ══ CHECK SESSION ON LOAD ══ */
-window.addEventListener('DOMContentLoaded', async ()=>{
-  const savedUser = JSON.parse(localStorage.getItem(PIN_SAVED_KEY)||'null');
-  const { data } = await sb.auth.getSession();
-  if(data.session){
-    currentUser = data.session.user;
-    // If we have a saved user show PIN screen first
-    if(savedUser){
-      showPinScreen();
-    } else {
-      launchApp();
-    }
-  } else if(savedUser){
-    // Session expired but we remember who they are — show PIN
-    showPinScreen();
-  }
-});
-
-/* ══ SUPABASE LOAD / SAVE ══ */
+/* ══════════════════════════════════════
+   SUPABASE DOCS
+══════════════════════════════════════ */
 async function loadDocs(){
   setSyncDot('syncing');
-  const { data, error } = await sb
-    .from('vault_docs')
-    .select('*')
-    .order('id', {ascending:false});
+  const {data,error}=await sb.from('vault_docs').select('*').order('id',{ascending:false});
   if(error){ console.error(error); setSyncDot('err'); return; }
-  docs = data || [];
+  docs=data||[];
   setSyncDot('ok');
   updateCounts();
-  renderVault();
-  renderDash();
+  renderAll();
 }
-
 async function saveDocToSb(doc){
   setSyncDot('syncing');
-  const { error } = await sb.from('vault_docs').insert([doc]);
+  const {error}=await sb.from('vault_docs').insert([doc]);
   if(error){ setSyncDot('err'); toast('Sync error: '+error.message,'err'); return false; }
-  setSyncDot('ok');
-  return true;
+  setSyncDot('ok'); return true;
 }
-
 async function deleteDocFromSb(id){
   setSyncDot('syncing');
-  const { error } = await sb.from('vault_docs').delete().eq('id', id);
-  if(error){ setSyncDot('err'); toast('Delete error: '+error.message,'err'); return false; }
-  setSyncDot('ok');
-  return true;
+  const {error}=await sb.from('vault_docs').delete().eq('id',id);
+  if(error){ setSyncDot('err'); return false; }
+  setSyncDot('ok'); return true;
 }
-
-async function renameDocInSb(id, name){
-  const { error } = await sb.from('vault_docs').update({name}).eq('id', id);
-  if(error){ toast('Rename error: '+error.message,'err'); }
+async function renameDocInSb(id,name){
+  await sb.from('vault_docs').update({name}).eq('id',id);
 }
-
-/* ══ REAL-TIME SYNC ══ */
 function setupRealtime(){
-  sb.channel('vault_docs_changes')
-    .on('postgres_changes', {event:'INSERT', schema:'public', table:'vault_docs'}, payload=>{
-      // Only add if not already present (avoid duplicating own inserts)
-      if(!docs.find(d=>d.id===payload.new.id)){
-        docs.unshift(payload.new);
-        updateCounts();
-        renderVault();
-        renderDash();
-        toast('📄 New doc synced from family!');
-      }
+  sb.channel('vault_docs_v5')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'vault_docs'},p=>{
+      if(!docs.find(d=>d.id===p.new.id)){ docs.unshift(p.new); updateCounts(); renderAll(); toast('📄 New doc synced!'); }
     })
-    .on('postgres_changes', {event:'DELETE', schema:'public', table:'vault_docs'}, payload=>{
-      docs = docs.filter(d=>d.id!==payload.old.id);
-      updateCounts(); renderVault(); renderDash();
+    .on('postgres_changes',{event:'DELETE',schema:'public',table:'vault_docs'},p=>{
+      docs=docs.filter(d=>d.id!==p.old.id); updateCounts(); renderAll();
     })
-    .on('postgres_changes', {event:'UPDATE', schema:'public', table:'vault_docs'}, payload=>{
-      const i = docs.findIndex(d=>d.id===payload.new.id);
-      if(i>-1){ docs[i]=payload.new; renderVault(); renderDash(); }
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'vault_docs'},p=>{
+      const i=docs.findIndex(d=>d.id===p.new.id);
+      if(i>-1){ docs[i]=p.new; renderAll(); }
     })
     .subscribe();
 }
-
-function setSyncDot(state){
-  const d = document.getElementById('syncDot');
-  d.className = 'sync-indicator' + (state==='syncing'?' syncing':state==='err'?' err':'');
+function setSyncDot(s){
+  const d=document.getElementById('syncDot');
+  d.className='sync-dot'+(s==='syncing'?' syncing':s==='err'?' err':'');
 }
 
-/* ══ COUNTS ══ */
-function updateCounts(){
-  document.getElementById('navCount').textContent = docs.length;
-}
-
-/* ══ TAB SWITCHING ══ */
-function switchTab(id, btn){
+/* ══════════════════════════════════════
+   TAB SWITCHING
+══════════════════════════════════════ */
+function switchTab(id,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
   btn.classList.add('active');
   if(id==='vault') renderVault();
   if(id==='stats') renderStats();
-  if(id==='dash')  renderDash();
+  if(id==='bills') renderBills();
+  if(id==='budget') renderBudget();
+  if(id==='debt') renderDebt();
+  if(id==='dash') renderDash();
+}
+function switchTabById(id){
+  const map={dash:0,scan:1,vault:2,bills:3,budget:4,debt:5,stats:6,tips:7};
+  const btns=document.querySelectorAll('.nav-btn');
+  switchTab(id,btns[map[id]]);
 }
 
-/* ══ SEARCH ══ */
+/* ══════════════════════════════════════
+   SEARCH
+══════════════════════════════════════ */
 function onSearch(){
-  searchQ = document.getElementById('gSearch').value.trim().toLowerCase();
+  searchQ=document.getElementById('gSearch').value.trim().toLowerCase();
   if(document.getElementById('tab-vault').classList.contains('active')) renderVault();
 }
 function hl(s,q){
@@ -1178,104 +1368,132 @@ function hl(s,q){
 }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-/* ══ DASHBOARD ══ */
-function renderDash(){
-  const total   = docs.length;
-  const totalA  = docs.reduce((s,d)=>s+(Number(d.amt)||0),0);
-  const cats    = {};
-  docs.forEach(d=>{ cats[d.cat]=(cats[d.cat]||0)+1; });
-  const thisM   = new Date().toISOString().slice(0,7);
-  const thisMA  = docs.filter(d=>(d.saved||'').startsWith(thisM)).length;
+/* ══════════════════════════════════════
+   COUNTS & RENDER ALL
+══════════════════════════════════════ */
+function updateCounts(){
+  document.getElementById('navCount').textContent=docs.length;
+}
+function renderAll(){
+  renderDash(); renderVault(); renderBills(); renderBudget(); renderDebt(); renderStats();
+}
 
-  document.getElementById('dashKPIs').innerHTML = `
-    <div class="kpi"><div class="kpi-icon">📄</div><div class="kpi-label">Total Documents</div><div class="kpi-val" style="color:var(--accent)">${total}</div><div class="kpi-sub">in the vault</div></div>
-    <div class="kpi"><div class="kpi-icon">💰</div><div class="kpi-label">Total Tracked</div><div class="kpi-val" style="color:var(--gold)">$${fmt(totalA)}</div><div class="kpi-sub">across all docs</div></div>
-    <div class="kpi"><div class="kpi-icon">📅</div><div class="kpi-label">This Month</div><div class="kpi-val" style="color:var(--green)">${thisMA}</div><div class="kpi-sub">docs added</div></div>
-    <div class="kpi"><div class="kpi-icon">🗂️</div><div class="kpi-label">Categories</div><div class="kpi-val" style="color:var(--purple)">${Object.keys(cats).length}</div><div class="kpi-sub">doc types</div></div>
+/* ══════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════ */
+function renderDash(){
+  const total=docs.length;
+  const totalAmt=docs.reduce((s,d)=>s+(Number(d.amt)||0),0);
+  const totalDebt=debts.reduce((s,d)=>s+(Number(d.balance)||0),0);
+  const totalBills=bills.reduce((s,b)=>s+(Number(b.amt)||0),0);
+  const overdueBills=bills.filter(b=>isDueStatus(b)==='overdue');
+  const cats={};
+  docs.forEach(d=>{ cats[d.cat]=(cats[d.cat]||0)+1; });
+
+  // Alerts
+  const alerts=[];
+  overdueBills.forEach(b=>alerts.push(`⚠️ ${b.name} is OVERDUE — $${fmt(b.amt)}`));
+  bills.filter(b=>isDueStatus(b)==='soon').forEach(b=>alerts.push(`🔔 ${b.name} due in ${daysUntilDue(b)} days — $${fmt(b.amt)}`));
+  document.getElementById('alertsBox').innerHTML = alerts.length ? `
+    <div class="alert-box">
+      <div class="alert-title">⚠️ Attention Needed</div>
+      ${alerts.map(a=>`<div class="alert-item">${a}</div>`).join('')}
+    </div>` : '';
+
+  document.getElementById('dashKPIs').innerHTML=`
+    <div class="kpi"><div class="kpi-icon">📄</div><div class="kpi-val" style="color:var(--blue)">${total}</div><div class="kpi-label">Documents</div><div class="kpi-sub">in vault</div></div>
+    <div class="kpi"><div class="kpi-icon">💰</div><div class="kpi-val" style="color:var(--gold)">$${fmt(totalAmt)}</div><div class="kpi-label">Tracked</div><div class="kpi-sub">total value</div></div>
+    <div class="kpi"><div class="kpi-icon">🔔</div><div class="kpi-val" style="color:${overdueBills.length?'var(--red)':'var(--green)'}">${bills.length}</div><div class="kpi-label">Bills</div><div class="kpi-sub">${overdueBills.length} overdue</div></div>
+    <div class="kpi"><div class="kpi-icon">💳</div><div class="kpi-val" style="color:var(--red)">$${fmt(totalDebt)}</div><div class="kpi-label">Total Debt</div><div class="kpi-sub">${debts.length} accounts</div></div>
+    <div class="kpi"><div class="kpi-icon">📋</div><div class="kpi-val" style="color:var(--purple)">$${fmt(totalBills)}</div><div class="kpi-label">Monthly Bills</div><div class="kpi-sub">recurring</div></div>
   `;
 
-  const recent = docs.slice(0,4);
-  document.getElementById('dashRecent').innerHTML = recent.length
+  // Bills due soon on dash
+  const soon=[...bills.filter(b=>isDueStatus(b)==='overdue'),...bills.filter(b=>isDueStatus(b)==='soon')].slice(0,4);
+  document.getElementById('dashBills').innerHTML=soon.length
+    ? soon.map(b=>billRow(b)).join('')
+    : `<div class="empty" style="padding:20px"><div class="empty-icon">✅</div><p>No bills overdue or due soon!</p></div>`;
+
+  const recent=docs.slice(0,4);
+  document.getElementById('dashRecent').innerHTML=recent.length
     ? `<div class="doc-list">${recent.map(d=>docRow(d,'')).join('')}</div>`
-    : `<div class="empty" style="padding:28px"><div class="empty-icon">📷</div><p>No documents yet — tap Scan to get started.</p></div>`;
-
-  document.getElementById('dashCats').innerHTML = Object.entries(cats).length
-    ? `<div style="display:flex;gap:10px;flex-wrap:wrap">${
-        Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat,n])=>`
-          <div onclick="openCat('${cat}')" style="cursor:pointer;background:${CAT[cat]?.bg||'var(--card)'};border:1px solid ${CAT[cat]?.color||'var(--border)'}33;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;min-width:130px;transition:transform .15s" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform=''">
-            <span style="font-size:22px">${CAT[cat]?.icon||'📁'}</span>
-            <div><div style="font-size:14px;font-weight:700">${CAT[cat]?.label||cat}</div><div style="font-size:11px;color:var(--muted2)">${n} doc${n!==1?'s':''}</div></div>
-          </div>`).join('')
-      }</div>`
-    : '<p style="color:var(--muted);font-size:13px">No categories yet.</p>';
+    : `<div class="empty" style="padding:24px"><div class="empty-icon">📷</div><p>Scan a document to get started!</p></div>`;
 }
-function openCat(cat){ document.getElementById('vCat').value=cat; switchTab('vault',document.getElementById('nb-vault')); }
 
-/* ══ SCAN / OCR ══ */
-document.addEventListener('DOMContentLoaded', ()=>{
-  document.getElementById('fCam').addEventListener('change', function(){ startScan(this); });
-  document.getElementById('fGal').addEventListener('change', function(){ startScan(this); });
-});
+/* ══════════════════════════════════════
+   SCAN / CLAUDE AI
+══════════════════════════════════════ */
+function triggerCamera(){ document.getElementById('fCam').click(); }
+function triggerGallery(){ document.getElementById('fGal').click(); }
 
 async function startScan(input){
-  const file = input.files[0];
-  if(!file) return;
-  document.getElementById('previewImg').src = URL.createObjectURL(file);
+  const file=input.files[0]; if(!file) return;
+  const url=URL.createObjectURL(file);
+  document.getElementById('previewImg').src=url;
   showEl('previewPanel'); hideEl('ocrPanel'); hideEl('savePanel');
   setMsg('','');
   ocrText='';
-  const orb = document.getElementById('scanOrb');
-  orb.textContent='⏳'; orb.classList.add('active');
-  setProgress(true,5,'Loading OCR engine','Starting up…');
+  const orb=document.getElementById('scanOrb');
+  orb.textContent='🤖'; orb.classList.add('active');
+  setAiStatus(true,'Sending to Claude AI…',10,'Preparing image…');
 
   try{
-    const result = await Tesseract.recognize(file,'eng',{
-      logger: m=>{
-        if(m.status==='loading tesseract core')       setProgress(true,10,'Loading engine','Downloading OCR…');
-        if(m.status==='initializing tesseract')       setProgress(true,25,'Initializing','Setting up…');
-        if(m.status==='loading language traineddata') setProgress(true,42,'Loading language data','Preparing…');
-        if(m.status==='initializing api')             setProgress(true,56,'Initializing API','Almost ready…');
-        if(m.status==='recognizing text'){
-          const p=56+Math.round(m.progress*44);
-          setProgress(true,p,`Recognizing text — ${p}%`,'Reading characters…');
-        }
-      }
+    // Convert to base64
+    const base64=await new Promise((res,rej)=>{
+      const r=new FileReader();
+      r.onload=()=>res(r.result.split(',')[1]);
+      r.onerror=rej;
+      r.readAsDataURL(file);
     });
-    ocrText=result.data.text.trim();
-    setProgress(false,100,'','');
-    if(!ocrText||ocrText.length<4){ setMsg('err','⚠️ Little text detected. Try better lighting or a clearer photo.'); orb.textContent='📄'; orb.classList.remove('active'); return; }
+    const mediaType=file.type||'image/jpeg';
+    setAiStatus(true,'Claude AI analyzing…',40,'Reading your document…');
 
-    // Auto detect
-    const amts=[...ocrText.matchAll(/\$?\s*(\d{1,6}[,.]\d{2})/g)].map(m=>parseFloat(m[1].replace(',','.'))).filter(n=>n>0);
-    if(amts.length) document.getElementById('fAmt').value=Math.max(...amts).toFixed(2);
-    const duem=ocrText.match(/due\s+(date[:\s]*)?(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i);
-    if(duem){ try{ const dp=new Date(duem[2]); if(!isNaN(dp)) document.getElementById('fDue').value=dp.toISOString().split('T')[0]; }catch{} }
-    if(!document.getElementById('fName').value){ const fl=ocrText.split('\n').find(l=>l.trim().length>4); if(fl) document.getElementById('fName').value=fl.trim().substring(0,60); }
+    const result=await analyzeWithClaude(base64,mediaType);
+    setAiStatus(false,100,'','');
 
+    if(!result||!result.text||result.text.length<5){
+      setMsg('err','⚠️ Could not extract text. Try better lighting or a clearer photo.');
+      orb.textContent='📄'; orb.classList.remove('active'); return;
+    }
+
+    ocrText=result.text;
+
+    // Auto-fill fields from Claude's analysis
+    if(result.name)   document.getElementById('fName').value=result.name;
+    if(result.category && CAT[result.category]) document.getElementById('fCat').value=result.category;
+    if(result.amount) document.getElementById('fAmt').value=Number(result.amount).toFixed(2);
+    if(result.due_date) document.getElementById('fDue').value=result.due_date;
+    if(result.vendor) document.getElementById('fVendor').value=result.vendor;
+    if(result.notes)  document.getElementById('fNotes').value=result.notes;
+
+    // Show chips
     const chips=[];
-    if(amts.length) chips.push(`💰 Amount: $${fmt(Math.max(...amts))}`);
-    if(duem) chips.push('📅 Due date detected');
-    chips.push(`📝 ${ocrText.length.toLocaleString()} chars`);
-    document.getElementById('detectedChips').innerHTML=chips.map(c=>`<div class="chip">${c}</div>`).join('');
+    if(result.category) chips.push({text:`📂 ${CAT[result.category]?.label||result.category}`,cls:'cat'});
+    if(result.amount)   chips.push({text:`💰 $${fmt(result.amount)}`,cls:''});
+    if(result.due_date) chips.push({text:`📅 Due ${fmtDate(result.due_date)}`,cls:'date'});
+    if(result.vendor)   chips.push({text:`🏢 ${result.vendor}`,cls:''});
+    if(result.is_overdue) chips.push({text:'⚠️ OVERDUE',cls:'flag'});
+    document.getElementById('aiChips').innerHTML=chips.map(c=>`<div class="ai-chip ${c.cls}">${c.text}</div>`).join('');
+
     document.getElementById('ocrBox').textContent=ocrText;
     showEl('ocrPanel'); showEl('savePanel');
-    setMsg('ok',`✅ Text extracted — ${ocrText.length.toLocaleString()} characters found.`);
+    setMsg('ok',`✅ Claude AI extracted ${ocrText.length.toLocaleString()} characters — all fields auto-filled!`);
+
   }catch(e){
-    setMsg('err','❌ Scan failed. Try again with better lighting.');
-    setProgress(false,0,'','');
+    setMsg('err','❌ Analysis failed. Check your connection and try again.');
+    console.error(e); setAiStatus(false,0,'','');
   }finally{
     orb.textContent='📄'; orb.classList.remove('active');
     input.value='';
   }
 }
 
-function setProgress(show,pct,label,step){
-  const el=document.getElementById('ocrProg');
-  show ? el.classList.add('show') : el.classList.remove('show');
-  document.getElementById('opFill').style.width=pct+'%';
-  document.getElementById('opPct').textContent=pct+'%';
-  document.getElementById('opLabel').textContent=label;
-  document.getElementById('opStep').textContent=step;
+function setAiStatus(show,pct,label,step){
+  const el=document.getElementById('aiStatus');
+  show?el.classList.add('show'):el.classList.remove('show');
+  document.getElementById('aiFill').style.width=pct+'%';
+  if(label) document.getElementById('aiLabel').textContent=label;
+  if(step)  document.getElementById('aiStep').textContent=step;
 }
 function setMsg(type,text){
   const el=document.getElementById('scanMsg');
@@ -1286,20 +1504,22 @@ function copyOcr(){ navigator.clipboard?.writeText(ocrText).then(()=>toast('Copi
 function clearScan(){
   ocrText='';
   hideEl('previewPanel'); hideEl('ocrPanel'); hideEl('savePanel');
-  setMsg('',''); setProgress(false,0,'','');
+  setMsg('',''); setAiStatus(false,0,'','');
   ['fName','fAmt','fDue','fVendor','fNotes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fCat').value='bill';
-  document.getElementById('detectedChips').innerHTML='';
+  document.getElementById('aiChips').innerHTML='';
 }
 
-/* ══ SAVE ══ */
+/* ══════════════════════════════════════
+   SAVE DOC
+══════════════════════════════════════ */
 async function saveDoc(){
   const name=document.getElementById('fName').value.trim();
   if(!name){ toast('Please enter a document name','err'); return; }
   if(!ocrText){ toast('No scanned text to save','err'); return; }
   if(!currentUser){ toast('Not signed in','err'); return; }
 
-  const doc = {
+  const doc={
     id:         Date.now(),
     user_email: currentUser.email,
     name,
@@ -1313,18 +1533,38 @@ async function saveDoc(){
     saved:  new Date().toISOString(),
   };
 
-  const ok = await saveDocToSb(doc);
+  // Auto-add to budget if category selected
+  const budgetCatName=document.getElementById('fBudgetCat').value;
+  if(budgetCatName && doc.amt){
+    expenses.push({id:Date.now()+1,desc:doc.name,amt:doc.amt,cat:budgetCatName,date:new Date().toISOString().split('T')[0]});
+    localStorage.setItem(STORE_BEXPS,JSON.stringify(expenses));
+    toast(`Added $${fmt(doc.amt)} to ${budgetCatName} budget`);
+  }
+
+  // Auto-add bill if it's a bill with due date
+  if(doc.cat==='bill' && doc.due && doc.amt){
+    const dueDay=new Date(doc.due).getDate();
+    const exists=bills.find(b=>b.name===doc.name);
+    if(!exists){
+      bills.push({id:Date.now()+2,name:doc.vendor||doc.name,amt:doc.amt,day:dueDay,cat:'Utilities',auto:'no',paid:[]});
+      localStorage.setItem(STORE_BILLS,JSON.stringify(bills));
+      toast('📅 Bill auto-added to Bills tracker!');
+    }
+  }
+
+  const ok=await saveDocToSb(doc);
   if(!ok) return;
   docs.unshift(doc);
-  updateCounts();
-  clearScan();
-  toast('✅ Saved & synced!');
-  setTimeout(()=>switchTab('vault',document.getElementById('nb-vault')), 700);
+  updateCounts(); clearScan(); renderAll();
+  toast('✅ Saved & synced to both phones!');
+  setTimeout(()=>switchTabById('vault'),700);
 }
 
-/* ══ VAULT ══ */
+/* ══════════════════════════════════════
+   VAULT
+══════════════════════════════════════ */
 function filterDocs(){
-  const cat =document.getElementById('vCat')?.value||'';
+  const cat=document.getElementById('vCat')?.value||'';
   const sort=document.getElementById('vSort')?.value||'newest';
   let list=docs.filter(d=>{
     const mc=!cat||d.cat===cat;
@@ -1340,9 +1580,9 @@ function filterDocs(){
   if(sort==='oldest') list.sort((a,b)=>a.id-b.id);
   if(sort==='name')   list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
   if(sort==='amount') list.sort((a,b)=>(Number(b.amt)||0)-(Number(a.amt)||0));
+  if(sort==='due')    list.sort((a,b)=>{ if(!a.due) return 1; if(!b.due) return -1; return a.due.localeCompare(b.due); });
   return list;
 }
-
 function renderVault(){
   const list=filterDocs();
   const el=document.getElementById('vaultContent');
@@ -1355,31 +1595,32 @@ function renderVault(){
     ?`<div class="doc-grid">${list.map(d=>docCard(d,q)).join('')}</div>`
     :`<div class="doc-list">${list.map(d=>docRow(d,q)).join('')}</div>`;
 }
-
 function docCard(d,q){
   const c=CAT[d.cat]||CAT.other;
-  const owner=d.user_email===currentUser?.email?'You':d.user_email?.split('@')[0]||'';
+  const overdue=d.due&&new Date(d.due)<new Date()&&d.cat==='bill';
   return `<div class="doc-card" onclick="openDoc(${d.id})">
-    <div class="doc-thumb" style="background:${c.bg}"><span style="font-size:48px">${c.icon}</span></div>
+    <div class="doc-thumb" style="background:${c.bg}">
+      <span style="font-size:46px">${c.icon}</span>
+      ${overdue?'<div class="doc-overdue">OVERDUE</div>':''}
+    </div>
     <div class="doc-body">
-      <div class="doc-name" title="${esc(d.name)}">${hl(d.name,q)}</div>
-      <div class="doc-date">${fmtDate(d.saved)}</div>
+      <div class="doc-name">${hl(d.name||'',q)}</div>
+      <div class="doc-date">${fmtDate(d.saved)}${d.vendor?' · '+esc(d.vendor):''}</div>
     </div>
     <div class="doc-foot">
       <span class="badge ${BDGE[d.cat]||'b-other'}">${c.label}</span>
-      <span class="doc-owner">👤 ${owner}</span>
       ${d.amt?`<span class="doc-amt">$${fmt(d.amt)}</span>`:''}
     </div>
   </div>`;
 }
-
 function docRow(d,q){
   const c=CAT[d.cat]||CAT.other;
   const owner=d.user_email===currentUser?.email?'You':d.user_email?.split('@')[0]||'';
+  const overdue=d.due&&new Date(d.due)<new Date()&&d.cat==='bill';
   return `<div class="doc-row" onclick="openDoc(${d.id})">
     <div class="row-icon" style="background:${c.bg}">${c.icon}</div>
     <div class="row-body">
-      <div class="row-name">${hl(d.name||'',q)}</div>
+      <div class="row-name">${hl(d.name||'',q)}${overdue?' <span style="color:var(--red);font-size:11px;font-weight:900">OVERDUE</span>':''}</div>
       <div class="row-meta">
         <span>${fmtDate(d.saved)}</span>
         <span class="badge ${BDGE[d.cat]||'b-other'}">${c.label}</span>
@@ -1395,62 +1636,283 @@ function docRow(d,q){
     </div>
   </div>`;
 }
-
 function setView(mode,btn){
   viewMode=mode;
   document.querySelectorAll('.vbtn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  renderVault();
+  btn.classList.add('on'); renderVault();
 }
 
-/* ══ STATS ══ */
+/* ══════════════════════════════════════
+   BILLS
+══════════════════════════════════════ */
+function addBill(){
+  const name=v('bl_name'),amt=Number(v('bl_amt')),day=Number(v('bl_day')),cat=v('bl_cat'),auto=v('bl_auto');
+  if(!name||!amt||!day){ toast('Fill in name, amount and due day','err'); return; }
+  bills.push({id:Date.now(),name,amt,day,cat,auto,paid:[]});
+  localStorage.setItem(STORE_BILLS,JSON.stringify(bills));
+  clr('bl_name','bl_amt','bl_day');
+  renderBills(); renderDash(); toast('Bill added!');
+}
+function deleteBill(id){
+  bills=bills.filter(b=>b.id!==id);
+  localStorage.setItem(STORE_BILLS,JSON.stringify(bills));
+  renderBills(); renderDash(); toast('Bill deleted.');
+}
+function markBillPaid(id){
+  const b=bills.find(b=>b.id===id); if(!b) return;
+  const key=`${new Date().getFullYear()}-${new Date().getMonth()}`;
+  if(!b.paid) b.paid=[];
+  b.paid.includes(key)?b.paid=b.paid.filter(k=>k!==key):b.paid.push(key);
+  localStorage.setItem(STORE_BILLS,JSON.stringify(bills));
+  renderBills(); renderDash(); toast(b.paid.includes(key)?'Marked paid! ✅':'Marked unpaid');
+}
+function isDueStatus(b){
+  const today=new Date();
+  const dueDate=new Date(today.getFullYear(),today.getMonth(),b.day);
+  const key=`${today.getFullYear()}-${today.getMonth()}`;
+  if(b.paid&&b.paid.includes(key)) return 'paid';
+  const diff=Math.round((dueDate-today)/86400000);
+  if(diff<0) return 'overdue';
+  if(diff<=7) return 'soon';
+  return 'upcoming';
+}
+function daysUntilDue(b){
+  const today=new Date();
+  const dueDate=new Date(today.getFullYear(),today.getMonth(),b.day);
+  return Math.round((dueDate-today)/86400000);
+}
+function billRow(b){
+  const status=isDueStatus(b);
+  const today=new Date();
+  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][today.getMonth()];
+  let statusBadge='';
+  if(status==='overdue') statusBadge='<span class="badge b-bill">OVERDUE</span>';
+  else if(status==='soon') statusBadge=`<span class="badge" style="background:var(--orange2);color:var(--orange);border-color:var(--orange)">Due in ${daysUntilDue(b)}d</span>`;
+  else if(status==='paid') statusBadge='<span class="badge b-receipt">PAID</span>';
+  return `<div class="bill-item ${status==='overdue'?'overdue':status==='soon'?'due-soon':status==='paid'?'paid':''}">
+    <div class="bill-due-box">
+      <div class="bill-due-day">${b.day}</div>
+      <div class="bill-due-mo">${mo}</div>
+    </div>
+    <div class="bill-info">
+      <div class="bill-name">${esc(b.name)} ${b.auto==='yes'?'<span style="font-size:11px;color:var(--muted)">(Auto)</span>':''}</div>
+      <div class="bill-meta"><span>${esc(b.cat)}</span>${statusBadge}</div>
+    </div>
+    <div class="bill-amt">$${fmt(b.amt)}</div>
+    <div class="bill-actions">
+      <button class="icon-btn" onclick="markBillPaid(${b.id})" title="${status==='paid'?'Mark Unpaid':'Mark Paid'}">${status==='paid'?'↩':'✔'}</button>
+      <button class="icon-btn" onclick="deleteBill(${b.id})">🗑</button>
+    </div>
+  </div>`;
+}
+function renderBills(){
+  const sorted=[...bills].sort((a,b)=>a.day-b.day);
+  const overdue=sorted.filter(b=>isDueStatus(b)==='overdue');
+  const soon=sorted.filter(b=>isDueStatus(b)==='soon');
+  const all=sorted;
+  document.getElementById('billsOverdue').innerHTML=overdue.length?overdue.map(billRow).join(''):'<p style="color:var(--muted);font-size:13px;padding:8px 0;font-weight:700">No overdue bills 🎉</p>';
+  document.getElementById('billsSoon').innerHTML=soon.length?soon.map(billRow).join(''):'<p style="color:var(--muted);font-size:13px;padding:8px 0;font-weight:700">No bills due in the next 7 days</p>';
+  document.getElementById('billsAll').innerHTML=all.length?all.map(billRow).join(''):'<div class="empty" style="padding:30px"><div class="empty-icon">🔔</div><p>No bills added yet.</p></div>';
+}
+
+/* ══════════════════════════════════════
+   BUDGET
+══════════════════════════════════════ */
+function addBudgetCat(){
+  const name=v('bc_name'),icon=v('bc_icon')||'💰',budget=Number(v('bc_budget'));
+  if(!name||!budget){ toast('Fill in name and budget amount','err'); return; }
+  budgetCats.push({id:Date.now(),name,icon,budget});
+  localStorage.setItem(STORE_BCATS,JSON.stringify(budgetCats));
+  clr('bc_name','bc_icon','bc_budget');
+  populateBudgetDropdowns(); renderBudget(); toast('Category added!');
+}
+function deleteBudgetCat(id){
+  budgetCats=budgetCats.filter(c=>c.id!==id);
+  localStorage.setItem(STORE_BCATS,JSON.stringify(budgetCats));
+  populateBudgetDropdowns(); renderBudget();
+}
+function addExpense(){
+  const desc=v('be_desc'),amt=Number(v('be_amt')),cat=v('be_cat'),date=v('be_date');
+  if(!desc||!amt||!date){ toast('Fill in all expense fields','err'); return; }
+  expenses.push({id:Date.now(),desc,amt,cat,date});
+  localStorage.setItem(STORE_BEXPS,JSON.stringify(expenses));
+  clr('be_desc','be_amt'); renderBudget(); toast('Expense logged!');
+}
+function deleteExpense(id){
+  expenses=expenses.filter(e=>e.id!==id);
+  localStorage.setItem(STORE_BEXPS,JSON.stringify(expenses));
+  renderBudget();
+}
+function populateBudgetDropdowns(){
+  ['be_cat','fBudgetCat'].forEach(id=>{
+    const s=document.getElementById(id); if(!s) return;
+    const cur=s.value;
+    if(id==='fBudgetCat') s.innerHTML='<option value="">— Don\'t add to budget —</option>';
+    else s.innerHTML='';
+    budgetCats.forEach(c=>{ const o=document.createElement('option'); o.value=c.name; o.text=`${c.icon} ${c.name}`; s.appendChild(o); });
+    if(cur) s.value=cur;
+  });
+}
+function getMonthExpenses(){
+  const now=new Date();
+  return expenses.filter(e=>{ const d=new Date(e.date); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear(); });
+}
+function renderBudget(){
+  const me=getMonthExpenses();
+  const catSpend={};
+  me.forEach(e=>{ catSpend[e.cat]=(catSpend[e.cat]||0)+Number(e.amt); });
+  let html='';
+  budgetCats.forEach(c=>{
+    const spent=catSpend[c.name]||0;
+    const pct=Math.min(100,(spent/c.budget)*100);
+    const color=pct>=100?'var(--red)':pct>=80?'var(--orange)':'var(--green)';
+    html+=`<div class="budget-row">
+      <div class="budget-row-top">
+        <div class="budget-cat">${c.icon} ${c.name}</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="budget-amts">$${fmt(spent)} / $${fmt(c.budget)}</div>
+          <span class="budget-pct" style="color:${color}">${pct.toFixed(0)}%</span>
+          <button class="icon-btn" onclick="deleteBudgetCat(${c.id})">🗑</button>
+        </div>
+      </div>
+      <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${color}"></div></div>
+    </div>`;
+  });
+  document.getElementById('budgetList').innerHTML=html||'<div class="empty" style="padding:24px"><div class="empty-icon">📋</div><p>No budget categories yet. Add one above!</p></div>';
+  const sorted=[...me].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  document.getElementById('expenseList').innerHTML=sorted.length
+    ?sorted.slice(0,20).map(e=>`
+      <div class="doc-row">
+        <div class="row-icon" style="background:var(--gold3)">💸</div>
+        <div class="row-body">
+          <div class="row-name">${esc(e.desc)}</div>
+          <div class="row-meta"><span>${e.cat}</span><span>${fmtDate(e.date)}</span></div>
+        </div>
+        <div class="row-amt">$${fmt(e.amt)}</div>
+        <div class="row-actions"><button class="icon-btn" onclick="deleteExpense(${e.id})">🗑</button></div>
+      </div>`).join('')
+    :'<div class="empty" style="padding:24px"><div class="empty-icon">💸</div><p>No expenses logged this month.</p></div>';
+}
+
+/* ══════════════════════════════════════
+   DEBT
+══════════════════════════════════════ */
+function addDebt(){
+  const name=v('d_name'),type=v('d_type'),balance=Number(v('d_bal')),rate=Number(v('d_rate')),min=Number(v('d_min'));
+  if(!name||!balance){ toast('Fill in name and balance','err'); return; }
+  debts.push({id:Date.now(),name,type,balance,originalBalance:balance,rate,min});
+  localStorage.setItem(STORE_DEBTS,JSON.stringify(debts));
+  clr('d_name','d_bal','d_rate','d_min'); populateDebtDropdown(); renderDebt(); toast('Debt account added!');
+}
+function deleteDebt(id){
+  if(!confirm('Delete this debt account?')) return;
+  debts=debts.filter(d=>d.id!==id);
+  localStorage.setItem(STORE_DEBTS,JSON.stringify(debts));
+  populateDebtDropdown(); renderDebt(); renderDash();
+}
+function populateDebtDropdown(){
+  const s=document.getElementById('p_debt'); if(!s) return;
+  s.innerHTML=debts.map(d=>`<option value="${d.id}">${d.name} ($${fmt(d.balance)})</option>`).join('');
+}
+function showPaymentForm(){
+  document.getElementById('paymentFormWrap').style.display='block';
+  document.getElementById('paymentFormWrap').scrollIntoView({behavior:'smooth'});
+}
+function logPayment(){
+  const debtId=Number(v('p_debt')),amt=Number(v('p_amt')),date=v('p_date');
+  if(!amt){ toast('Enter payment amount','err'); return; }
+  const d=debts.find(d=>d.id===debtId); if(!d) return;
+  d.balance=Math.max(0,d.balance-amt);
+  payments.push({id:Date.now(),debtId,name:d.name,amt,date});
+  localStorage.setItem(STORE_DEBTS,JSON.stringify(debts));
+  localStorage.setItem(STORE_PAYMENTS,JSON.stringify(payments));
+  document.getElementById('paymentFormWrap').style.display='none';
+  clr('p_amt'); populateDebtDropdown(); renderDebt(); renderDash();
+  toast(`Payment of $${fmt(amt)} logged! ✅`);
+}
+function renderDebt(){
+  const typeIcons={'Credit Card':'💳','Auto Loan':'🚗','Personal Loan':'💵','Medical':'🏥','Mortgage':'🏠','Student Loan':'🎓','Other':'📄'};
+  const sorted=[...debts].sort((a,b)=>Number(b.rate)-Number(a.rate));
+  document.getElementById('debtList').innerHTML=sorted.length?sorted.map(d=>{
+    const pct=Math.min(100,((d.originalBalance-d.balance)/Math.max(1,d.originalBalance))*100);
+    const monthsLeft=d.min>0?Math.ceil(d.balance/d.min):'?';
+    const color=pct>=75?'var(--green)':pct>=40?'var(--orange)':'var(--red)';
+    return `<div class="debt-card">
+      <div class="debt-header">
+        <div>
+          <div class="debt-name">${typeIcons[d.type]||'📄'} ${esc(d.name)}</div>
+          <div class="debt-type">${d.type}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="debt-balance">$${fmt(d.balance)}</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:700">remaining</div>
+        </div>
+      </div>
+      <div class="debt-info">
+        <div class="debt-stat"><label>Rate</label><span>${d.rate}% APR</span></div>
+        <div class="debt-stat"><label>Min Pay</label><span>$${fmt(d.min)}/mo</span></div>
+        <div class="debt-stat"><label>Est Payoff</label><span>${monthsLeft} mo</span></div>
+      </div>
+      <div style="margin-bottom:4px;display:flex;justify-content:space-between;font-size:12px;font-weight:800">
+        <span>Paid off</span><span style="color:${color}">${pct.toFixed(0)}%</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${color}"></div></div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn btn-green btn-sm" onclick="showPaymentForm()">💰 Log Payment</button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteDebt(${d.id})">🗑 Remove</button>
+      </div>
+    </div>`;
+  }).join(''):'<div class="empty" style="padding:30px"><div class="empty-icon">🎉</div><h3>No Debt Tracked</h3><p>Add accounts above to track payoff progress.</p></div>';
+}
+
+/* ══════════════════════════════════════
+   STATS
+══════════════════════════════════════ */
 function renderStats(){
   const total=docs.length;
   const totalA=docs.reduce((s,d)=>s+(Number(d.amt)||0),0);
   const chars=docs.reduce((s,d)=>s+(d.chars||0),0);
   const cats={};
   docs.forEach(d=>{ cats[d.cat]=(cats[d.cat]||0)+1; });
-
   document.getElementById('statsKPI').innerHTML=`
-    <div class="sk"><div class="sk-icon">📄</div><div class="sk-val" style="color:var(--accent)">${total}</div><div class="sk-label">Documents</div></div>
+    <div class="sk"><div class="sk-icon">📄</div><div class="sk-val" style="color:var(--blue)">${total}</div><div class="sk-label">Documents</div></div>
     <div class="sk"><div class="sk-icon">💰</div><div class="sk-val" style="color:var(--gold)">$${fmt(totalA)}</div><div class="sk-label">Total Value</div></div>
     <div class="sk"><div class="sk-icon">📝</div><div class="sk-val" style="color:var(--green)">${(chars/1000).toFixed(1)}k</div><div class="sk-label">Text Stored</div></div>
     <div class="sk"><div class="sk-icon">🗂️</div><div class="sk-val" style="color:var(--purple)">${Object.keys(cats).length}</div><div class="sk-label">Categories</div></div>
   `;
   const maxC=Math.max(...Object.values(cats),1);
-  document.getElementById('statsCats').innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat,n])=>{
-    const c=CAT[cat]||CAT.other;
-    return `<div class="cat-row">
-      <div class="cat-row-top"><span style="font-weight:600">${c.icon} ${c.label}</span><span style="font-size:12px;color:var(--muted2)">${n} doc${n!==1?'s':''}</span></div>
-      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/maxC*100)}%;background:${c.color}"></div></div>
-    </div>`;
-  }).join('')||'<p style="color:var(--muted);font-size:13px">No documents yet.</p>';
-
+  document.getElementById('statsCats').innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat,n])=>`
+    <div class="cat-bar-row">
+      <div class="cat-bar-top"><span>${CAT[cat]?.icon||'📁'} ${CAT[cat]?.label||cat}</span><span>${n} doc${n!==1?'s':''}</span></div>
+      <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${Math.round(n/maxC*100)}%;background:${CAT_COLORS[cat]||'#6b7280'}"></div></div>
+    </div>`).join('')||'<p style="color:var(--muted);font-size:13px;font-weight:700">No documents yet.</p>';
   const months={};
   const now=new Date();
   for(let i=5;i>=0;i--){ const d=new Date(now.getFullYear(),now.getMonth()-i,1); months[d.toISOString().slice(0,7)]=0; }
   docs.forEach(d=>{ const k=(d.saved||'').slice(0,7); if(k in months) months[k]++; });
   const maxM=Math.max(...Object.values(months),1);
-  document.getElementById('statsMonths').innerHTML=`<div style="display:flex;gap:8px;align-items:flex-end;height:80px;margin-bottom:8px">
+  document.getElementById('statsMonths').innerHTML=`<div style="display:flex;gap:8px;align-items:flex-end;height:80px;margin-bottom:6px">
     ${Object.entries(months).map(([k,n])=>{
       const h=Math.max(6,Math.round(n/maxM*70));
       const lbl=new Date(k+'-02').toLocaleDateString('en-US',{month:'short'});
       return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-        <div style="font-size:10px;color:var(--muted2);font-weight:600">${n||''}</div>
-        <div style="width:100%;height:${h}px;background:var(--accent);border-radius:4px 4px 0 0;opacity:${n?1:0.15}"></div>
-        <div style="font-size:10px;color:var(--muted2)">${lbl}</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:800">${n||''}</div>
+        <div style="width:100%;height:${h}px;background:var(--gold);border-radius:4px 4px 0 0;border:1.5px solid #1a1a1a;opacity:${n?1:0.2}"></div>
+        <div style="font-size:10px;color:var(--muted);font-weight:800">${lbl}</div>
       </div>`;
     }).join('')}
   </div>`;
 }
 
-/* ══ MODAL ══ */
+/* ══════════════════════════════════════
+   MODAL
+══════════════════════════════════════ */
 function openDoc(id){
   const d=docs.find(x=>x.id===id); if(!d) return;
   openId=id;
   const c=CAT[d.cat]||CAT.other;
   const owner=d.user_email===currentUser?.email?'Scanned by you':'Scanned by '+d.user_email?.split('@')[0];
-  document.getElementById('modalCat').innerHTML=`<span class="badge ${BDGE[d.cat]||'b-other'}">${c.icon} ${c.label}</span> <span style="margin-left:4px">· ${owner}</span>`;
+  document.getElementById('modalCat').innerHTML=`<span class="badge ${BDGE[d.cat]||'b-other'}">${c.icon} ${c.label}</span> · ${owner}`;
   document.getElementById('modalTitle').textContent=d.name;
   document.getElementById('modalText').textContent=d.text;
   document.getElementById('modalMeta').innerHTML=[
@@ -1459,7 +1921,7 @@ function openDoc(id){
     d.due?`🗓 Due ${fmtDate(d.due)}`:'',
     d.vendor?`🏢 ${esc(d.vendor)}`:'',
     d.chars?`📝 ${Number(d.chars).toLocaleString()} chars`:'',
-  ].filter(Boolean).map(x=>`<span style="font-size:12px;color:var(--text2)">${x}</span>`).join('');
+  ].filter(Boolean).map(x=>`<span style="font-size:13px;color:var(--text2);font-weight:700">${x}</span>`).join('');
   const nn=document.getElementById('modalNotes');
   if(d.notes){ nn.innerHTML=`<strong>📌 Notes:</strong> ${esc(d.notes)}`; nn.classList.add('show'); } else nn.classList.remove('show');
   document.getElementById('modalDel').onclick=()=>deleteDoc(id);
@@ -1471,27 +1933,26 @@ function copyModal(){ navigator.clipboard?.writeText(document.getElementById('mo
 async function editDocName(){
   const d=docs.find(x=>x.id===openId); if(!d) return;
   const n=prompt('Rename document:',d.name);
-  if(n&&n.trim()){
-    d.name=n.trim();
-    await renameDocInSb(d.id,d.name);
-    document.getElementById('modalTitle').textContent=d.name;
-    renderVault(); renderDash(); toast('Renamed!');
-  }
+  if(n&&n.trim()){ d.name=n.trim(); await renameDocInSb(d.id,d.name); document.getElementById('modalTitle').textContent=d.name; renderVault(); renderDash(); toast('Renamed!'); }
 }
 
-/* ══ DELETE ══ */
+/* ══════════════════════════════════════
+   DELETE
+══════════════════════════════════════ */
 async function deleteDoc(id){
   if(!confirm('Delete this document from the vault?')) return;
-  const ok=await deleteDocFromSb(id);
-  if(!ok) return;
+  const ok=await deleteDocFromSb(id); if(!ok) return;
   docs=docs.filter(d=>d.id!==id);
-  updateCounts(); closeModal(); renderVault(); renderDash();
-  toast('Document deleted.');
+  updateCounts(); closeModal(); renderAll(); toast('Document deleted.');
 }
 
-/* ══ HELPERS ══ */
+/* ══════════════════════════════════════
+   HELPERS
+══════════════════════════════════════ */
 function showEl(id){ document.getElementById(id).classList.add('show'); }
 function hideEl(id){ document.getElementById(id).classList.remove('show'); }
+function v(id){ return (document.getElementById(id)?.value||'').trim(); }
+function clr(...ids){ ids.forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; }); }
 function fmtDate(iso){
   if(!iso) return '';
   try{ return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }catch{ return iso; }
@@ -1501,9 +1962,8 @@ let _tt;
 function toast(msg,type='ok'){
   const el=document.getElementById('toast');
   el.textContent=msg; el.className='show '+type;
-  clearTimeout(_tt); _tt=setTimeout(()=>el.className='',3000);
+  clearTimeout(_tt); _tt=setTimeout(()=>el.className='',3200);
 }
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 </script>
 </body>
 </html>
