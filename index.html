@@ -456,7 +456,29 @@ main{flex:1;padding:22px 20px;max-width:1040px;margin:0 auto;width:100%}
 #toast.ok{background:#f0fdf4;border-color:var(--green);color:var(--green)}
 #toast.err{background:#fef2f2;border-color:var(--red);color:var(--red)}
 
-/* ── KATHY ACCESSIBILITY - BOLD ALL TEXT ── */
+/* ── PIN PAD ── */
+.pin-dot{
+  width:18px;height:18px;border-radius:50%;
+  border:3px solid #1a1a1a;background:transparent;
+  transition:background .15s,transform .1s;
+}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold);transform:scale(1.15)}
+.pin-pad{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;width:260px;
+}
+.pin-key{
+  background:var(--card);border:3px solid #1a1a1a;
+  border-radius:var(--radius);padding:20px 0;
+  font-size:24px;font-weight:900;cursor:pointer;text-align:center;
+  box-shadow:4px 4px 0px #1a1a1a;
+  transition:transform .1s,box-shadow .1s;
+  color:#1a1a1a;
+}
+.pin-key:active{transform:translate(2px,2px);box-shadow:2px 2px 0px #1a1a1a}
+.pin-zero{grid-column:2}
+.pin-del{font-size:20px;color:var(--muted)}
+.pin-del:hover{color:var(--red)}
 body{font-weight:600}
 p,span,div,label,select,input,textarea,button,a{font-weight:600}
 .muted,.muted2,.text2,.doc-date,.row-meta,.row-preview,.doc-owner,.op-step,.auth-sub,.kpi-sub,.kpi-label,.sec-head,.panel-lbl,.field label,.factions span,.tip p,.dash-hero p,.scan-hero p{font-weight:700!important;color:#333!important}
@@ -563,7 +585,7 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
 
   <!-- TITLE ABOVE SIGN IN BOX -->
   <div class="vault-title-wrap">
-    <div class="vault-title-main">Gus & Kat's</div>
+    <div class="vault-title-main">Kat & Steve's</div>
     <div class="vault-title-sub">Family FinanceVault</div>
     <div class="vault-title-stars">★ &nbsp; Private & Secure &nbsp; ★</div>
   </div>
@@ -585,9 +607,42 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
       <button id="authSwitchBtn">Create Account</button>
     </div>
     <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);text-align:center;line-height:1.7">
-      🔒 100% private — only Gus & Kat can access this vault.<br/>Data stored securely in your own Supabase account.
+      🔒 100% private — only Kat & Steve can access this vault.<br/>Data stored securely in your own Supabase account.
     </div>
   </div>
+</div>
+
+<!-- ══ PIN SCREEN ══ -->
+<div id="pinScreen" style="display:none;position:fixed;inset:0;z-index:9998;background:var(--bg);background-image:radial-gradient(ellipse at 50% 0%,rgba(184,134,11,0.1) 0%,transparent 70%);flex-direction:column;align-items:center;justify-content:center;padding:20px">
+  <div style="font-size:48px;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(184,134,11,0.4))">🔐</div>
+  <div style="font-size:26px;font-weight:900;font-family:Georgia,serif;color:#1a1a1a;margin-bottom:4px">FinanceVault</div>
+  <div style="font-size:15px;font-weight:700;color:var(--gold);margin-bottom:28px">Enter your PIN</div>
+
+  <!-- PIN dots -->
+  <div style="display:flex;gap:16px;margin-bottom:28px" id="pinDots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+
+  <!-- PIN pad -->
+  <div class="pin-pad">
+    <button class="pin-key" data-n="1">1</button>
+    <button class="pin-key" data-n="2">2</button>
+    <button class="pin-key" data-n="3">3</button>
+    <button class="pin-key" data-n="4">4</button>
+    <button class="pin-key" data-n="5">5</button>
+    <button class="pin-key" data-n="6">6</button>
+    <button class="pin-key" data-n="7">7</button>
+    <button class="pin-key" data-n="8">8</button>
+    <button class="pin-key" data-n="9">9</button>
+    <button class="pin-key pin-zero" data-n="0">0</button>
+    <button class="pin-key pin-del" id="pinDelBtn">⌫</button>
+  </div>
+
+  <div id="pinErr" style="color:var(--red);font-size:14px;font-weight:800;min-height:22px;margin-top:16px;text-align:center"></div>
+  <button onclick="showEmailLogin()" style="margin-top:20px;background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;text-decoration:underline">Use email & password instead</button>
 </div>
 
 <!-- ══ APP ══ -->
@@ -624,7 +679,7 @@ p,span,div,label,select,input,textarea,button,a{font-weight:600}
     <div id="tab-dash" class="tab active">
       <div class="dash-hero">
         <h2>Welcome to <span>FinanceVault</span> 👋</h2>
-        <p>Gus & Kat's shared family document vault — synced between both phones in real time. Scan any bill, insurance card, or receipt and it instantly appears for both of you.</p>
+        <p>Kat & Steve's shared family document vault — synced between both phones in real time. Scan any bill, insurance card, or receipt and it instantly appears for both of you.</p>
         <div class="hw">
           <button class="btn btn-primary" onclick="switchTab('scan',document.getElementById('nb-scan'))">📷 Scan a Document</button>
           <button class="btn btn-ghost" onclick="switchTab('vault',document.getElementById('nb-vault'))">🗄️ Open Vault</button>
@@ -845,6 +900,94 @@ const CAT = {
 };
 const BDGE = {bill:'b-bill',ins:'b-ins',receipt:'b-receipt',bank:'b-bank',medical:'b-medical',tax:'b-tax',warranty:'b-warranty',other:'b-other'};
 
+/* ══ PIN LOGIC ══ */
+const VAULT_PIN = '2580';
+const PIN_SAVED_KEY = 'fv_pin_user';
+let pinBuffer = '';
+
+function showPinScreen(){
+  document.getElementById('authScreen').style.display = 'none';
+  const ps = document.getElementById('pinScreen');
+  ps.style.display = 'flex';
+  pinBuffer = '';
+  updatePinDots();
+  document.getElementById('pinErr').textContent = '';
+}
+
+function showEmailLogin(){
+  document.getElementById('pinScreen').style.display = 'none';
+  document.getElementById('authScreen').style.display = 'flex';
+}
+
+function showEmailLoginAndClear(){
+  localStorage.removeItem(PIN_SAVED_KEY);
+  showEmailLogin();
+}
+
+function updatePinDots(){
+  for(let i=0;i<4;i++){
+    const d = document.getElementById('pd'+i);
+    if(d) d.classList.toggle('filled', i < pinBuffer.length);
+  }
+}
+
+function pinPress(n){
+  if(pinBuffer.length >= 4) return;
+  pinBuffer += n;
+  updatePinDots();
+  if(pinBuffer.length === 4) setTimeout(checkPin, 120);
+}
+
+function pinDel(){
+  pinBuffer = pinBuffer.slice(0,-1);
+  document.getElementById('pinErr').textContent = '';
+  updatePinDots();
+}
+
+function checkPin(){
+  if(pinBuffer === VAULT_PIN){
+    // Restore saved session
+    const savedUser = JSON.parse(localStorage.getItem(PIN_SAVED_KEY)||'null');
+    if(savedUser){
+      currentUser = savedUser;
+      document.getElementById('pinScreen').style.display = 'none';
+      launchApp();
+    } else {
+      showEmailLogin();
+    }
+  } else {
+    document.getElementById('pinErr').textContent = '❌ Incorrect PIN';
+    const dots = document.querySelectorAll('.pin-dot');
+    dots.forEach(d=>{ d.style.background='#f87171'; d.style.borderColor='#f87171'; });
+    setTimeout(()=>{
+      pinBuffer = '';
+      updatePinDots();
+      dots.forEach(d=>{ d.style.background=''; d.style.borderColor=''; });
+      document.getElementById('pinErr').textContent = '';
+    }, 800);
+  }
+}
+
+// Wire up PIN pad buttons after DOM loads
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.pin-key[data-n]').forEach(function(btn){
+    btn.addEventListener('click', function(){ pinPress(this.getAttribute('data-n')); });
+    btn.addEventListener('touchend', function(e){ e.preventDefault(); pinPress(this.getAttribute('data-n')); });
+  });
+  const delBtn = document.getElementById('pinDelBtn');
+  if(delBtn){
+    delBtn.addEventListener('click', pinDel);
+    delBtn.addEventListener('touchend', function(e){ e.preventDefault(); pinDel(); });
+  }
+  // Keyboard support
+  document.addEventListener('keydown', function(e){
+    if(document.getElementById('pinScreen').style.display === 'flex'){
+      if(e.key >= '0' && e.key <= '9') pinPress(e.key);
+      if(e.key === 'Backspace') pinDel();
+    }
+  });
+});
+
 /* ══ AUTH ══ */
 document.getElementById('authBtn').addEventListener('click', doAuth);
 document.getElementById('authPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doAuth(); });
@@ -900,14 +1043,23 @@ async function signOut(){
   await sb.auth.signOut();
   currentUser = null; docs = [];
   document.getElementById('app').classList.remove('show');
-  document.getElementById('authScreen').style.display='flex';
+  // Show PIN if we have a saved user
+  const savedUser = JSON.parse(localStorage.getItem(PIN_SAVED_KEY)||'null');
+  if(savedUser){
+    showPinScreen();
+  } else {
+    document.getElementById('authScreen').style.display='flex';
+  }
   document.getElementById('authPass').value='';
   setAuthMsg('','');
 }
 
 function launchApp(){
   document.getElementById('authScreen').style.display='none';
+  document.getElementById('pinScreen').style.display='none';
   document.getElementById('app').classList.add('show');
+  // Save user for PIN access next time
+  localStorage.setItem(PIN_SAVED_KEY, JSON.stringify(currentUser));
   const email = currentUser?.email || '';
   document.getElementById('userLabel').textContent = email.split('@')[0];
   loadDocs();
@@ -916,10 +1068,19 @@ function launchApp(){
 
 /* ══ CHECK SESSION ON LOAD ══ */
 window.addEventListener('DOMContentLoaded', async ()=>{
+  const savedUser = JSON.parse(localStorage.getItem(PIN_SAVED_KEY)||'null');
   const { data } = await sb.auth.getSession();
   if(data.session){
     currentUser = data.session.user;
-    launchApp();
+    // If we have a saved user show PIN screen first
+    if(savedUser){
+      showPinScreen();
+    } else {
+      launchApp();
+    }
+  } else if(savedUser){
+    // Session expired but we remember who they are — show PIN
+    showPinScreen();
   }
 });
 
