@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FinanceVault — Site Map</title>
+<style>
+:root{
+  --navy:#16234A; --navy-2:#1E3A6E; --red:#C41E3A; --red-2:#E2465C;
+  --cream:#FBF9F4; --panel:#EEF2F9; --card:#FFFFFF;
+  --ink:#15234C; --ink-2:#566079; --line:rgba(21,35,76,.14); --silver:#9aa1b4;
+  --green:#1B7A3D;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:600;line-height:1.5;padding:26px 16px 60px}
+.serif{font-family:Georgia,'Times New Roman',serif}
+.wrap{max-width:860px;margin:0 auto}
+.mono{font-family:'SF Mono',ui-monospace,Menlo,Consolas,monospace}
+
+/* header */
+.head{background:linear-gradient(155deg,var(--navy-2),var(--navy) 60%,#0E1730);color:var(--cream);border-radius:20px;padding:26px 26px 22px;position:relative;overflow:hidden;box-shadow:0 14px 36px rgba(21,35,76,.22)}
+.head::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--red),#fff,var(--navy-2))}
+.head .kicker{font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--red-2)}
+.head h1{font-family:Georgia,serif;font-size:34px;font-weight:700;margin:6px 0 4px;letter-spacing:.5px}
+.head h1 .v{color:#E9C46A}
+.head h1 .fin{color:#fff}
+.head p{font-size:13.5px;color:#C6D0E6;max-width:560px}
+.head .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.head .tag{font-size:11px;font-weight:800;letter-spacing:.5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:5px 12px}
+.head .tag b{color:#E9C46A}
+
+/* sections */
+.sec{margin-top:26px}
+.sec-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.sec-h .n{width:28px;height:28px;flex-shrink:0;border-radius:8px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:700;font-size:15px}
+.sec-h h2{font-family:Georgia,serif;font-size:20px;font-weight:700;color:var(--navy)}
+.sec-h .line{flex:1;height:2px;background:var(--line)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 6px 18px rgba(21,35,76,.06)}
+
+/* file tree */
+.tree{padding:20px 22px;font-size:14px}
+.tree .row{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line)}
+.tree .row:last-child{border-bottom:none}
+.tree .fname{font-family:'SF Mono',ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:var(--navy);white-space:nowrap}
+.tree .fname.folder{color:var(--red)}
+.tree .indent{padding-left:26px}
+.tree .desc{color:var(--ink-2);font-size:12.5px;font-weight:600}
+.tree .pill{font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:var(--panel);color:var(--navy);white-space:nowrap;margin-left:auto;align-self:center}
+.tree .pill.you{background:#FBE7E4;color:var(--red)}
+.tree .pill.opt{background:#EEF2F9;color:var(--ink-2)}
+
+/* three-column architecture */
+.cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.col{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 15px;box-shadow:0 6px 18px rgba(21,35,76,.06);position:relative;overflow:hidden}
+.col::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.col.app::before{background:var(--navy)}
+.col.scan::before{background:var(--red)}
+.col.data::before{background:var(--green)}
+.col .ic{font-size:24px}
+.col h3{font-family:Georgia,serif;font-size:16px;font-weight:700;margin:8px 0 4px;color:var(--navy)}
+.col .where{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--ink-2)}
+.col p{font-size:12.5px;color:var(--ink-2);font-weight:600;margin-top:8px}
+
+/* app screen map */
+.screens{display:flex;flex-direction:column;gap:10px}
+.screen{display:flex;align-items:flex-start;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 6px 18px rgba(21,35,76,.06)}
+.screen .badge{width:44px;height:44px;flex-shrink:0;border-radius:11px;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:22px}
+.screen.mid .badge{background:linear-gradient(135deg,var(--red-2),var(--red));color:#fff}
+.screen .nm{font-family:Georgia,serif;font-size:16px;font-weight:700;color:var(--navy)}
+.screen .sub{font-size:12.5px;color:var(--ink-2);font-weight:600;margin-top:3px}
+
+/* flow */
+.flow{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 18px;box-shadow:0 6px 18px rgba(21,35,76,.06)}
+.flow-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 13px;text-align:center;min-width:90px}
+.step .t{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--navy)}
+.step .d{font-size:11px;color:var(--ink-2);font-weight:600;margin-top:2px}
+.step.hot{background:#FBE7E4;border-color:rgba(196,30,58,.3)}
+.arrow{color:var(--red);font-size:20px;font-weight:800}
+
+/* footer */
+.foot{margin-top:26px;background:linear-gradient(155deg,var(--navy-2),var(--navy) 60%);color:var(--cream);border-radius:16px;padding:18px 22px;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
+.foot .item .k{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#9FB0D0}
+.foot .item .val{font-family:Georgia,serif;font-size:16px;font-weight:700;margin-top:2px}
+.foot .item .val.g{color:#7ED9A0}
+.note{font-size:11.5px;color:var(--ink-2);text-align:center;margin-top:18px;font-weight:600}
+
+@media(max-width:640px){
+  .cols{grid-template-columns:1fr}
+  .head h1{font-size:27px}
+  .tree .pill{display:none}
+}
+@media print{
+  body{padding:0;background:#fff}
+  .card,.col,.screen,.flow,.head,.foot{box-shadow:none}
+  .sec{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div class="kicker">Project Reference · Site Map</div>
+    <h1 class="serif"><span class="fin">Finance</span><span class="v">Vault</span></h1>
+    <p>Kat &amp; Steve's private family document vault. Scan a bill, it files itself. This map shows every file, where it lives, and how the app is laid out.</p>
+    <div class="meta">
+      <span class="tag">Design: <b>Patriotic</b></span>
+      <span class="tag">Host: <b>Vercel</b></span>
+      <span class="tag">Data: <b>Supabase</b></span>
+      <span class="tag">AI: <b>Claude</b></span>
+    </div>
+  </div>
+
+  <!-- 1. FILES -->
+  <div class="sec">
+    <div class="sec-h"><div class="n serif">1</div><h2 class="serif">Project Files</h2><div class="line"></div></div>
+    <div class="card tree">
+      <div class="row"><span class="fname folder">financevault/</span><span class="desc">— your GitHub repository (the root)</span></div>
+      <div class="row indent"><span class="fname">index.html</span><span class="desc">The entire app — every screen lives here.</span><span class="pill you">You upload</span></div>
+      <div class="row indent"><span class="fname">vercel.json</span><span class="desc">Security headers &amp; settings.</span><span class="pill you">You upload</span></div>
+      <div class="row indent"><span class="fname folder">api/</span><span class="desc">Folder that holds the scanner.</span><span class="pill you">You upload</span></div>
+      <div class="row indent" style="padding-left:52px"><span class="fname">scan.js</span><span class="desc">Reads documents with Claude AI (key stays server-side).</span><span class="pill you">You upload</span></div>
+      <div class="row indent"><span class="fname">SETUP.md</span><span class="desc">Your setup notes.</span><span class="pill opt">Optional</span></div>
+      <div class="row indent"><span class="fname">SITEMAP.html</span><span class="desc">This document.</span><span class="pill opt">Reference</span></div>
+    </div>
+  </div>
+
+  <!-- 2. ARCHITECTURE -->
+  <div class="sec">
+    <div class="sec-h"><div class="n serif">2</div><h2 class="serif">Where Everything Lives</h2><div class="line"></div></div>
+    <div class="cols">
+      <div class="col app">
+        <div class="ic">📱</div>
+        <h3 class="serif">The App</h3>
+        <div class="where">index.html → Vercel</div>
+        <p>Every screen you see — lock, dashboard, bills, vault. One file, served fast worldwide.</p>
+      </div>
+      <div class="col scan">
+        <div class="ic">🤖</div>
+        <h3 class="serif">The Scanner</h3>
+        <div class="where">api/scan.js → Anthropic</div>
+        <p>Reads your photos with Claude. Your API key sits in Vercel's settings — never in a file.</p>
+      </div>
+      <div class="col data">
+        <div class="ic">🗄️</div>
+        <h3 class="serif">Your Data</h3>
+        <div class="where">Device + Supabase</div>
+        <p>Scanned docs, bills &amp; budget. On your device now; synced across all devices once sign-in is on.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. APP SCREEN MAP -->
+  <div class="sec">
+    <div class="sec-h"><div class="n serif">3</div><h2 class="serif">App Screen Map</h2><div class="line"></div></div>
+    <div class="screens">
+      <div class="screen"><div class="badge">🔒</div><div><div class="nm serif">Lock Screen</div><div class="sub">Opens with your PIN (2580). Later: one-tap email sign-in, locked to you &amp; Kathy.</div></div></div>
+      <div class="screen"><div class="badge">🏠</div><div><div class="nm serif">Home</div><div class="sub">Total due this month · paid vs owed · overdue alerts · next bill · quick stats.</div></div></div>
+      <div class="screen"><div class="badge">🧾</div><div><div class="nm serif">Bills</div><div class="sub">Overdue / due-soon / all · mark paid · autopay flag · Pay-All total.</div></div></div>
+      <div class="screen mid"><div class="badge">📷</div><div><div class="nm serif">Scan <span style="font-size:11px;color:var(--red);font-weight:800">★ the star action</span></div><div class="sub">Snap a document → Claude reads it → auto-files into Bills, Budget &amp; Vault.</div></div></div>
+      <div class="screen"><div class="badge">📊</div><div><div class="nm serif">Money</div><div class="sub">Budget (23 categories) · Debt payoff (avalanche) · Stats (6-month trends).</div></div></div>
+      <div class="screen"><div class="badge">🗄️</div><div><div class="nm serif">Vault</div><div class="sub">Every document · search · rename · delete · 14 document types.</div></div></div>
+    </div>
+  </div>
+
+  <!-- 4. SCAN FLOW -->
+  <div class="sec">
+    <div class="sec-h"><div class="n serif">4</div><h2 class="serif">What Happens When You Scan</h2><div class="line"></div></div>
+    <div class="flow">
+      <div class="flow-row">
+        <div class="step"><div class="t">📷 Photo</div><div class="d">bill or receipt</div></div>
+        <span class="arrow">→</span>
+        <div class="step hot"><div class="t">🤖 Claude</div><div class="d">reads it</div></div>
+        <span class="arrow">→</span>
+        <div class="step"><div class="t">✓ Filed</div><div class="d">vendor · amount · due date · category</div></div>
+        <span class="arrow">→</span>
+        <div class="step"><div class="t">📊 Updated</div><div class="d">Bills · Budget · Home totals</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="foot">
+    <div class="item"><div class="k">PIN</div><div class="val">2580</div></div>
+    <div class="item"><div class="k">AI Model</div><div class="val">claude-sonnet-4-6</div></div>
+    <div class="item"><div class="k">Cost / scan</div><div class="val">~1¢</div></div>
+    <div class="item"><div class="k">Works offline</div><div class="val g">Yes ✓</div></div>
+    <div class="item"><div class="k">Private</div><div class="val g">Unlisted ✓</div></div>
+  </div>
+
+  <p class="note">FinanceVault is a private family app — no public sitemap.xml needed (that's only for sites you want strangers to find).</p>
+
+</div>
+</body>
+</html>
