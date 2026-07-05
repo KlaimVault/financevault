@@ -2,2116 +2,1019 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>FinanceVault — Kat & Steve's Family Vault</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"/>
+<title>Kat &amp; Steve's Family FinanceVault</title>
+<meta name="description" content="Scan a bill and it organizes itself. Private family finance vault for Kat &amp; Steve."/>
+<meta name="theme-color" content="#14110D"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="FinanceVault"/>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2314110D'/%3E%3Ccircle cx='90' cy='90' r='52' fill='none' stroke='%23E9C46A' stroke-width='9'/%3E%3Ccircle cx='90' cy='90' r='16' fill='%23E9C46A'/%3E%3Cg stroke='%23E9C46A' stroke-width='9' stroke-linecap='round'%3E%3Cline x1='90' y1='38' x2='90' y2='58'/%3E%3Cline x1='90' y1='122' x2='90' y2='142'/%3E%3Cline x1='38' y1='90' x2='58' y2='90'/%3E%3Cline x1='122' y1='90' x2='142' y2='90'/%3E%3C/g%3E%3C/svg%3E"/>
 <style>
-:root {
-  --bg:      #faf6f0;
-  --bg2:     #f5efe6;
-  --surface: #fffdf9;
-  --card:    #ffffff;
-  --card2:   #fdf8f2;
-  --border:  #1a1a1a;
-  --border2: #333333;
-  --gold:    #c9920a;
-  --gold2:   #e6a817;
-  --gold3:   #fef3c7;
-  --green:   #15803d;
-  --green2:  #dcfce7;
-  --red:     #dc2626;
-  --red2:    #fee2e2;
-  --blue:    #2563eb;
-  --blue2:   #dbeafe;
-  --purple:  #7c3aed;
-  --purple2: #ede9fe;
-  --orange:  #ea580c;
-  --orange2: #ffedd5;
-  --teal:    #0d9488;
-  --teal2:   #ccfbf1;
-  --text:    #1a1a1a;
-  --text2:   #374151;
-  --muted:   #6b7280;
-  --muted2:  #9ca3af;
-  --radius:  12px;
-  --rsm:     8px;
-  --shadow:  0 2px 8px rgba(0,0,0,0.08);
-  --shadow2: 0 4px 16px rgba(0,0,0,0.12);
+/* ═══════════ THEME PALETTES (Kathy's designs) ═══════════ */
+/* VINTAGE — cream · bronze · olive  (default) */
+:root, :root[data-theme="vintage"]{
+  --bg:#FBF6EA; --panel:#F2E9D5; --panel-2:#E8DBC0; --card:#FFFDF7;
+  --text:#3B2F26; --text-2:#6E6152;
+  --line:rgba(59,47,38,.12); --line-2:rgba(59,47,38,.20);
+  --accent:#C9A227; --accent-lt:#E3C766; --accent-dp:#9A7A1C; --on-accent:#2A2013;
+  --good:#4E7A2E; --good-bg:#EAF0DC; --bad:#B14A2A; --bad-bg:#F6E5DB;
+  --bar-a:#3B2F26; --bar-b:#2A2019; --bar-text:#FBF6EA; --bar-line:#C9A227;
+  --hero-a:#46382B; --hero-b:#33281E; --hero-c:#241C14; --hero-text:#FBF6EA; --hero-lbl:#E3C766;
+  --word-a1:#4A3A2C; --word-a2:#2A2019; --word-b1:#7E8B57; --word-b2:#57683B;
+  --lock-a:#46382B; --lock-b:#241C14;
+  --badge-a:#FBF6EA; --badge-b:#EEE2C9; --badge-brd:#C9A227; --badge-ink:#3B2F26; --badge-accent:#9A7A1C;
+  --shadow:0 8px 28px rgba(59,47,38,.10), 0 2px 6px rgba(59,47,38,.05);
+}
+/* PATRIOTIC — navy · red · cream */
+:root[data-theme="patriotic"]{
+  --bg:#FBF9F4; --panel:#EEF1F8; --panel-2:#E1E7F2; --card:#FFFFFF;
+  --text:#15234C; --text-2:#566079;
+  --line:rgba(21,35,76,.12); --line-2:rgba(21,35,76,.20);
+  --accent:#C41E3A; --accent-lt:#E2465C; --accent-dp:#9A1229; --on-accent:#FFFFFF;
+  --good:#1B7A3D; --good-bg:#E3F1E7; --bad:#B01E2E; --bad-bg:#FBE7E4;
+  --bar-a:#16234A; --bar-b:#0E1730; --bar-text:#FBF9F4; --bar-line:#C41E3A;
+  --hero-a:#1E3A6E; --hero-b:#16264C; --hero-c:#0E1730; --hero-text:#FBF9F4; --hero-lbl:#E6EBF7;
+  --word-a1:#1E3A6E; --word-a2:#14264C; --word-b1:#E2465C; --word-b2:#C41E3A;
+  --lock-a:#1E3A6E; --lock-b:#0E1730;
+  --badge-a:#FBF9F4; --badge-b:#EAEFF8; --badge-brd:#C41E3A; --badge-ink:#15234C; --badge-accent:#C41E3A;
+  --shadow:0 8px 28px rgba(21,35,76,.10), 0 2px 6px rgba(21,35,76,.05);
+}
+/* MIDNIGHT — black · pastel pink · mint · lavender */
+:root[data-theme="midnight"]{
+  --bg:#0B0B0F; --panel:#17171E; --panel-2:#20202A; --card:#16161C;
+  --text:#F3EFF5; --text-2:#B7B0C2;
+  --line:rgba(255,255,255,.10); --line-2:rgba(255,255,255,.17);
+  --accent:#F4B8C8; --accent-lt:#FAD0DC; --accent-dp:#D98BA6; --on-accent:#1A1420;
+  --good:#8FE0B8; --good-bg:rgba(143,224,184,.14); --bad:#FF8497; --bad-bg:rgba(255,132,151,.14);
+  --bar-a:#16161C; --bar-b:#0B0B0F; --bar-text:#F3EFF5; --bar-line:#F4B8C8;
+  --hero-a:#1C1622; --hero-b:#141019; --hero-c:#0B0B0F; --hero-text:#F3EFF5; --hero-lbl:#F4B8C8;
+  --word-a1:#F7C3D2; --word-a2:#E79FB6; --word-b1:#BFEEDD; --word-b2:#97E0C9;
+  --lock-a:#17141C; --lock-b:#08080B;
+  --badge-a:#14141A; --badge-b:#0B0B0F; --badge-brd:#F4B8C8; --badge-ink:#F3EFF5; --badge-accent:#A8E6D4;
+  --shadow:0 10px 30px rgba(0,0,0,.5), 0 2px 6px rgba(0,0,0,.4);
+}
+/* back-compat aliases → resolve to whichever theme is active */
+:root{
+  --ink-0:var(--text); --ink-1:var(--text); --ink-2:var(--text-2);
+  --cream-0:var(--bg); --cream-1:var(--panel); --cream-2:var(--panel-2);
+  --gold:var(--accent); --gold-lt:var(--accent-lt); --gold-dp:var(--accent-dp);
+  --green:var(--good); --green-lt:var(--good-bg); --red:var(--bad); --red-lt:var(--bad-bg);
+  --blue:var(--accent-dp);
+  --nav-h:74px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
+html{-webkit-text-size-adjust:100%}
 body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
-  background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;
-  font-weight:600;-webkit-font-smoothing:antialiased;min-height:100vh;
+  background:var(--cream-0); color:var(--ink-0);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  font-weight:600; line-height:1.4; -webkit-font-smoothing:antialiased;
+  overscroll-behavior-y:none;
 }
+.serif{font-family:Georgia,'Times New Roman',serif}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font-family:inherit;font-weight:600}
+::selection{background:var(--gold-lt)}
+h1,h2,h3{line-height:1.15}
 
-/* ══ SCROLLBAR ══ */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}
+/* ─────────────────────────── LOCK SCREEN ─────────────────────────── */
+#lock{position:fixed;inset:0;z-index:1000;background:radial-gradient(120% 90% at 50% 0%,var(--lock-a) 0%,var(--lock-b) 62%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px;text-align:center}
+.badge{background:linear-gradient(180deg,var(--badge-a),var(--badge-b));border:3px solid var(--badge-brd);border-radius:22px;padding:20px 26px 22px;box-shadow:0 14px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.15);max-width:340px;width:100%}
+.badge .flags{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px}
+.badge .flag{width:34px;height:22px;border:1.5px solid rgba(0,0,0,.35);border-radius:3px}
+.vault-mark{width:56px;height:56px;margin:0 auto 4px;display:block}
+.vault-mark circle,.vault-mark line{stroke:var(--badge-accent)}
+.vault-mark circle[fill="#C6971D"]{fill:var(--badge-accent);stroke:none}
+.badge .name{font-family:Georgia,serif;font-weight:700;color:var(--badge-ink);font-size:15px;letter-spacing:.5px;line-height:1.25;margin-bottom:2px}
+.badge .name b{color:var(--badge-accent)}
+.wordmark{font-family:Georgia,serif;font-weight:700;font-size:34px;letter-spacing:.5px;line-height:1;margin:6px 0 2px}
+.wordmark .fin{background:linear-gradient(180deg,var(--word-a1),var(--word-a2) 70%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.wordmark .vault{background:linear-gradient(180deg,var(--word-b1) 0%,var(--word-b2) 75%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.badge .sub{font-size:11px;font-weight:700;color:var(--badge-ink);opacity:.75;letter-spacing:1.5px;text-transform:uppercase;margin-top:4px}
+#lock .prompt{color:var(--bar-text);font-size:15px;font-weight:700;margin:22px 0 16px}
+.dots{display:flex;gap:16px;justify-content:center;margin-bottom:8px}
+.dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--accent-lt);background:transparent;transition:.15s}
+.dot.on{background:var(--accent-lt);box-shadow:0 0 14px var(--accent)}
+/* theme picker on lock */
+.themepick{margin-top:20px}
+.tp-label{color:var(--bar-text);opacity:.85;font-size:12px;font-weight:700;margin-bottom:9px}
+.tp-row{display:flex;gap:9px;justify-content:center}
+.tp{display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.14);border-radius:14px;padding:9px 12px;color:var(--bar-text);font-size:11.5px;font-weight:800}
+.tp.on{border-color:var(--accent-lt);background:rgba(255,255,255,.12)}
+.tp .sw{width:38px;height:22px;border-radius:6px;border:1px solid rgba(255,255,255,.3)}
+.sw-patriotic{background:linear-gradient(90deg,#16234A 33%,#FBF9F4 33% 66%,#C41E3A 66%)}
+.sw-midnight{background:linear-gradient(90deg,#0B0B0F 30%,#F4B8C8 30% 55%,#A8E6D4 55% 80%,#C9B8E8 80%)}
+.sw-vintage{background:linear-gradient(90deg,#3B2F26 33%,#C9A227 33% 66%,#6B7A4F 66%)}
+#lock.err .dots{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:280px;margin:20px auto 0;width:100%}
+.key{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.18);border-radius:16px;color:var(--bar-text);font-family:Georgia,serif;font-size:26px;font-weight:700;height:62px;transition:.1s}
+.key:active{background:rgba(255,255,255,.16);transform:scale(.95)}
+.key.blank{background:none;border:none}
+.key.util{font-size:15px;font-family:inherit;color:var(--accent-lt);font-weight:700}
 
-/* ══ PIN SCREEN ══ */
-#pinScreen{
-  position:fixed;inset:0;z-index:9999;
-  background:var(--bg);
-  background-image:radial-gradient(ellipse at 50% 0%,rgba(201,146,10,0.08) 0%,transparent 70%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:20px;
-}
-.pin-badge-wrap{margin-bottom:16px;filter:drop-shadow(3px 3px 0px rgba(0,0,0,0.12));animation:float 4s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-.pin-title-wrap{text-align:center;margin-bottom:24px}
-.pin-title-main{font-size:28px;font-weight:900;font-family:Georgia,serif;color:#1a1a1a;line-height:1.2}
-.pin-title-sub{font-size:22px;font-weight:900;font-family:Georgia,serif;color:var(--gold);line-height:1.2}
-.pin-title-stars{font-size:13px;font-weight:700;color:#1a1a1a;margin-top:6px;letter-spacing:2px}
-.pin-prompt{font-size:16px;font-weight:800;color:var(--gold);margin-bottom:20px;text-align:center}
-.pin-dots{display:flex;gap:16px;margin-bottom:24px}
-.pin-dot{width:18px;height:18px;border-radius:50%;border:3px solid #1a1a1a;background:transparent;transition:all .15s}
-.pin-dot.filled{background:var(--gold);border-color:var(--gold);transform:scale(1.15)}
-.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:255px}
-.pin-key{
-  background:var(--card);border:3px solid #1a1a1a;border-radius:var(--radius);
-  padding:18px 0;font-size:24px;font-weight:900;cursor:pointer;text-align:center;
-  box-shadow:4px 4px 0px #1a1a1a;transition:transform .1s,box-shadow .1s;color:#1a1a1a;
-}
-.pin-key:active{transform:translate(2px,2px);box-shadow:2px 2px 0px #1a1a1a}
-.pin-zero{grid-column:2}
-.pin-del{font-size:18px;color:var(--muted)}
-.pin-err{color:var(--red);font-size:14px;font-weight:800;min-height:22px;margin-top:14px;text-align:center}
-.pin-switch{margin-top:18px;background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;text-decoration:underline}
+/* ─────────────────────────── APP SHELL ─────────────────────────── */
+#app{display:none;min-height:100vh;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
+#app.show{display:block}
+.topbar{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,var(--bar-a),var(--bar-b));color:var(--bar-text);padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--bar-line)}
+.topbar .tw{font-family:Georgia,serif;font-size:21px;font-weight:700;display:flex;align-items:center;gap:7px}
+.topbar .tw .vault{color:var(--accent-lt)}
+.topbar .right{display:flex;align-items:center;gap:8px}
+.topbar .month{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--accent-lt);background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:6px 10px}
+.topbar .themebtn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:16px}
+.mini-vault{width:24px;height:24px}
+.mini-vault circle,.mini-vault line{stroke:var(--accent-lt)}
+.mini-vault circle[fill="#E9C46A"]{fill:var(--accent-lt);stroke:none}
 
-/* ══ AUTH SCREEN ══ */
-#authScreen{
-  position:fixed;inset:0;z-index:9998;
-  background:var(--bg);
-  background-image:radial-gradient(ellipse at 50% 0%,rgba(201,146,10,0.08) 0%,transparent 70%);
-  display:none;flex-direction:column;align-items:center;justify-content:center;
-  padding:20px;overflow-y:auto;
-}
-.auth-badge-wrap{margin-bottom:12px;filter:drop-shadow(3px 3px 0px rgba(0,0,0,0.12));animation:float 4s ease-in-out infinite}
-.auth-title-wrap{text-align:center;margin-bottom:16px}
-.auth-title-main{font-size:26px;font-weight:900;font-family:Georgia,serif;color:#1a1a1a;line-height:1.2}
-.auth-title-sub{font-size:22px;font-weight:900;font-family:Georgia,serif;color:var(--gold);line-height:1.2}
-.auth-title-stars{font-size:12px;font-weight:700;color:#1a1a1a;margin-top:5px;letter-spacing:2px}
-.auth-box{
-  background:var(--card);border:3px solid #1a1a1a;border-radius:16px;
-  padding:24px;width:100%;max-width:360px;box-shadow:5px 5px 0px #1a1a1a;
-}
-.auth-box h3{font-size:17px;font-weight:900;margin-bottom:18px;text-align:center;color:#1a1a1a}
-.auth-field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
-.auth-field label{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px}
-.auth-field input{
-  background:var(--bg2);border:2px solid #1a1a1a;color:#1a1a1a;
-  padding:10px 12px;border-radius:var(--rsm);font-size:15px;font-weight:700;outline:none;
-  transition:border-color .2s;
-}
-.auth-field input:focus{border-color:var(--gold)}
-.auth-msg{font-size:13px;min-height:18px;margin-bottom:10px;text-align:center;font-weight:700}
-.auth-msg.err{color:var(--red)}
-.auth-msg.ok{color:var(--green)}
-.auth-switch{text-align:center;margin-top:14px;font-size:13px;color:var(--muted);font-weight:700}
-.auth-switch button{background:none;border:none;color:var(--blue);font-weight:800;cursor:pointer;font-size:13px}
+.view{display:none;padding:18px 16px 8px;animation:fade .25s ease}
+.view.show{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.view-title{font-family:Georgia,serif;font-size:26px;font-weight:700;margin-bottom:2px}
+.view-sub{font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:16px}
 
-/* ══ APP ══ */
-#app{display:none;flex-direction:column;min-height:100vh}
-#app.show{display:flex}
+/* section eyebrow */
+.eyebrow{font-size:11px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--gold-dp);margin:22px 2px 10px;display:flex;align-items:center;gap:8px}
+.eyebrow::after{content:'';flex:1;height:1px;background:var(--line)}
 
-/* ══ HEADER ══ */
-header{
-  background:var(--surface);border-bottom:3px solid #1a1a1a;
-  padding:0 16px;height:58px;
-  display:flex;align-items:center;gap:12px;
-  position:sticky;top:0;z-index:200;
-  box-shadow:0 2px 0px #1a1a1a;
-}
-.logo{display:flex;align-items:center;gap:8px;white-space:nowrap}
-.logo-icon{
-  width:34px;height:34px;background:linear-gradient(135deg,var(--gold),#8B6914);
-  border-radius:9px;display:flex;align-items:center;justify-content:center;
-  font-size:18px;border:2px solid #1a1a1a;box-shadow:2px 2px 0px #1a1a1a;
-}
-.logo-text{font-size:17px;font-weight:900;color:#1a1a1a;font-family:Georgia,serif}
-.logo-text em{font-style:normal;color:var(--gold)}
-.hdr-search{flex:1;max-width:380px;position:relative}
-.hdr-search input{
-  width:100%;background:var(--bg2);border:2px solid #1a1a1a;
-  border-radius:var(--rsm);padding:7px 12px 7px 34px;
-  color:#1a1a1a;font-size:13px;font-weight:700;outline:none;
-}
-.hdr-search input:focus{border-color:var(--gold)}
-.hdr-search .si{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
-.hdr-right{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
-.user-pill{
-  background:var(--bg2);border:2px solid #1a1a1a;border-radius:99px;
-  padding:5px 12px;font-size:12px;font-weight:800;color:#1a1a1a;
-  display:flex;align-items:center;gap:6px;
-}
-.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--green);border:1px solid #1a1a1a}
-.sync-dot.syncing{background:var(--gold);animation:blink .8s infinite}
-.sync-dot.err{background:var(--red)}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.hdr-btn{
-  background:var(--gold);border:2px solid #1a1a1a;border-radius:var(--rsm);
-  padding:6px 12px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;
-  box-shadow:2px 2px 0px #1a1a1a;transition:all .12s;white-space:nowrap;
-}
-.hdr-btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0px #1a1a1a}
-.hdr-btn.ghost{background:var(--bg2);color:#1a1a1a}
+/* ─────────────────────────── CARDS ─────────────────────────── */
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
 
-/* ══ NAV ══ */
-nav{
-  background:var(--surface);border-bottom:3px solid #1a1a1a;
-  display:flex;overflow-x:auto;scrollbar-width:none;
-}
-nav::-webkit-scrollbar{display:none}
-.nav-btn{
-  padding:12px 14px;border:none;background:transparent;
-  color:var(--muted);font-size:13px;font-weight:800;cursor:pointer;
-  border-bottom:3px solid transparent;white-space:nowrap;
-  transition:color .15s,border-color .15s;
-  display:flex;align-items:center;gap:5px;
-}
-.nav-btn:hover{color:#1a1a1a}
-.nav-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
-.nav-badge{background:var(--red);color:#fff;font-size:10px;font-weight:900;padding:1px 6px;border-radius:99px}
+/* HERO STATEMENT CARD */
+.statement{background:linear-gradient(155deg,var(--hero-a) 0%,var(--hero-b) 55%,var(--hero-c) 100%);border-radius:22px;padding:22px 22px 20px;color:var(--hero-text);position:relative;overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,.28)}
+.statement::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent-dp),var(--accent-lt),var(--accent-dp))}
+.statement .lbl{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--hero-lbl);opacity:.95}
+.statement .big{font-family:Georgia,serif;font-size:46px;font-weight:700;line-height:1;margin:8px 0 4px;letter-spacing:-.5px}
+.statement .big .c{color:var(--gold-lt);font-size:26px;vertical-align:top;margin-right:2px}
+.statement .row{display:flex;gap:10px;margin-top:16px}
+.statement .chip{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:11px 12px}
+.statement .chip .k{font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;opacity:.7}
+.statement .chip .val{font-family:Georgia,serif;font-size:21px;font-weight:700;margin-top:3px}
+.statement .chip.paid .val{color:var(--good)}
+.statement .chip.owed .val{color:var(--gold-lt)}
+/* progress ring inline */
+.progline{margin-top:16px}
+.progline .track{height:12px;border-radius:8px;background:rgba(255,255,255,.1);overflow:hidden}
+.progline .fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--good),var(--good))}
+.progline .cap{display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin-top:7px;opacity:.85}
 
-/* ══ MAIN ══ */
-main{flex:1;padding:20px 16px;max-width:1040px;margin:0 auto;width:100%}
-.tab{display:none}
-.tab.active{display:block}
+/* KPI grid */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 15px;box-shadow:var(--shadow)}
+.kpi .k{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-2)}
+.kpi .val{font-family:Georgia,serif;font-size:26px;font-weight:700;margin-top:4px;color:var(--ink-0)}
+.kpi .val.red{color:var(--red)} .kpi .val.green{color:var(--green)} .kpi .val.gold{color:var(--gold-dp)}
 
-/* ══ SECTION HEADER ══ */
-.sec-head{
-  font-size:11px;font-weight:900;color:var(--muted);text-transform:uppercase;
-  letter-spacing:.6px;margin:22px 0 12px;
-  display:flex;align-items:center;gap:8px;
-}
-.sec-head::after{content:'';flex:1;height:2px;background:#1a1a1a}
+/* alert banner */
+.alert{display:flex;align-items:center;gap:12px;background:var(--red-lt);border:1.5px solid rgba(192,57,43,.4);border-radius:16px;padding:14px 16px;margin-bottom:6px}
+.alert .ic{width:34px;height:34px;flex-shrink:0;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px}
+.alert .tx{font-size:13.5px;font-weight:700;color:#7a2018;line-height:1.35}
+.alert .tx b{color:var(--red);font-family:Georgia,serif;font-size:15px}
 
-/* ══ CARDS ══ */
-.card{
-  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
-  padding:18px;box-shadow:3px 3px 0px #1a1a1a;margin-bottom:14px;
-}
-.card-title{font-size:15px;font-weight:900;color:#1a1a1a;margin-bottom:14px}
+/* ─────────────────────────── BILL ROW ─────────────────────────── */
+.list{display:flex;flex-direction:column;gap:10px}
+.item{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px 14px;box-shadow:var(--shadow);text-align:left;width:100%}
+.item:active{transform:scale(.995)}
+.item .ic{width:44px;height:44px;flex-shrink:0;border-radius:12px;background:var(--cream-1);display:flex;align-items:center;justify-content:center;font-size:20px}
+.item .mid{flex:1;min-width:0}
+.item .nm{font-size:15px;font-weight:800;color:var(--ink-0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .meta{font-size:12px;font-weight:600;color:var(--ink-2);margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.item .amt{font-family:Georgia,serif;font-size:19px;font-weight:700;text-align:right;flex-shrink:0}
+.pill{font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.pill.over{background:var(--red);color:#fff}
+.pill.soon{background:#F4E3B8;color:#7a5a12}
+.pill.paid{background:var(--green-lt);color:var(--green)}
+.pill.auto{background:var(--cream-2);color:var(--ink-1)}
 
-/* ══ KPI GRID ══ */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
-.kpi{
-  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
-  padding:16px;box-shadow:3px 3px 0px #1a1a1a;
-  transition:transform .15s,box-shadow .15s;
-}
-.kpi:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0px #1a1a1a}
-.kpi-icon{font-size:24px;margin-bottom:8px}
-.kpi-val{font-size:26px;font-weight:900;line-height:1;margin-bottom:4px}
-.kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:800}
-.kpi-sub{font-size:11px;color:var(--muted);margin-top:3px;font-weight:700}
-
-/* ══ BUTTONS ══ */
-.btn{
-  padding:9px 18px;border:2px solid #1a1a1a;border-radius:var(--rsm);
-  font-size:13px;font-weight:900;cursor:pointer;
-  display:inline-flex;align-items:center;gap:6px;
-  transition:transform .1s,box-shadow .1s;white-space:nowrap;
-  box-shadow:3px 3px 0px #1a1a1a;
-}
-.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0px #1a1a1a}
-.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0px #1a1a1a}
-.btn-gold{background:var(--gold);color:#fff}
-.btn-blue{background:var(--blue);color:#fff}
+/* ─────────────────────────── BUTTONS ─────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:800;border-radius:14px;padding:14px 18px;font-size:15px;transition:transform .1s,box-shadow .12s;width:100%}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:linear-gradient(135deg,var(--accent-lt),var(--accent));color:var(--on-accent);box-shadow:0 6px 18px rgba(0,0,0,.16);border:1px solid rgba(0,0,0,.12)}
+.cam svg,.nav .scanbtn .ring svg{stroke:var(--on-accent)}
+.btn-dark{background:var(--ink-0);color:var(--cream-0)}
+.btn-ghost{background:var(--card);color:var(--ink-0);border:1.5px solid var(--line-2)}
 .btn-green{background:var(--green);color:#fff}
-.btn-red{background:var(--red);color:#fff}
-.btn-ghost{background:var(--bg2);color:#1a1a1a}
-.btn-sm{padding:6px 12px;font-size:12px;box-shadow:2px 2px 0px #1a1a1a}
-.btn-sm:hover{box-shadow:3px 3px 0px #1a1a1a}
-.icon-btn{
-  width:32px;height:32px;border:2px solid #1a1a1a;border-radius:var(--rsm);
-  background:var(--bg2);color:var(--muted);cursor:pointer;font-size:14px;
-  display:inline-flex;align-items:center;justify-content:center;
-  box-shadow:2px 2px 0px #1a1a1a;transition:all .12s;
-}
-.icon-btn:hover{background:var(--gold);color:#fff;border-color:var(--gold)}
+.btn-red{background:var(--card);color:var(--red);border:1.5px solid rgba(192,57,43,.4)}
+.btn-sm{padding:10px 14px;font-size:13px;border-radius:12px;width:auto}
+.btn-row{display:flex;gap:10px;margin-top:14px}
 
-/* ══ FORMS ══ */
-.field{display:flex;flex-direction:column;gap:4px}
-.field label{font-size:11px;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.3px}
-.field input,.field select,.field textarea{
-  background:var(--bg2);border:2px solid #1a1a1a;color:#1a1a1a;
-  padding:9px 12px;border-radius:var(--rsm);font-size:14px;font-weight:700;
-  outline:none;transition:border-color .2s;font-family:inherit;
-}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold)}
-.field input::placeholder{color:var(--muted2)}
-.field textarea{resize:vertical;min-height:60px}
-.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
-.factions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center}
+/* ─────────────────────────── SCAN ─────────────────────────── */
+.scan-hero{background:var(--card);border:2px dashed var(--line-2);border-radius:22px;padding:34px 22px;text-align:center;box-shadow:var(--shadow)}
+.scan-hero .cam{width:70px;height:70px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,var(--gold-lt),var(--gold));display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(198,151,29,.4)}
+.scan-hero h3{font-family:Georgia,serif;font-size:22px;font-weight:700;margin-bottom:6px}
+.scan-hero p{font-size:13.5px;font-weight:600;color:var(--ink-2);max-width:280px;margin:0 auto 20px;line-height:1.5}
+.scan-steps{display:flex;justify-content:center;gap:6px;margin-top:22px;flex-wrap:wrap}
+.scan-steps span{font-size:11px;font-weight:700;color:var(--ink-2);background:var(--cream-1);border-radius:20px;padding:6px 11px}
+.scanning{text-align:center;padding:40px 20px}
+.spinner{width:56px;height:56px;margin:0 auto 18px;border-radius:50%;border:5px solid var(--cream-2);border-top-color:var(--gold);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.scan-preview{max-width:220px;max-height:220px;border-radius:14px;margin:0 auto 16px;display:block;box-shadow:var(--shadow);border:2px solid var(--line)}
 
-/* ══ BADGES ══ */
-.badge{
-  display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;
-  font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.3px;
-  border:1.5px solid;white-space:nowrap;
-}
-.b-bill    {background:#fee2e2;color:#991b1b;border-color:#dc2626}
-.b-ins     {background:#dbeafe;color:#1e40af;border-color:#2563eb}
-.b-receipt {background:#dcfce7;color:#14532d;border-color:#15803d}
-.b-bank    {background:#fef3c7;color:#92400e;border-color:#d97706}
-.b-medical {background:#ede9fe;color:#4c1d95;border-color:#7c3aed}
-.b-tax     {background:#ffedd5;color:#9a3412;border-color:#ea580c}
-.b-warranty{background:#ccfbf1;color:#134e4a;border-color:#0d9488}
-.b-debt    {background:#fce7f3;color:#831843;border-color:#db2777}
-.b-other   {background:#f3f4f6;color:#374151;border-color:#6b7280}
+/* ─────────────────────────── FORMS / MODAL ─────────────────────────── */
+.modal-bg{position:fixed;inset:0;z-index:200;background:rgba(20,17,13,.55);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center}
+.modal-bg.show{display:flex}
+.sheet{background:var(--cream-0);width:100%;max-width:560px;border-radius:24px 24px 0 0;padding:22px 20px calc(24px + env(safe-area-inset-bottom));max-height:92vh;overflow-y:auto;box-shadow:0 -10px 40px rgba(0,0,0,.3);animation:slideup .28s ease}
+@keyframes slideup{from{transform:translateY(100%)}to{transform:none}}
+.sheet .grip{width:44px;height:5px;border-radius:3px;background:var(--line-2);margin:0 auto 16px}
+.sheet h3{font-family:Georgia,serif;font-size:22px;font-weight:700;margin-bottom:4px}
+.sheet .hint{font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:16px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--ink-2);margin-bottom:6px}
+.field input,.field select{width:100%;background:var(--card);border:1.5px solid var(--line-2);border-radius:13px;padding:14px 14px;font-size:16px;font-weight:700;color:var(--ink-0)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--gold)}
+.field.two{display:flex;gap:12px}.field.two>div{flex:1}
+.detail-img{width:100%;max-height:300px;object-fit:contain;border-radius:14px;background:var(--cream-1);margin-bottom:14px;border:1px solid var(--line)}
+.detail-row{display:flex;justify-content:space-between;padding:11px 2px;border-bottom:1px solid var(--line);font-size:14px}
+.detail-row .k{font-weight:700;color:var(--ink-2)}
+.detail-row .v{font-weight:800;text-align:right}
 
-/* ══ PROGRESS BARS ══ */
-.prog-wrap{margin-top:6px}
-.prog-track{height:10px;background:var(--bg2);border-radius:99px;overflow:hidden;border:1.5px solid #1a1a1a}
-.prog-fill{height:100%;border-radius:99px;transition:width .5s}
+/* segmented sub-tabs (Money view) */
+.seg{display:flex;background:var(--cream-1);border-radius:14px;padding:4px;margin-bottom:18px}
+.seg button{flex:1;padding:10px;border-radius:11px;font-size:13.5px;font-weight:800;color:var(--ink-2)}
+.seg button.on{background:var(--card);color:var(--ink-0);box-shadow:0 2px 6px rgba(20,17,13,.08)}
 
-/* ══ SCAN TAB ══ */
-.scan-hero{
-  background:linear-gradient(135deg,#fffdf9,#fdf5e4);
-  border:3px solid #1a1a1a;border-radius:16px;
-  padding:36px 24px;text-align:center;margin-bottom:18px;
-  box-shadow:5px 5px 0px #1a1a1a;position:relative;overflow:hidden;
-}
-.scan-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,146,10,0.07) 0%,transparent 70%);pointer-events:none}
-.scan-orb{
-  width:120px;height:120px;margin:0 auto 20px;border-radius:50%;
-  background:rgba(201,146,10,0.1);border:3px dashed var(--gold);
-  display:flex;align-items:center;justify-content:center;
-  font-size:50px;cursor:pointer;position:relative;
-  box-shadow:4px 4px 0px #1a1a1a;transition:transform .2s;
-}
-.scan-orb:hover{transform:scale(1.04)}
-.scan-orb.active{animation:orb-pulse 1.2s ease-in-out infinite;border-style:solid}
-@keyframes orb-pulse{
-  0%,100%{box-shadow:0 0 0 0 rgba(201,146,10,0.5),4px 4px 0px #1a1a1a}
-  50%{box-shadow:0 0 0 18px rgba(201,146,10,0),4px 4px 0px #1a1a1a}
-}
-.scan-hero h2{font-size:22px;font-weight:900;color:#1a1a1a;margin-bottom:8px;position:relative}
-.scan-hero p{font-size:14px;color:var(--text2);max-width:360px;margin:0 auto;position:relative;font-weight:700;line-height:1.7}
-.scan-btns{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;position:relative}
+/* budget bar */
+.bud{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 15px;box-shadow:var(--shadow)}
+.bud .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px}
+.bud .cat{font-size:14px;font-weight:800}
+.bud .nums{font-size:12.5px;font-weight:700;color:var(--ink-2)}
+.bud .nums b{color:var(--ink-0);font-family:Georgia,serif;font-size:14px}
+.bar{height:11px;border-radius:7px;background:var(--cream-1);overflow:hidden}
+.bar .f{height:100%;border-radius:7px;background:linear-gradient(90deg,var(--gold),var(--gold-lt));transition:width .4s}
+.bar .f.warn{background:linear-gradient(90deg,#E08A2B,#F4B860)}
+.bar .f.over{background:linear-gradient(90deg,#A5301F,#D9584A)}
 
-/* ══ AI STATUS ══ */
-.ai-status{
-  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
-  padding:16px;margin-bottom:14px;display:none;box-shadow:3px 3px 0px #1a1a1a;
-}
-.ai-status.show{display:block}
-.ai-status-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.ai-status-label{font-size:14px;font-weight:800;color:#1a1a1a;flex:1}
-.ai-status-pct{font-size:14px;font-weight:900;color:var(--gold)}
-.ai-prog{height:8px;background:var(--bg2);border-radius:99px;overflow:hidden;border:1.5px solid #1a1a1a}
-.ai-prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--orange));border-radius:99px;transition:width .4s}
-.ai-step{font-size:12px;color:var(--muted);margin-top:6px;font-weight:700}
+/* debt card */
+.debt{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:var(--shadow)}
+.debt .hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.debt .nm{font-size:15px;font-weight:800}
+.debt .apr{font-size:11px;font-weight:800;color:var(--red);background:var(--red-lt);border-radius:20px;padding:3px 9px}
+.debt .bal{font-family:Georgia,serif;font-size:24px;font-weight:700;margin:4px 0 10px}
 
-/* ══ MSG ══ */
-.msg{border-radius:var(--rsm);padding:12px 14px;font-size:14px;margin-bottom:12px;display:none;align-items:center;gap:8px;border:2px solid;font-weight:700}
-.msg.show{display:flex}
-.msg.ok{background:var(--green2);border-color:var(--green);color:#14532d}
-.msg.err{background:var(--red2);border-color:var(--red);color:#7f1d1d}
-.msg.info{background:var(--blue2);border-color:var(--blue);color:#1e3a8a}
-.msg.warn{background:var(--orange2);border-color:var(--orange);color:#7c2d12}
+/* stats bars */
+.stat-bar{display:flex;align-items:flex-end;gap:8px;height:150px;padding:10px 4px 0;border-bottom:2px solid var(--line);margin-bottom:8px}
+.stat-bar .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.stat-bar .col .b{width:70%;max-width:38px;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--gold-lt),var(--gold));min-height:4px;transition:height .5s}
+.stat-bar .col .b.now{background:linear-gradient(180deg,var(--good),var(--good))}
+.stat-lbls{display:flex;gap:8px}
+.stat-lbls span{flex:1;text-align:center;font-size:10.5px;font-weight:700;color:var(--ink-2)}
 
-/* ══ PANELS ══ */
-.panel{background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);padding:18px;margin-bottom:14px;display:none;box-shadow:3px 3px 0px #1a1a1a}
-.panel.show{display:block}
-.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.panel-hdr h3{font-size:15px;font-weight:900;color:#1a1a1a}
-.panel-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:900;letter-spacing:.4px;margin-bottom:10px}
-.preview-img{max-width:100%;max-height:260px;object-fit:contain;border-radius:var(--rsm);display:block;margin:0 auto;border:2px solid #1a1a1a;box-shadow:3px 3px 0px #1a1a1a}
-.ocr-box{
-  background:var(--bg2);border:2px solid #1a1a1a;border-radius:var(--rsm);padding:14px;
-  font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:220px;overflow-y:auto;
-  color:#1a1a1a;font-family:'SF Mono',Monaco,Consolas,monospace;font-weight:600;
-}
+/* vault grid */
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.vcard{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);text-align:left}
+.vcard .thumb{height:104px;background:var(--cream-1);display:flex;align-items:center;justify-content:center;font-size:30px;position:relative}
+.vcard .thumb img{width:100%;height:100%;object-fit:cover}
+.vcard .thumb .tag{position:absolute;top:7px;left:7px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:3px 7px;border-radius:20px;background:rgba(20,17,13,.72);color:var(--gold-lt)}
+.vcard .bd{padding:10px 11px}
+.vcard .nm{font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vcard .meta{font-size:11px;font-weight:600;color:var(--ink-2);margin-top:3px}
 
-/* ══ AI EXTRACTED CHIPS ══ */
-.ai-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.ai-chip{
-  background:var(--gold3);border:2px solid var(--gold);border-radius:99px;
-  padding:4px 12px;font-size:12px;font-weight:800;color:#92400e;
-  display:flex;align-items:center;gap:4px;
-}
-.ai-chip.cat{background:var(--blue2);border-color:var(--blue);color:#1e40af}
-.ai-chip.date{background:var(--green2);border-color:var(--green);color:#14532d}
-.ai-chip.flag{background:var(--red2);border-color:var(--red);color:#7f1d1d}
+/* search */
+.search{width:100%;background:var(--card);border:1.5px solid var(--line-2);border-radius:14px;padding:12px 14px;font-size:15px;font-weight:700;margin-bottom:16px}
 
-/* ══ SAVE PANEL ══ */
-.save-panel{background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);padding:20px;display:none;margin-bottom:14px;box-shadow:3px 3px 0px #1a1a1a}
-.save-panel.show{display:block}
-.save-panel h3{font-size:16px;font-weight:900;margin-bottom:16px;color:#1a1a1a}
+/* empty state */
+.empty{text-align:center;padding:36px 20px;color:var(--ink-2)}
+.empty .ic{font-size:38px;margin-bottom:10px;opacity:.5}
+.empty p{font-size:14px;font-weight:700;line-height:1.5}
 
-/* ══ VAULT ══ */
-.vault-bar{display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
-.vault-bar select{
-  background:var(--card);border:2px solid #1a1a1a;color:#1a1a1a;
-  padding:8px 10px;border-radius:var(--rsm);font-size:13px;font-weight:700;
-  outline:none;cursor:pointer;box-shadow:2px 2px 0px #1a1a1a;
-}
-.spacer{flex:1}
-.view-grp{display:flex;gap:4px}
-.vbtn{
-  background:var(--bg2);border:2px solid #1a1a1a;color:var(--muted);
-  padding:7px 10px;border-radius:var(--rsm);cursor:pointer;font-size:15px;
-  box-shadow:2px 2px 0px #1a1a1a;transition:all .12s;
-}
-.vbtn.on{background:var(--gold);color:#fff}
+/* tips */
+.tip{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);margin-bottom:11px}
+.tip h4{font-size:14px;font-weight:800;margin-bottom:3px}
+.tip p{font-size:13px;font-weight:600;color:var(--ink-1);line-height:1.5}
 
-/* ══ DOC GRID ══ */
-.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.doc-card{
-  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
-  overflow:hidden;cursor:pointer;box-shadow:3px 3px 0px #1a1a1a;
-  transition:transform .15s,box-shadow .15s;
-}
-.doc-card:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0px #1a1a1a}
-.doc-thumb{height:100px;display:flex;align-items:center;justify-content:center;font-size:44px;border-bottom:2px solid #1a1a1a;position:relative}
-.doc-overdue{position:absolute;top:6px;right:6px;background:var(--red);color:#fff;font-size:9px;font-weight:900;padding:2px 6px;border-radius:99px;border:1px solid #1a1a1a}
-.doc-body{padding:10px 12px}
-.doc-name{font-size:13px;font-weight:900;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#1a1a1a}
-.doc-date{font-size:11px;color:var(--muted);font-weight:700}
-.doc-foot{padding:8px 12px;border-top:2px solid #1a1a1a;display:flex;align-items:center;justify-content:space-between;gap:6px}
-.doc-amt{font-size:13px;font-weight:900;color:var(--gold)}
+/* ─────────────────────────── BOTTOM NAV ─────────────────────────── */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:60;height:calc(var(--nav-h) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:linear-gradient(180deg,var(--bar-a),var(--bar-b));border-top:2px solid var(--bar-line);display:flex;align-items:center;justify-content:space-around}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:rgba(251,247,239,.55);height:100%;padding-top:12px}
+.nav button.on{color:var(--gold-lt)}
+.nav button .ic{width:26px;height:26px}
+.nav button .l{font-size:10px;font-weight:800;letter-spacing:.3px}
+.nav .scanbtn{position:relative;top:-16px;flex:0 0 auto}
+.nav .scanbtn .ring{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--gold-lt),var(--gold));display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(198,151,29,.5);border:3px solid #14110D}
+.nav .scanbtn .l{color:var(--gold-lt);margin-top:4px}
 
-/* ══ DOC LIST ══ */
-.doc-list{display:flex;flex-direction:column;gap:8px}
-.doc-row{
-  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
-  padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;
-  box-shadow:3px 3px 0px #1a1a1a;transition:transform .12s,box-shadow .12s;
-}
-.doc-row:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0px #1a1a1a}
-.row-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:2px solid #1a1a1a}
-.row-body{flex:1;min-width:0}
-.row-name{font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#1a1a1a}
-.row-meta{font-size:12px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-weight:700}
-.row-preview{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
-.row-amt{font-size:15px;font-weight:900;color:var(--gold);white-space:nowrap;flex-shrink:0}
-.row-actions{display:flex;gap:5px;flex-shrink:0}
-
-/* ══ BILL ROWS ══ */
-.bill-item{
-  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
-  padding:14px 16px;display:flex;align-items:center;gap:14px;
-  box-shadow:3px 3px 0px #1a1a1a;margin-bottom:8px;
-}
-.bill-due-box{
-  min-width:50px;text-align:center;
-  background:var(--gold3);border:2px solid var(--gold);border-radius:8px;
-  padding:6px 4px;
-}
-.bill-due-day{font-size:22px;font-weight:900;color:#1a1a1a;line-height:1}
-.bill-due-mo{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase}
-.bill-info{flex:1;min-width:0}
-.bill-name{font-size:14px;font-weight:900;color:#1a1a1a}
-.bill-meta{font-size:12px;color:var(--muted);font-weight:700;margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
-.bill-amt{font-size:18px;font-weight:900;color:#1a1a1a;flex-shrink:0}
-.bill-actions{display:flex;gap:6px;flex-shrink:0}
-.bill-item.overdue{border-color:var(--red);box-shadow:3px 3px 0px var(--red)}
-.bill-item.overdue .bill-due-box{background:var(--red2);border-color:var(--red)}
-.bill-item.due-soon{border-color:var(--orange);box-shadow:3px 3px 0px var(--orange)}
-.bill-item.paid{opacity:0.6}
-
-/* ══ BUDGET ROWS ══ */
-.budget-row{
-  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
-  padding:14px 16px;margin-bottom:8px;box-shadow:3px 3px 0px #1a1a1a;
-}
-.budget-row-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.budget-cat{font-size:14px;font-weight:900;color:#1a1a1a;display:flex;align-items:center;gap:8px}
-.budget-amts{font-size:13px;font-weight:800;color:var(--muted)}
-.budget-pct{font-size:12px;font-weight:900}
-
-/* ══ DEBT CARDS ══ */
-.debt-card{
-  background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);
-  padding:16px;margin-bottom:10px;box-shadow:3px 3px 0px #1a1a1a;
-}
-.debt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
-.debt-name{font-size:16px;font-weight:900;color:#1a1a1a}
-.debt-type{font-size:11px;color:var(--muted);font-weight:800;margin-top:2px}
-.debt-balance{font-size:24px;font-weight:900;color:var(--red)}
-.debt-info{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
-.debt-stat label{font-size:10px;color:var(--muted);font-weight:900;text-transform:uppercase;display:block;margin-bottom:2px}
-.debt-stat span{font-size:15px;font-weight:900;color:#1a1a1a}
-
-/* ══ MODAL ══ */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(3px)}
-.overlay.show{display:flex}
-.modal{background:var(--surface);border:3px solid #1a1a1a;border-radius:16px;width:100%;max-width:660px;margin:auto;box-shadow:6px 6px 0px #1a1a1a;overflow:hidden}
-.modal-head{padding:16px 20px;border-bottom:2px solid #1a1a1a;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;background:var(--card)}
-.modal-head h3{font-size:17px;font-weight:900;color:#1a1a1a;line-height:1.3}
-.modal-body{padding:18px 20px;max-height:65vh;overflow-y:auto}
-.modal-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-.modal-text{background:var(--bg2);border:2px solid #1a1a1a;border-radius:var(--rsm);padding:14px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:300px;overflow-y:auto;color:#1a1a1a;font-family:'SF Mono',Monaco,Consolas,monospace;font-weight:600}
-.modal-notes{margin-top:10px;font-size:14px;color:#1a1a1a;background:var(--card);border:2px solid #1a1a1a;border-radius:var(--rsm);padding:10px 12px;display:none;font-weight:700}
-.modal-notes.show{display:block}
-.modal-foot{padding:13px 20px;border-top:2px solid #1a1a1a;display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--card)}
-
-/* ══ STATS ══ */
-.stats-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:22px}
-.sk{background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);padding:16px;text-align:center;box-shadow:3px 3px 0px #1a1a1a}
-.sk-icon{font-size:26px;margin-bottom:6px}
-.sk-val{font-size:26px;font-weight:900;margin-bottom:2px}
-.sk-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:800}
-.cat-bar-row{margin-bottom:10px}
-.cat-bar-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;font-weight:800}
-.cat-bar-track{height:10px;background:var(--bg2);border-radius:99px;overflow:hidden;border:1.5px solid #1a1a1a}
-.cat-bar-fill{height:100%;border-radius:99px}
-
-/* ══ EMPTY ══ */
-.empty{text-align:center;padding:50px 20px;color:var(--muted)}
-.empty-icon{font-size:48px;margin-bottom:12px}
-.empty h3{font-size:17px;font-weight:900;color:#1a1a1a;margin-bottom:6px}
-.empty p{font-size:14px;font-weight:700;line-height:1.6}
-
-/* ══ SPINNER ══ */
-.spin{display:inline-block;width:16px;height:16px;border:2.5px solid var(--bg2);border-top-color:var(--gold);border-radius:50%;animation:sp .65s linear infinite;flex-shrink:0}
-@keyframes sp{to{transform:rotate(360deg)}}
-
-/* ══ TOAST ══ */
-#toast{
-  position:fixed;bottom:24px;left:50%;
-  transform:translateX(-50%) translateY(14px);
-  background:var(--card);border:2px solid #1a1a1a;color:#1a1a1a;
-  padding:10px 20px;border-radius:99px;font-size:14px;font-weight:900;
-  opacity:0;transition:opacity .25s,transform .25s;
-  z-index:9997;pointer-events:none;white-space:nowrap;box-shadow:3px 3px 0px #1a1a1a;
-}
+/* toast */
+#toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--ink-0);color:var(--cream-0);font-size:13.5px;font-weight:800;padding:13px 20px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:.28s;z-index:300;max-width:90%;text-align:center;border:1px solid rgba(233,196,106,.3)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-#toast.ok{background:var(--green2);border-color:var(--green);color:#14532d}
-#toast.err{background:var(--red2);border-color:var(--red);color:#7f1d1d}
+#toast.ok{border-color:rgba(126,217,160,.5)}
+#toast.err{border-color:rgba(217,88,74,.6)}
 
-mark{background:rgba(201,146,10,0.2);color:#92400e;border-radius:2px;padding:0 1px;font-weight:800}
-
-/* ══ ALERTS BOX ══ */
-.alert-box{
-  background:var(--red2);border:2px solid var(--red);border-radius:var(--radius);
-  padding:14px 16px;margin-bottom:16px;
-}
-.alert-title{font-size:13px;font-weight:900;color:var(--red);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
-.alert-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(220,38,38,0.2);font-size:13px;font-weight:700;color:#7f1d1d}
-.alert-item:last-child{border-bottom:none}
-
-/* ══ TIPS ══ */
-.tip{background:var(--card);border:2px solid #1a1a1a;border-radius:var(--radius);padding:16px;box-shadow:3px 3px 0px #1a1a1a;transition:transform .15s,box-shadow .15s}
-.tip:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0px #1a1a1a}
-.tip-icon{font-size:24px;margin-bottom:8px}
-.tip h4{font-size:14px;font-weight:900;color:#1a1a1a;margin-bottom:4px}
-.tip p{font-size:13px;color:var(--text2);font-weight:700;line-height:1.6}
-.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
-
-/* ══ RESPONSIVE ══ */
-@media(max-width:640px){
-  header{padding:0 10px;gap:8px}
-  .logo-text{display:none}
-  main{padding:14px 10px}
-  .kpi-grid,.stats-kpi{grid-template-columns:1fr 1fr}
-  .doc-grid{grid-template-columns:1fr 1fr}
-  .fgrid{grid-template-columns:1fr}
-  .hdr-right .hdr-btn.ghost{display:none}
-  .debt-info{grid-template-columns:1fr 1fr}
-}
-@media(max-width:380px){.doc-grid{grid-template-columns:1fr}}
+/* ═══════════ PATRIOTIC — polished lock emblem ═══════════ */
+.previewtag{position:fixed;top:calc(env(safe-area-inset-top) + 6px);left:8px;z-index:2000;background:rgba(22,35,74,.85);color:#fff;font-family:Georgia,serif;font-weight:700;font-size:10px;letter-spacing:2px;padding:4px 9px;border-radius:20px;pointer-events:none}
+#lock{background:radial-gradient(130% 100% at 50% -8%,#FFFFFF 0%,#EEF2F9 62%,#E1E8F4 100%)}
+#lock .emblem{width:100%;max-width:360px;background:#FFFFFF;border:2px solid #16234A;border-radius:26px;padding:20px 20px 18px;box-shadow:0 18px 44px rgba(22,35,74,.16),inset 0 0 0 5px rgba(196,30,58,.12);position:relative}
+#lock .crest{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:2px}
+#lock .flag-lg{width:34px;height:21px;border:1px solid rgba(0,0,0,.3);border-radius:3px;flex-shrink:0}
+#lock .vaultdoor{width:112px;height:112px;filter:drop-shadow(0 5px 10px rgba(22,35,74,.3))}
+#lock .wordmark{font-size:42px;margin:4px 0 6px;text-align:center}
+#lock .wordmark .fin{background:linear-gradient(180deg,#2A4A86,#16234A 72%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+#lock .wordmark .vault{background:linear-gradient(180deg,#E2465C,#C41E3A 72%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+#lock .startag{font-family:Georgia,serif;font-weight:700;font-size:16px;color:#16234A;text-align:center;letter-spacing:.5px}
+#lock .startag span{color:#C41E3A;margin:0 4px}
+#lock .starwings{width:100%;max-width:300px;height:auto;margin:8px auto 2px;display:block}
+#lock .tagline{font-family:Georgia,serif;font-weight:700;font-size:10.5px;letter-spacing:1.5px;color:#16234A;text-transform:uppercase;text-align:center;margin-top:4px}
+#lock .famline{font-family:Georgia,serif;font-weight:700;font-size:13px;color:#566079;margin:16px 0 2px;letter-spacing:.3px}
+#lock .prompt{color:#16234A;font-size:15px;font-weight:800;margin:10px 0 14px}
+#lock .dot{border-color:#C41E3A}
+#lock .dot.on{background:#C41E3A;box-shadow:0 0 12px rgba(196,30,58,.5)}
+#lock .key{background:#FFFFFF;border:1.5px solid rgba(22,35,74,.28);color:#16234A}
+#lock .key:active{background:#EEF2F9}
+#lock .key.util{color:#C41E3A}
+/* veteran ribbon (home) */
+.vetribbon{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(180deg,#1E3A6E,#16234A);color:#FBF9F4;border-radius:14px;padding:12px 14px;margin:22px 0 6px;font-family:Georgia,serif;font-weight:700;font-size:12px;letter-spacing:1px;box-shadow:var(--shadow)}
+.vetribbon .flag{width:26px;height:16px;border:1px solid rgba(0,0,0,.3);border-radius:2px}
+.hidden{display:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (min-width:600px){.vgrid{grid-template-columns:1fr 1fr 1fr}}
 </style>
 </head>
 <body>
+<div class="previewtag">PATRIOTIC</div>
 
-<!-- ════════════════════════════════════
-     PIN SCREEN
-════════════════════════════════════ -->
-<div id="pinScreen">
-  <div class="pin-badge-wrap">
-    <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" width="220" height="220">
-      <circle cx="140" cy="140" r="136" fill="#ede8f5"/>
-      <circle cx="140" cy="140" r="136" fill="none" stroke="#1a1a1a" stroke-width="4"/>
-      <circle cx="140" cy="140" r="128" fill="none" stroke="#c9920a" stroke-width="3"/>
-      <circle cx="140" cy="140" r="121" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-      <!-- Left sprig -->
-      <path d="M 58,186 Q 64,162 61,136 Q 59,118 65,96" fill="none" stroke="#9b7eb8" stroke-width="2"/>
-      <ellipse cx="49" cy="172" rx="13" ry="6" fill="#c4aee0" opacity="0.9" transform="rotate(-35 49 172)"/>
-      <ellipse cx="44" cy="155" rx="12" ry="5" fill="#d4c2e8" opacity="0.85" transform="rotate(-48 44 155)"/>
-      <ellipse cx="47" cy="138" rx="13" ry="5" fill="#c4aee0" opacity="0.9" transform="rotate(-25 47 138)"/>
-      <ellipse cx="73" cy="168" rx="12" ry="5" fill="#b8c9a8" opacity="0.9" transform="rotate(22 73 168)"/>
-      <ellipse cx="75" cy="150" rx="11" ry="5" fill="#c8d5b9" opacity="0.85" transform="rotate(32 75 150)"/>
-      <circle cx="63" cy="102" r="8" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="1"/>
-      <circle cx="54" cy="112" r="5.5" fill="#f9c4d4" stroke="#1a1a1a" stroke-width="0.8"/>
-      <circle cx="72" cy="108" r="5" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="0.8"/>
-      <!-- Right sprig -->
-      <path d="M 222,186 Q 216,162 219,136 Q 221,118 215,96" fill="none" stroke="#9b7eb8" stroke-width="2"/>
-      <ellipse cx="231" cy="172" rx="13" ry="6" fill="#c4aee0" opacity="0.9" transform="rotate(35 231 172)"/>
-      <ellipse cx="236" cy="155" rx="12" ry="5" fill="#d4c2e8" opacity="0.85" transform="rotate(48 236 155)"/>
-      <ellipse cx="233" cy="138" rx="13" ry="5" fill="#c4aee0" opacity="0.9" transform="rotate(25 233 138)"/>
-      <ellipse cx="207" cy="168" rx="12" ry="5" fill="#b8c9a8" opacity="0.9" transform="rotate(-22 207 168)"/>
-      <ellipse cx="205" cy="150" rx="11" ry="5" fill="#c8d5b9" opacity="0.85" transform="rotate(-32 205 150)"/>
-      <circle cx="217" cy="102" r="8" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="1"/>
-      <circle cx="226" cy="112" r="5.5" fill="#f9c4d4" stroke="#1a1a1a" stroke-width="0.8"/>
-      <circle cx="208" cy="108" r="5" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="0.8"/>
-      <!-- Lock coin -->
-      <circle cx="140" cy="84" r="28" fill="#fdf5e4" stroke="#1a1a1a" stroke-width="2.5"/>
-      <circle cx="140" cy="84" r="22" fill="none" stroke="#c9920a" stroke-width="2"/>
-      <text x="140" y="92" text-anchor="middle" font-size="20" fill="#1a1a1a">🔐</text>
-      <!-- Text -->
-      <text x="140" y="150" text-anchor="middle" font-size="30" font-weight="900" fill="#1a1a1a" font-family="Georgia,serif">Finance</text>
-      <text x="140" y="182" text-anchor="middle" font-size="30" font-weight="900" fill="#c9920a" font-family="Georgia,serif">Vault</text>
-      <text x="92" y="206" text-anchor="middle" font-size="14" fill="#c9920a">★</text>
-      <text x="140" y="208" text-anchor="middle" font-size="14" fill="#c9920a">★</text>
-      <text x="188" y="206" text-anchor="middle" font-size="14" fill="#c9920a">★</text>
+<!-- ══════════════════ LOCK SCREEN (Patriotic) ══════════════════ -->
+<div id="lock">
+  <div class="emblem">
+    <div class="crest">
+      <svg class="flag flag-lg" viewBox="0 0 24 14"><rect width="24" height="14" fill="#B22234"/><rect y="1.08" width="24" height="1.08" fill="#fff"/><rect y="3.23" width="24" height="1.08" fill="#fff"/><rect y="5.38" width="24" height="1.08" fill="#fff"/><rect y="7.54" width="24" height="1.08" fill="#fff"/><rect y="9.69" width="24" height="1.08" fill="#fff"/><rect y="11.85" width="24" height="1.08" fill="#fff"/><rect width="10" height="7.54" fill="#3C3B6E"/></svg>
+
+      <svg class="vaultdoor" viewBox="0 0 120 120" aria-hidden="true">
+        <defs>
+          <radialGradient id="steel" cx="38%" cy="34%" r="72%">
+            <stop offset="0%" stop-color="#fcfcfc"/><stop offset="34%" stop-color="#dcdcdc"/>
+            <stop offset="68%" stop-color="#ababab"/><stop offset="100%" stop-color="#6f6f6f"/>
+          </radialGradient>
+          <radialGradient id="hub" cx="40%" cy="34%" r="70%">
+            <stop offset="0%" stop-color="#eaeaea"/><stop offset="55%" stop-color="#b0b0b0"/><stop offset="100%" stop-color="#7a7a7a"/>
+          </radialGradient>
+        </defs>
+        <circle cx="60" cy="60" r="57" fill="#3a3a3a"/>
+        <circle cx="60" cy="60" r="54" fill="url(#steel)"/>
+        <circle cx="60" cy="60" r="46" fill="none" stroke="#8f8f8f" stroke-width="2"/>
+        <g fill="#7d7d7d"><circle cx="110" cy="60" r="3.4"/><circle cx="95" cy="95" r="3.4"/><circle cx="60" cy="110" r="3.4"/><circle cx="25" cy="95" r="3.4"/><circle cx="10" cy="60" r="3.4"/><circle cx="25" cy="25" r="3.4"/><circle cx="60" cy="10" r="3.4"/><circle cx="95" cy="25" r="3.4"/></g>
+        <circle cx="60" cy="60" r="31" fill="url(#steel)" stroke="#8a8a8a" stroke-width="2"/>
+        <g stroke="#606060" stroke-width="6" stroke-linecap="round">
+          <line x1="34" y1="60" x2="86" y2="60"/><line x1="47" y1="37.5" x2="73" y2="82.5"/><line x1="73" y1="37.5" x2="47" y2="82.5"/>
+        </g>
+        <circle cx="60" cy="60" r="14" fill="url(#hub)" stroke="#6f6f6f" stroke-width="1.5"/>
+        <text x="60" y="65" text-anchor="middle" font-family="Georgia,serif" font-size="12" font-weight="700" fill="#2b3a63">K&amp;S</text>
+      </svg>
+
+      <svg class="flag flag-lg" viewBox="0 0 24 14"><rect width="24" height="14" fill="#B22234"/><rect y="1.08" width="24" height="1.08" fill="#fff"/><rect y="3.23" width="24" height="1.08" fill="#fff"/><rect y="5.38" width="24" height="1.08" fill="#fff"/><rect y="7.54" width="24" height="1.08" fill="#fff"/><rect y="9.69" width="24" height="1.08" fill="#fff"/><rect y="11.85" width="24" height="1.08" fill="#fff"/><rect width="10" height="7.54" fill="#3C3B6E"/></svg>
+    </div>
+
+    <div class="wordmark serif"><span class="fin">Finance</span><span class="vault">Vault</span></div>
+    <div class="startag">Bills <span>★</span> Budget <span>★</span> Vault</div>
+
+    <svg class="starwings" viewBox="0 0 340 54" aria-hidden="true">
+      <g fill="none" stroke-linecap="round">
+        <path d="M14 30 Q 90 20 148 26" stroke="#C41E3A" stroke-width="3.2"/>
+        <path d="M22 40 Q 96 32 148 36" stroke="#16234A" stroke-width="3.2"/>
+        <path d="M326 30 Q 250 20 192 26" stroke="#C41E3A" stroke-width="3.2"/>
+        <path d="M318 40 Q 244 32 192 36" stroke="#16234A" stroke-width="3.2"/>
+      </g>
+      <polygon points="170,10 174.4,24.1 189.1,24.1 177.2,32.9 181.7,47 170,38.3 158.3,47 162.8,32.9 150.9,24.1 165.6,24.1" fill="#16234A" stroke="#b9c2d6" stroke-width="1.5"/>
     </svg>
   </div>
-  <div class="pin-title-wrap">
-    <div class="pin-title-main">Kat & Steve's</div>
-    <div class="pin-title-sub">Family FinanceVault</div>
-    <div class="pin-title-stars">★ &nbsp; Private & Secure &nbsp; ★</div>
-  </div>
-  <div class="pin-prompt">Enter your PIN</div>
-  <div class="pin-dots" id="pinDots">
-    <div class="pin-dot" id="pd0"></div>
-    <div class="pin-dot" id="pd1"></div>
-    <div class="pin-dot" id="pd2"></div>
-    <div class="pin-dot" id="pd3"></div>
-  </div>
-  <div class="pin-pad" id="pinPad">
-    <button class="pin-key" data-n="1">1</button>
-    <button class="pin-key" data-n="2">2</button>
-    <button class="pin-key" data-n="3">3</button>
-    <button class="pin-key" data-n="4">4</button>
-    <button class="pin-key" data-n="5">5</button>
-    <button class="pin-key" data-n="6">6</button>
-    <button class="pin-key" data-n="7">7</button>
-    <button class="pin-key" data-n="8">8</button>
-    <button class="pin-key" data-n="9">9</button>
-    <button class="pin-key pin-zero" data-n="0">0</button>
-    <button class="pin-key pin-del" id="pinDelBtn">⌫</button>
-  </div>
-  <div class="pin-err" id="pinErr"></div>
-  <button class="pin-switch" id="pinSwitchBtn">Use email & password instead</button>
+  <div class="famline">Kat &amp; Steve's Family Vault</div>
+  <div class="prompt">Enter your PIN</div>
+  <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+  <div class="pad" id="pad"></div>
 </div>
 
-<!-- ════════════════════════════════════
-     AUTH SCREEN
-════════════════════════════════════ -->
-<div id="authScreen">
-  <div class="auth-badge-wrap">
-    <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" width="180" height="180">
-      <circle cx="140" cy="140" r="136" fill="#ede8f5"/>
-      <circle cx="140" cy="140" r="136" fill="none" stroke="#1a1a1a" stroke-width="4"/>
-      <circle cx="140" cy="140" r="128" fill="none" stroke="#c9920a" stroke-width="3"/>
-      <circle cx="140" cy="140" r="121" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-      <path d="M 58,186 Q 64,162 61,136 Q 59,118 65,96" fill="none" stroke="#9b7eb8" stroke-width="2"/>
-      <ellipse cx="49" cy="172" rx="13" ry="6" fill="#c4aee0" opacity="0.9" transform="rotate(-35 49 172)"/>
-      <ellipse cx="44" cy="155" rx="12" ry="5" fill="#d4c2e8" opacity="0.85" transform="rotate(-48 44 155)"/>
-      <ellipse cx="73" cy="168" rx="12" ry="5" fill="#b8c9a8" opacity="0.9" transform="rotate(22 73 168)"/>
-      <circle cx="63" cy="102" r="8" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="1"/>
-      <path d="M 222,186 Q 216,162 219,136 Q 221,118 215,96" fill="none" stroke="#9b7eb8" stroke-width="2"/>
-      <ellipse cx="231" cy="172" rx="13" ry="6" fill="#c4aee0" opacity="0.9" transform="rotate(35 231 172)"/>
-      <ellipse cx="236" cy="155" rx="12" ry="5" fill="#d4c2e8" opacity="0.85" transform="rotate(48 236 155)"/>
-      <ellipse cx="207" cy="168" rx="12" ry="5" fill="#b8c9a8" opacity="0.9" transform="rotate(-22 207 168)"/>
-      <circle cx="217" cy="102" r="8" fill="#f4a7c0" stroke="#1a1a1a" stroke-width="1"/>
-      <circle cx="140" cy="84" r="28" fill="#fdf5e4" stroke="#1a1a1a" stroke-width="2.5"/>
-      <circle cx="140" cy="84" r="22" fill="none" stroke="#c9920a" stroke-width="2"/>
-      <text x="140" y="92" text-anchor="middle" font-size="20" fill="#1a1a1a">🔐</text>
-      <text x="140" y="150" text-anchor="middle" font-size="30" font-weight="900" fill="#1a1a1a" font-family="Georgia,serif">Finance</text>
-      <text x="140" y="182" text-anchor="middle" font-size="30" font-weight="900" fill="#c9920a" font-family="Georgia,serif">Vault</text>
-      <text x="92" y="206" text-anchor="middle" font-size="14" fill="#c9920a">★</text>
-      <text x="140" y="208" text-anchor="middle" font-size="14" fill="#c9920a">★</text>
-      <text x="188" y="206" text-anchor="middle" font-size="14" fill="#c9920a">★</text>
-    </svg>
-  </div>
-  <div class="auth-title-wrap">
-    <div class="auth-title-main">Kat & Steve's</div>
-    <div class="auth-title-sub">Family FinanceVault</div>
-    <div class="auth-title-stars">★ &nbsp; Private & Secure &nbsp; ★</div>
-  </div>
-  <div class="auth-box">
-    <h3 id="authTitle">Sign In to Your Vault</h3>
-    <div class="auth-field">
-      <label>Email</label>
-      <input type="email" id="authEmail" placeholder="your@email.com" autocomplete="email"/>
-    </div>
-    <div class="auth-field">
-      <label>Password</label>
-      <input type="password" id="authPass" placeholder="••••••••" autocomplete="current-password"/>
-    </div>
-    <div class="auth-msg" id="authMsg"></div>
-    <button class="btn btn-blue" style="width:100%;justify-content:center" id="authBtn">Sign In</button>
-    <div class="auth-switch">
-      <span id="authSwitchTxt">Don't have an account?</span>
-      <button id="authSwitchBtn">Create Account</button>
-    </div>
-    <div style="margin-top:12px;padding-top:12px;border-top:2px solid #1a1a1a;font-size:12px;color:var(--muted);text-align:center;line-height:1.7;font-weight:700">
-      🔒 100% private — only Kat & Steve can access this vault.
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════
-     MAIN APP
-════════════════════════════════════ -->
+<!-- ══════════════════ APP ══════════════════ -->
 <div id="app">
-  <header>
-    <div class="logo">
-      <div class="logo-icon">🔐</div>
-      <span class="logo-text">Finance<em>Vault</em></span>
+  <div class="topbar">
+    <div class="tw serif">
+      <svg class="mini-vault" viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="#E9C46A" stroke-width="7"/><circle cx="50" cy="50" r="12" fill="#E9C46A"/><g stroke="#E9C46A" stroke-width="7" stroke-linecap="round"><line x1="50" y1="8" x2="50" y2="22"/><line x1="50" y1="78" x2="50" y2="92"/><line x1="8" y1="50" x2="22" y2="50"/><line x1="78" y1="50" x2="92" y2="50"/></g></svg>
+      Finance<span class="vault">Vault</span>
     </div>
-    <div class="hdr-search">
-      <span class="si">🔍</span>
-      <input id="gSearch" placeholder="Search everything…" oninput="onSearch()" autocomplete="off"/>
-    </div>
-    <div class="hdr-right">
-      <div class="user-pill">
-        <div class="sync-dot" id="syncDot"></div>
-        <span id="userLabel">…</span>
-      </div>
-      <button class="hdr-btn ghost" onclick="lockVault()">🔒 Lock</button>
-      <button class="hdr-btn" onclick="signOut()">🚪 Out</button>
-    </div>
-  </header>
-
-  <nav>
-    <button class="nav-btn active" id="nb-dash" onclick="switchTab('dash',this)">🏠 Home</button>
-    <button class="nav-btn" id="nb-scan" onclick="switchTab('scan',this)">📷 Scan</button>
-    <button class="nav-btn" id="nb-vault" onclick="switchTab('vault',this)">🗄️ Vault <span class="nav-badge" id="navCount">0</span></button>
-    <button class="nav-btn" id="nb-bills" onclick="switchTab('bills',this)">🔔 Bills</button>
-    <button class="nav-btn" id="nb-budget" onclick="switchTab('budget',this)">📋 Budget</button>
-    <button class="nav-btn" id="nb-debt" onclick="switchTab('debt',this)">💳 Debt</button>
-    <button class="nav-btn" id="nb-stats" onclick="switchTab('stats',this)">📊 Stats</button>
-    <button class="nav-btn" id="nb-tips" onclick="switchTab('tips',this)">💡 Tips</button>
-  </nav>
-
-  <main>
-
-    <!-- ════ DASHBOARD ════ -->
-    <div id="tab-dash" class="tab active">
-      <div id="alertsBox"></div>
-      <div class="kpi-grid" id="dashKPIs"></div>
-      <div class="sec-head">📅 Bills Due Soon</div>
-      <div id="dashBills"></div>
-      <div class="sec-head">📄 Recently Scanned</div>
-      <div id="dashRecent"></div>
-    </div>
-
-    <!-- ════ SCAN ════ -->
-    <div id="tab-scan" class="tab">
-      <div class="scan-hero">
-        <div class="scan-orb" id="scanOrb" onclick="triggerCamera()">📄</div>
-        <h2>Scan Any Document</h2>
-        <p>Take a photo of any bill, insurance card, receipt, or document. The app enhances the image, extracts all text, and automatically organizes everything for you — 100% free!</p>
-        <div class="scan-btns">
-          <button class="btn btn-gold" onclick="triggerCamera()">📷 Take Photo</button>
-          <button class="btn btn-ghost" onclick="triggerGallery()">🖼️ Choose Image</button>
-        </div>
-        <input type="file" id="fCam" accept="image/*" capture="environment" style="display:none"/>
-        <input type="file" id="fGal" accept="image/*" style="display:none"/>
-      </div>
-
-      <div class="msg" id="scanMsg"></div>
-
-      <div class="ai-status" id="aiStatus">
-        <div class="ai-status-top">
-          <div class="spin"></div>
-          <div class="ai-status-label" id="aiLabel">Enhancing & scanning document…</div>
-          <div class="ai-status-pct" id="aiPct"></div>
-        </div>
-        <div class="ai-prog"><div class="ai-prog-fill" id="aiFill" style="width:0%"></div></div>
-        <div class="ai-step" id="aiStep">Claude AI is reading your document</div>
-      </div>
-
-      <div class="panel" id="previewPanel">
-        <div class="panel-lbl">Document Preview</div>
-        <img class="preview-img" id="previewImg" src="" alt=""/>
-      </div>
-
-      <div class="panel" id="ocrPanel">
-        <div class="panel-hdr">
-          <h3>📝 Extracted Text</h3>
-          <button class="btn btn-ghost btn-sm" onclick="copyOcr()">📋 Copy</button>
-        </div>
-        <div class="ocr-box" id="ocrBox"></div>
-        <div class="ai-chips" id="aiChips"></div>
-      </div>
-
-      <div class="save-panel" id="savePanel">
-        <h3>💾 Auto-Organized — Review & Save</h3>
-        <div class="fgrid">
-          <div class="field" style="grid-column:1/-1">
-            <label>Document Name *</label>
-            <input id="fName" placeholder="e.g. NV Energy Bill – July 2025"/>
-          </div>
-          <div class="field">
-            <label>Category (Auto-Set)</label>
-            <select id="fCat">
-              <option value="bill">📄 Bill</option>
-              <option value="ins">🛡️ Insurance</option>
-              <option value="receipt">🧾 Receipt</option>
-              <option value="bank">🏦 Bank Statement</option>
-              <option value="medical">🏥 Medical</option>
-              <option value="tax">📋 Tax Document</option>
-              <option value="warranty">🔧 Warranty</option>
-              <option value="debt">💳 Debt/Loan</option>
-              <option value="other">📁 Other</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Amount (Auto-Detected)</label>
-            <input id="fAmt" type="number" step="0.01" placeholder="0.00"/>
-          </div>
-          <div class="field">
-            <label>Due Date (Auto-Found)</label>
-            <input id="fDue" type="date"/>
-          </div>
-          <div class="field">
-            <label>Vendor / Company</label>
-            <input id="fVendor" placeholder="e.g. NV Energy"/>
-          </div>
-          <div class="field">
-            <label>Add to Budget Category</label>
-            <select id="fBudgetCat">
-              <option value="">— Don't add to budget —</option>
-            </select>
-          </div>
-          <div class="field" style="grid-column:1/-1">
-            <label>Notes</label>
-            <textarea id="fNotes" placeholder="Any extra details…"></textarea>
-          </div>
-        </div>
-        <div class="factions">
-          <button class="btn btn-green" onclick="saveDoc()">✅ Save & Sync</button>
-          <button class="btn btn-ghost" onclick="clearScan()">🗑 Clear</button>
-          <span style="font-size:12px;color:var(--muted);font-weight:700">Syncs to both phones instantly</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ════ VAULT ════ -->
-    <div id="tab-vault" class="tab">
-      <div class="vault-bar">
-        <select id="vCat" onchange="renderVault()">
-          <option value="">All Categories</option>
-          <option value="bill">Bills</option>
-          <option value="ins">Insurance</option>
-          <option value="receipt">Receipts</option>
-          <option value="bank">Bank Statements</option>
-          <option value="medical">Medical</option>
-          <option value="tax">Tax Documents</option>
-          <option value="warranty">Warranties</option>
-          <option value="debt">Debt/Loans</option>
-          <option value="other">Other</option>
-        </select>
-        <select id="vSort" onchange="renderVault()">
-          <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
-          <option value="name">Name A–Z</option>
-          <option value="amount">Highest Amount</option>
-          <option value="due">Due Date</option>
-        </select>
-        <div class="spacer"></div>
-        <div class="view-grp">
-          <button class="vbtn on" id="vg" onclick="setView('grid',this)">⊞</button>
-          <button class="vbtn" id="vl" onclick="setView('list',this)">☰</button>
-        </div>
-      </div>
-      <div id="vaultContent"></div>
-    </div>
-
-    <!-- ════ BILLS ════ -->
-    <div id="tab-bills" class="tab">
-      <div class="card">
-        <div class="card-title">➕ Add a Bill</div>
-        <div class="fgrid">
-          <div class="field">
-            <label>Bill Name</label>
-            <input id="bl_name" placeholder="e.g. Electric Bill"/>
-          </div>
-          <div class="field">
-            <label>Amount ($)</label>
-            <input id="bl_amt" type="number" placeholder="0.00"/>
-          </div>
-          <div class="field">
-            <label>Due Day (1–31)</label>
-            <input id="bl_day" type="number" min="1" max="31" placeholder="15"/>
-          </div>
-          <div class="field">
-            <label>Category</label>
-            <select id="bl_cat">
-              <option>Utilities</option>
-              <option>Insurance</option>
-              <option>Subscription</option>
-              <option>Rent/Mortgage</option>
-              <option>Medical</option>
-              <option>Loan</option>
-              <option>Phone</option>
-              <option>Internet</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Auto-Pay?</label>
-            <select id="bl_auto">
-              <option value="no">No – Manual</option>
-              <option value="yes">Yes – Auto-Pay</option>
-            </select>
-          </div>
-        </div>
-        <div class="factions">
-          <button class="btn btn-gold" onclick="addBill()">+ Add Bill</button>
-        </div>
-      </div>
-      <div class="sec-head">🔴 Overdue</div>
-      <div id="billsOverdue"></div>
-      <div class="sec-head">🟡 Due Soon (Next 7 Days)</div>
-      <div id="billsSoon"></div>
-      <div class="sec-head">📋 All Bills</div>
-      <div id="billsAll"></div>
-    </div>
-
-    <!-- ════ BUDGET ════ -->
-    <div id="tab-budget" class="tab">
-      <div class="card">
-        <div class="card-title">➕ Add Budget Category</div>
-        <div class="fgrid">
-          <div class="field">
-            <label>Category Name</label>
-            <input id="bc_name" placeholder="e.g. Groceries"/>
-          </div>
-          <div class="field">
-            <label>Icon</label>
-            <input id="bc_icon" placeholder="🛒" maxlength="2"/>
-          </div>
-          <div class="field">
-            <label>Monthly Budget ($)</label>
-            <input id="bc_budget" type="number" placeholder="500"/>
-          </div>
-        </div>
-        <div class="factions">
-          <button class="btn btn-gold" onclick="addBudgetCat()">+ Add Category</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">💸 Log an Expense</div>
-        <div class="fgrid">
-          <div class="field">
-            <label>Description</label>
-            <input id="be_desc" placeholder="e.g. Walmart groceries"/>
-          </div>
-          <div class="field">
-            <label>Amount ($)</label>
-            <input id="be_amt" type="number" placeholder="0.00"/>
-          </div>
-          <div class="field">
-            <label>Category</label>
-            <select id="be_cat"></select>
-          </div>
-          <div class="field">
-            <label>Date</label>
-            <input id="be_date" type="date"/>
-          </div>
-        </div>
-        <div class="factions">
-          <button class="btn btn-green" onclick="addExpense()">+ Log Expense</button>
-        </div>
-      </div>
-
-      <div class="sec-head">📊 This Month's Budget</div>
-      <div id="budgetList"></div>
-      <div class="sec-head">💸 Recent Expenses</div>
-      <div id="expenseList"></div>
-    </div>
-
-    <!-- ════ DEBT ════ -->
-    <div id="tab-debt" class="tab">
-      <div class="card">
-        <div class="card-title">➕ Add Debt Account</div>
-        <div class="fgrid">
-          <div class="field">
-            <label>Account Name</label>
-            <input id="d_name" placeholder="e.g. Chase Visa"/>
-          </div>
-          <div class="field">
-            <label>Type</label>
-            <select id="d_type">
-              <option>Credit Card</option>
-              <option>Auto Loan</option>
-              <option>Personal Loan</option>
-              <option>Medical</option>
-              <option>Mortgage</option>
-              <option>Student Loan</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Current Balance ($)</label>
-            <input id="d_bal" type="number" placeholder="0.00"/>
-          </div>
-          <div class="field">
-            <label>Interest Rate (%)</label>
-            <input id="d_rate" type="number" placeholder="19.99"/>
-          </div>
-          <div class="field">
-            <label>Min Payment ($)</label>
-            <input id="d_min" type="number" placeholder="0.00"/>
-          </div>
-        </div>
-        <div class="factions">
-          <button class="btn btn-gold" onclick="addDebt()">+ Add Debt</button>
-        </div>
-      </div>
-      <div class="sec-head">💳 Debt Accounts (Highest Rate First)</div>
-      <div id="debtList"></div>
-      <div id="paymentFormWrap" style="display:none">
-        <div class="sec-head">💰 Log a Payment</div>
-        <div class="card">
-          <div class="fgrid">
-            <div class="field">
-              <label>Account</label>
-              <select id="p_debt"></select>
-            </div>
-            <div class="field">
-              <label>Payment ($)</label>
-              <input id="p_amt" type="number" placeholder="0.00"/>
-            </div>
-            <div class="field">
-              <label>Date</label>
-              <input id="p_date" type="date"/>
-            </div>
-          </div>
-          <div class="factions">
-            <button class="btn btn-green" onclick="logPayment()">✅ Log Payment</button>
-            <button class="btn btn-ghost" onclick="document.getElementById('paymentFormWrap').style.display='none'">Cancel</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ════ STATS ════ -->
-    <div id="tab-stats" class="tab">
-      <div class="stats-kpi" id="statsKPI"></div>
-      <div class="sec-head">Documents by Category</div>
-      <div id="statsCats"></div>
-      <div class="sec-head">Monthly Activity</div>
-      <div id="statsMonths"></div>
-    </div>
-
-    <!-- ════ TIPS ════ -->
-    <div id="tab-tips" class="tab">
-      <div class="sec-head">📷 Scanning Tips for Best Results</div>
-      <div class="tips-grid">
-        <div class="tip"><div class="tip-icon">☀️</div><h4>Good Lighting</h4><p>Scan near a bright window. Avoid shadows across the text.</p></div>
-        <div class="tip"><div class="tip-icon">📐</div><h4>Lay It Flat</h4><p>Place document flat on a surface. Curved paper reduces accuracy.</p></div>
-        <div class="tip"><div class="tip-icon">🔍</div><h4>Fill the Frame</h4><p>Get the document to fill most of your camera view.</p></div>
-        <div class="tip"><div class="tip-icon">🚫</div><h4>Avoid Glare</h4><p>Tilt slightly to avoid shiny reflections on glossy paper.</p></div>
-        <div class="tip"><div class="tip-icon">🤖</div><h4>Claude AI Reads It</h4><p>Claude AI extracts text, category, amount and due date automatically — much more accurate than standard OCR.</p></div>
-        <div class="tip"><div class="tip-icon">🔄</div><h4>Retry if Needed</h4><p>Not happy with results? Clear and try again with better lighting.</p></div>
-      </div>
-      <div class="sec-head">🔒 Privacy & Sync</div>
-      <div class="tip" style="max-width:100%">
-        <div class="tip-icon">🔐</div>
-        <h4 style="margin-bottom:8px">100% Private — Real-Time Sync Between Both Phones</h4>
-        <p>All documents are stored in Kat & Steve's private Supabase database. Nobody else can see your vault. When either of you scans a document it appears on the other phone within seconds. The PIN 2580 gets you in instantly after the first login.</p>
-      </div>
-      <div class="sec-head">📱 Add to Home Screen</div>
-      <div class="tips-grid">
-        <div class="tip"><div class="tip-icon">🤖</div><h4>Android</h4><p>Open in Chrome → tap ⋮ → "Add to Home screen"</p></div>
-        <div class="tip"><div class="tip-icon">🍎</div><h4>iPhone</h4><p>Open in Safari → tap Share ↑ → "Add to Home Screen"</p></div>
-      </div>
-    </div>
-
-  </main>
-</div>
-
-<!-- DOCUMENT MODAL -->
-<div class="overlay" id="docOverlay" onclick="overlayClick(event)">
-  <div class="modal">
-    <div class="modal-head">
-      <div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:800" id="modalCat"></div>
-        <h3 id="modalTitle"></h3>
-      </div>
-      <button class="icon-btn" onclick="closeModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="modal-meta" id="modalMeta"></div>
-      <div class="modal-text" id="modalText"></div>
-      <div class="modal-notes" id="modalNotes"></div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost btn-sm" onclick="copyModal()">📋 Copy</button>
-      <button class="btn btn-ghost btn-sm" onclick="editDocName()">✏️ Rename</button>
-      <div style="flex:1"></div>
-      <button class="btn btn-red btn-sm" id="modalDel">🗑 Delete</button>
-      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Close</button>
+    <div class="right">
+      <div class="month" id="topMonth">—</div>
     </div>
   </div>
+
+  <!-- HOME -->
+  <section class="view show" id="v-home"></section>
+  <!-- BILLS -->
+  <section class="view" id="v-bills"></section>
+  <!-- SCAN -->
+  <section class="view" id="v-scan"></section>
+  <!-- MONEY -->
+  <section class="view" id="v-money"></section>
+  <!-- VAULT -->
+  <section class="view" id="v-vault"></section>
 </div>
 
+<!-- BOTTOM NAV -->
+<nav class="nav" id="nav" style="display:none">
+  <button data-view="home" class="on">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+    <span class="l">Home</span>
+  </button>
+  <button data-view="bills">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z"/><path d="M9 8h6M9 12h6"/></svg>
+    <span class="l">Bills</span>
+  </button>
+  <button data-view="scan" class="scanbtn">
+    <span class="ring"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#20180a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3.2"/></svg></span>
+    <span class="l">Scan</span>
+  </button>
+  <button data-view="money">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+    <span class="l">Money</span>
+  </button>
+  <button data-view="vault">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="12" r="3.4"/><path d="M12 4v2M12 18v2"/></svg>
+    <span class="l">Vault</span>
+  </button>
+</nav>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal"><div class="sheet" id="sheet"></div></div>
 <div id="toast"></div>
 
+<!-- hidden file input for scanning -->
+<input type="file" id="fileInput" accept="image/*" capture="environment" class="hidden"/>
+
 <script>
-'use strict';
-/* ══════════════════════════════════════
-   SUPABASE
-══════════════════════════════════════ */
-const SB_URL = 'https://qfzbcidtsfjweyziowcq.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmemJjaWR0c2Zqd2V5emlvd2NxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5ODkxMDEsImV4cCI6MjA5NzU2NTEwMX0.Kwrt9R1qfJ9-GtJl5WP4IVcO7V7sImr_hjRsD6kA5qo';
-const sb = supabase.createClient(SB_URL, SB_KEY);
-
-/* ══════════════════════════════════════
-   IMAGE PREPROCESSING FOR BEST OCR
-══════════════════════════════════════ */
-function preprocessImage(file) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-
-      // Scale up to at least 2400px wide for better OCR
-      const TARGET = 2400;
-      const scale = img.width < TARGET ? TARGET / img.width : 1.5;
-      canvas.width  = img.width  * scale;
-      canvas.height = img.height * scale;
-
-      // Draw scaled image
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      // Get pixel data
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
-
-      // Step 1: Convert to grayscale
-      for(let i = 0; i < data.length; i += 4) {
-        const gray = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
-        data[i] = data[i+1] = data[i+2] = gray;
-      }
-
-      // Step 2: Boost contrast using levels adjustment
-      const contrast = 1.6;
-      const brightness = 10;
-      for(let i = 0; i < data.length; i += 4) {
-        let val = data[i];
-        val = ((val / 255 - 0.5) * contrast + 0.5) * 255 + brightness;
-        val = Math.max(0, Math.min(255, val));
-        data[i] = data[i+1] = data[i+2] = val;
-      }
-
-      // Step 3: Sharpen using convolution kernel
-      ctx.putImageData(imageData, 0, 0);
-      const sharpened = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const src = new Uint8ClampedArray(imageData.data);
-      const dst = sharpened.data;
-      const w = canvas.width;
-      const kernel = [0,-1,0,-1,5,-1,0,-1,0]; // sharpen kernel
-
-      for(let y = 1; y < canvas.height - 1; y++) {
-        for(let x = 1; x < w - 1; x++) {
-          const idx = (y * w + x) * 4;
-          let r = 0;
-          for(let ky = -1; ky <= 1; ky++) {
-            for(let kx = -1; kx <= 1; kx++) {
-              const kidx = ((y+ky) * w + (x+kx)) * 4;
-              r += src[kidx] * kernel[(ky+1)*3+(kx+1)];
-            }
-          }
-          r = Math.max(0, Math.min(255, r));
-          dst[idx] = dst[idx+1] = dst[idx+2] = r;
-          dst[idx+3] = 255;
-        }
-      }
-      ctx.putImageData(sharpened, 0, 0);
-
-      // Step 4: Adaptive threshold — makes text crisp black on white
-      const final = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const fd = final.data;
-      const blockSize = 25;
-      const threshold = 12;
-
-      for(let y = 0; y < canvas.height; y++) {
-        for(let x = 0; x < w; x++) {
-          const idx = (y * w + x) * 4;
-          // Calculate local mean
-          let sum = 0, count = 0;
-          for(let by = Math.max(0,y-blockSize); by < Math.min(canvas.height,y+blockSize); by += 3) {
-            for(let bx = Math.max(0,x-blockSize); bx < Math.min(w,x+blockSize); bx += 3) {
-              sum += dst[(by*w+bx)*4];
-              count++;
-            }
-          }
-          const mean = sum / count;
-          const val = dst[idx] < mean - threshold ? 0 : 255;
-          fd[idx] = fd[idx+1] = fd[idx+2] = val;
-          fd[idx+3] = 255;
-        }
-      }
-      ctx.putImageData(final, 0, 0);
-      URL.revokeObjectURL(url);
-      resolve(canvas);
-    };
-    img.src = url;
-  });
-}
-
-/* ══════════════════════════════════════
-   TESSERACT OCR — FULLY OPTIMIZED
-══════════════════════════════════════ */
-async function analyzeWithTesseract(file, onProgress) {
-  onProgress(5, 'Preprocessing image for best quality…');
-
-  // Preprocess image
-  const canvas = await preprocessImage(file);
-
-  onProgress(20, 'Image enhanced — starting text recognition…');
-
-  // Run Tesseract with best settings
-  const result = await Tesseract.recognize(canvas, 'eng', {
-    logger: m => {
-      if(m.status === 'loading tesseract core')       onProgress(25, 'Loading OCR engine…');
-      if(m.status === 'initializing tesseract')       onProgress(35, 'Initializing…');
-      if(m.status === 'loading language traineddata') onProgress(45, 'Loading language data…');
-      if(m.status === 'initializing api')             onProgress(55, 'Almost ready…');
-      if(m.status === 'recognizing text'){
-        const p = 55 + Math.round(m.progress * 40);
-        onProgress(p, `Reading text… ${p}%`);
-      }
-    },
-    tessedit_pageseg_mode: Tesseract.PSM.AUTO,
-    tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,!?@#$%&*()-/:;\'"',
-    preserve_interword_spaces: '1',
-  });
-
-  const text = result.data.text.trim();
-
-  // ── SMART AMOUNT DETECTION ──
-  // Find all dollar amounts, pick the largest "due" or "total" amount
-  const amtPatterns = [
-    /(?:amount\s+due|total\s+due|balance\s+due|please\s+pay|total\s+amount)[:\s]*\$?\s*(\d{1,6}[,.]\d{2})/gi,
-    /(?:total|amount|due|balance)[:\s]*\$?\s*(\d{1,6}[,.]\d{2})/gi,
-    /\$\s*(\d{1,6}[,.]\d{2})/g,
-    /(\d{1,6}[,.]\d{2})/g,
-  ];
-  let amount = null;
-  for(const pat of amtPatterns){
-    const matches = [...text.matchAll(pat)];
-    if(matches.length){
-      const vals = matches.map(m => parseFloat(m[1].replace(',','.'))).filter(n=>n>0&&n<99999);
-      if(vals.length){ amount = Math.max(...vals); break; }
-    }
-  }
-
-  // ── SMART DATE DETECTION ──
-  let due_date = null;
-  const datePatterns = [
-    /(?:due\s+date|payment\s+due|due\s+by|pay\s+by|pay\s+on\s+or\s+before)[:\s]*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/gi,
-    /(?:due\s+date|payment\s+due)[:\s]*([A-Za-z]+ \d{1,2},?\s*\d{4})/gi,
-    /(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4})/g,
-    /([A-Za-z]+ \d{1,2},?\s*\d{4})/g,
-  ];
-  for(const pat of datePatterns){
-    const matches = [...text.matchAll(pat)];
-    for(const m of matches){
-      try{
-        const d = new Date(m[1]);
-        if(!isNaN(d) && d.getFullYear() >= new Date().getFullYear()){
-          due_date = d.toISOString().split('T')[0];
-          break;
-        }
-      }catch{}
-    }
-    if(due_date) break;
-  }
-
-  // ── SMART CATEGORY DETECTION ──
-  const lower = text.toLowerCase();
-  let category = 'other';
-  const catRules = [
-    {cat:'bill',    words:['electric','energy','nv energy','gas','water','utility','utilities','power','sewage','trash','garbage','internet','cable','phone','at&t','verizon','t-mobile','amount due','total due','pay by']},
-    {cat:'ins',     words:['insurance','policy','premium','coverage','deductible','claim','beneficiary','insured','policyholder','allstate','geico','state farm','progressive','aetna','humana','blue cross']},
-    {cat:'medical', words:['medical','doctor','hospital','clinic','pharmacy','prescription','diagnosis','patient','physician','dental','vision','health','medicare','medicaid','copay','co-pay']},
-    {cat:'bank',    words:['bank','statement','account','deposit','withdrawal','checking','savings','chase','wells fargo','bank of america','citibank','routing','transaction history']},
-    {cat:'tax',     words:['tax','irs','w-2','w2','1099','refund','federal','state tax','form','schedule','turbotax','taxable']},
-    {cat:'warranty',words:['warranty','guarantee','product registration','serial number','model number','limited warranty','proof of purchase']},
-    {cat:'debt',    words:['loan','mortgage','credit card','minimum payment','apr','interest rate','credit score','statement balance','revolving']},
-    {cat:'receipt', words:['receipt','thank you for your purchase','order confirmation','subtotal','cashier','register','walmart','target','costco','amazon','store']},
-  ];
-  for(const rule of catRules){
-    if(rule.words.some(w => lower.includes(w))){ category = rule.cat; break; }
-  }
-
-  // ── VENDOR DETECTION ──
-  // Try to find company name from first few meaningful lines
-  const lines = text.split('\n').map(l=>l.trim()).filter(l=>l.length>2&&l.length<60&&!/^\d+$/.test(l));
-  const vendor = lines[0] || '';
-
-  // ── AUTO NAME ──
-  const catLabels = {bill:'Bill',ins:'Insurance',receipt:'Receipt',bank:'Bank Statement',medical:'Medical',tax:'Tax Document',warranty:'Warranty',debt:'Debt/Loan',other:'Document'};
-  const monthYear = new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'});
-  const name = vendor ? `${vendor} — ${monthYear}` : `${catLabels[category]} — ${monthYear}`;
-
-  const is_overdue = due_date ? new Date(due_date) < new Date() : false;
-
-  return { text, name, category, amount, due_date, vendor, is_overdue, notes: '' };
-}
-
-/* ══════════════════════════════════════
-   STATE
-══════════════════════════════════════ */
-const VAULT_PIN    = '2580';
-const PIN_USER_KEY = 'fv5_pin_user';
-const STORE_BILLS  = 'fv5_bills';
-const STORE_BCATS  = 'fv5_budgetcats';
-const STORE_BEXPS  = 'fv5_expenses';
-const STORE_DEBTS  = 'fv5_debts';
-const STORE_PAYMENTS = 'fv5_payments';
-
-let docs        = [];
-let bills       = JSON.parse(localStorage.getItem(STORE_BILLS)||'[]');
-let budgetCats  = JSON.parse(localStorage.getItem(STORE_BCATS)||'[]');
-let expenses    = JSON.parse(localStorage.getItem(STORE_BEXPS)||'[]');
-let debts       = JSON.parse(localStorage.getItem(STORE_DEBTS)||'[]');
-let payments    = JSON.parse(localStorage.getItem(STORE_PAYMENTS)||'[]');
-let currentUser = null;
-let ocrText     = '';
-let viewMode    = 'grid';
-let searchQ     = '';
-let openId      = null;
-let pinBuffer   = '';
-let authMode    = 'signin';
-
-/* ══════════════════════════════════════
-   CATEGORY CONFIG
-══════════════════════════════════════ */
-const CAT = {
-  bill:    {label:'Bill',      icon:'📄', color:var_('--red'),    bg:'var(--red2)'},
-  ins:     {label:'Insurance', icon:'🛡️', color:'#2563eb',        bg:'var(--blue2)'},
-  receipt: {label:'Receipt',   icon:'🧾', color:'var(--green)',   bg:'var(--green2)'},
-  bank:    {label:'Bank Stmt', icon:'🏦', color:'#d97706',        bg:'var(--gold3)'},
-  medical: {label:'Medical',   icon:'🏥', color:'var(--purple)',  bg:'var(--purple2)'},
-  tax:     {label:'Tax Doc',   icon:'📋', color:'var(--orange)',  bg:'var(--orange2)'},
-  warranty:{label:'Warranty',  icon:'🔧', color:'var(--teal)',    bg:'var(--teal2)'},
-  debt:    {label:'Debt/Loan', icon:'💳', color:'#db2777',        bg:'#fce7f3'},
-  other:   {label:'Other',     icon:'📁', color:'#6b7280',        bg:'#f3f4f6'},
+/* ══════════════════════════════════════════════════════════════════
+   CONFIG  —  edit these two lines to turn on 2-phone sync
+══════════════════════════════════════════════════════════════════ */
+const CONFIG = {
+  PIN: '2580',
+  SCAN_ENDPOINT: '/api/scan',   // Vercel serverless function (keeps API key server-side)
+  SUPABASE_URL: '',             // paste https://xxxx.supabase.co  to sync Kat & Steve's phones
+  SUPABASE_ANON_KEY: '',        // paste the anon public key
+  HOUSEHOLD: 'kat-steve'        // shared key so both phones see the same vault
 };
-const BDGE = {bill:'b-bill',ins:'b-ins',receipt:'b-receipt',bank:'b-bank',medical:'b-medical',tax:'b-tax',warranty:'b-warranty',debt:'b-debt',other:'b-other'};
-const CAT_COLORS = {bill:'#dc2626',ins:'#2563eb',receipt:'#15803d',bank:'#d97706',medical:'#7c3aed',tax:'#ea580c',warranty:'#0d9488',debt:'#db2777',other:'#6b7280'};
 
-function var_(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+/* ══════════════ STATE ══════════════ */
+let state = { docs:[], expenses:[], budgets:[], debts:[] };
+let pinBuf = '';
+let scanImage = null;   // {data, media, preview}
+let moneyTab = 'budget';
+let sb = null;          // supabase client if configured
 
-/* ══════════════════════════════════════
-   PIN SYSTEM
-══════════════════════════════════════ */
-function initPinPad(){
-  document.querySelectorAll('.pin-key[data-n]').forEach(btn=>{
-    btn.addEventListener('click', ()=>pinPress(btn.getAttribute('data-n')));
-    btn.addEventListener('touchend', e=>{ e.preventDefault(); pinPress(btn.getAttribute('data-n')); });
+const CATS = ['Housing','Utilities','Insurance','Auto','Medical','Groceries','Dining','Phone/Internet','Subscriptions','Credit Card','Loan','Taxes','Childcare','Pets','Entertainment','Shopping','Home','Travel','Banking','Income','Savings','Personal','Other'];
+const CAT_ICON = {Housing:'🏠',Utilities:'💡',Insurance:'🛡️',Auto:'🚗',Medical:'⚕️',Groceries:'🛒',Dining:'🍽️','Phone/Internet':'📶',Subscriptions:'🔁','Credit Card':'💳',Loan:'🏦',Taxes:'🧾',Childcare:'🧸',Pets:'🐾',Entertainment:'🎬',Shopping:'🛍️',Home:'🔧',Travel:'✈️',Banking:'🏦',Income:'💰',Savings:'🐷',Personal:'👤',Other:'📄'};
+const TYPES = ['bill','receipt','insurance','medical','tax','banking','investment','legal','property','vehicle','warranty','id','statement','other'];
+const TYPE_ICON = {bill:'🔔',receipt:'🧾',insurance:'🛡️',medical:'⚕️',tax:'🗂️',banking:'🏦',investment:'📈',legal:'⚖️',property:'🏠',vehicle:'🚗',warranty:'📃',id:'🪪',statement:'📊',other:'📄'};
+
+/* ══════════════ STORAGE (local-first) ══════════════ */
+const LS = 'financevault_v6';
+function save(){ try{ localStorage.setItem(LS, JSON.stringify(state)); }catch(e){} }
+function load(){
+  try{ const r = localStorage.getItem(LS); if(r) state = Object.assign(state, JSON.parse(r)); }catch(e){}
+}
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+
+/* ══════════════ DATE HELPERS ══════════════ */
+function today(){ const d=new Date(); d.setHours(0,0,0,0); return d; }
+function parseD(iso){ if(!iso) return null; const d=new Date(iso+'T00:00:00'); return isNaN(d)?null:d; }
+function fmtD(iso){ const d=parseD(iso); if(!d) return '—'; return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function daysUntil(iso){ const d=parseD(iso); if(!d) return null; return Math.round((d-today())/86400000); }
+function money(n){ return Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function money0(n){ return Math.round(Number(n||0)).toLocaleString('en-US'); }
+function curMonthLabel(){ return new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'}); }
+function inCurMonth(iso){ const d=parseD(iso); if(!d) return false; const n=new Date(); return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear(); }
+
+/* ══════════════ DERIVED ══════════════ */
+function bills(){ return state.docs.filter(d=>d.type==='bill'); }
+function overdue(){ return bills().filter(b=>!b.paid && daysUntil(b.dueDate)!==null && daysUntil(b.dueDate)<0); }
+function dueSoon(){ return bills().filter(b=>!b.paid && daysUntil(b.dueDate)!==null && daysUntil(b.dueDate)>=0 && daysUntil(b.dueDate)<=7); }
+function monthBills(){ return bills().filter(b=>inCurMonth(b.dueDate)); }
+function sum(a,k){ return a.reduce((t,x)=>t+Number(x[k]||0),0); }
+
+/* ══════════════ LOCK SCREEN ══════════════ */
+function buildPad(){
+  const pad = document.getElementById('pad');
+  const keys = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
+  pad.innerHTML='';
+  keys.forEach(k=>{
+    const b=document.createElement('button');
+    if(k===''){ b.className='key blank'; }
+    else if(k==='⌫'){ b.className='key util'; b.textContent='⌫'; b.onclick=()=>{ pinBuf=pinBuf.slice(0,-1); renderDots(); }; }
+    else { b.className='key'; b.textContent=k; b.onclick=()=>pressPin(k); }
+    pad.appendChild(b);
   });
-  document.getElementById('pinDelBtn').addEventListener('click', pinDel);
-  document.getElementById('pinDelBtn').addEventListener('touchend', e=>{ e.preventDefault(); pinDel(); });
-  document.getElementById('pinSwitchBtn').addEventListener('click', showEmailLogin);
-  document.addEventListener('keydown', e=>{
-    if(document.getElementById('pinScreen').style.display!=='none'){
-      if(e.key>='0'&&e.key<='9') pinPress(e.key);
-      if(e.key==='Backspace') pinDel();
-    }
-    if(e.key==='Escape') closeModal();
-  });
 }
-
-function pinPress(n){
-  if(pinBuffer.length>=4) return;
-  pinBuffer+=n;
-  updatePinDots();
-  if(pinBuffer.length===4) setTimeout(checkPin,120);
+function pressPin(k){
+  if(pinBuf.length>=4) return;
+  pinBuf+=k; renderDots();
+  if(pinBuf.length===4) setTimeout(checkPin,120);
 }
-function pinDel(){
-  pinBuffer=pinBuffer.slice(0,-1);
-  document.getElementById('pinErr').textContent='';
-  updatePinDots();
-}
-function updatePinDots(){
-  for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.toggle('filled',i<pinBuffer.length);
+function renderDots(){
+  document.querySelectorAll('#lock .dot').forEach((d,i)=>d.classList.toggle('on', i<pinBuf.length));
 }
 function checkPin(){
-  if(pinBuffer===VAULT_PIN){
-    const saved=JSON.parse(localStorage.getItem(PIN_USER_KEY)||'null');
-    if(saved){
-      currentUser=saved;
-      document.getElementById('pinScreen').style.display='none';
-      launchApp();
-    } else { showEmailLogin(); }
+  if(pinBuf===CONFIG.PIN){
+    sessionStorage.setItem('fv_unlocked','1');
+    unlock();
   } else {
-    document.getElementById('pinErr').textContent='❌ Incorrect PIN — try again';
-    document.querySelectorAll('.pin-dot').forEach(d=>{ d.style.background='#dc2626'; d.style.borderColor='#dc2626'; });
-    setTimeout(()=>{
-      pinBuffer=''; updatePinDots();
-      document.querySelectorAll('.pin-dot').forEach(d=>{ d.style.background=''; d.style.borderColor=''; });
-      document.getElementById('pinErr').textContent='';
-    },800);
+    const lock=document.getElementById('lock');
+    lock.classList.add('err');
+    setTimeout(()=>{ lock.classList.remove('err'); pinBuf=''; renderDots(); },420);
   }
 }
-function showPinScreen(){
-  document.getElementById('authScreen').style.display='none';
-  document.getElementById('pinScreen').style.display='flex';
-  pinBuffer=''; updatePinDots();
-  document.getElementById('pinErr').textContent='';
-}
-function showEmailLogin(){
-  document.getElementById('pinScreen').style.display='none';
-  document.getElementById('authScreen').style.display='flex';
-}
-function lockVault(){
-  document.getElementById('app').classList.remove('show');
-  const saved=JSON.parse(localStorage.getItem(PIN_USER_KEY)||'null');
-  saved ? showPinScreen() : showEmailLogin();
-}
-
-/* ══════════════════════════════════════
-   AUTH
-══════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', ()=>{
-  initPinPad();
-  document.getElementById('authBtn').addEventListener('click', doAuth);
-  document.getElementById('authPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doAuth(); });
-  document.getElementById('authEmail').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('authPass').focus(); });
-  document.getElementById('authSwitchBtn').addEventListener('click', ()=>{
-    authMode = authMode==='signin'?'signup':'signin';
-    document.getElementById('authTitle').textContent    = authMode==='signin'?'Sign In to Your Vault':'Create Your Account';
-    document.getElementById('authBtn').textContent      = authMode==='signin'?'Sign In':'Create Account';
-    document.getElementById('authSwitchTxt').textContent= authMode==='signin'?"Don't have an account?":'Already have an account?';
-    document.getElementById('authSwitchBtn').textContent= authMode==='signin'?'Create Account':'Sign In';
-    setAuthMsg('','');
-  });
-  document.getElementById('fCam').addEventListener('change', function(){ startScan(this); });
-  document.getElementById('fGal').addEventListener('change', function(){ startScan(this); });
-  document.getElementById('be_date').value = new Date().toISOString().split('T')[0];
-  document.getElementById('p_date').value  = new Date().toISOString().split('T')[0];
-  checkSession();
-});
-
-async function checkSession(){
-  const saved=JSON.parse(localStorage.getItem(PIN_USER_KEY)||'null');
-  const {data} = await sb.auth.getSession();
-  if(data.session){ currentUser=data.session.user; saved?showPinScreen():launchApp(); }
-  else if(saved){ showPinScreen(); }
-}
-
-async function doAuth(){
-  const email=document.getElementById('authEmail').value.trim();
-  const pass =document.getElementById('authPass').value;
-  if(!email||!pass){ setAuthMsg('Please enter email and password','err'); return; }
-  const btn=document.getElementById('authBtn');
-  btn.textContent=authMode==='signin'?'Signing in…':'Creating…';
-  btn.disabled=true;
-  try{
-    const res=authMode==='signin'
-      ? await sb.auth.signInWithPassword({email,password:pass})
-      : await sb.auth.signUp({email,password:pass});
-    if(res.error) throw res.error;
-    if(authMode==='signup'&&!res.data.session){ setAuthMsg('✅ Check email to confirm, then sign in.','ok'); }
-    else { currentUser=res.data.user||res.data.session?.user; launchApp(); }
-  }catch(e){ setAuthMsg(e.message||'Something went wrong','err'); }
-  finally{ btn.textContent=authMode==='signin'?'Sign In':'Create Account'; btn.disabled=false; }
-}
-function setAuthMsg(msg,type){
-  const el=document.getElementById('authMsg');
-  el.textContent=msg; el.className='auth-msg'+(type?' '+type:'');
-}
-async function signOut(){
-  await sb.auth.signOut();
-  localStorage.removeItem(PIN_USER_KEY);
-  currentUser=null; docs=[];
-  document.getElementById('app').classList.remove('show');
-  document.getElementById('authScreen').style.display='flex';
-  document.getElementById('authPass').value='';
-  setAuthMsg('','');
-}
-function launchApp(){
-  document.getElementById('pinScreen').style.display='none';
-  document.getElementById('authScreen').style.display='none';
+function unlock(){
+  document.getElementById('lock').style.display='none';
   document.getElementById('app').classList.add('show');
-  localStorage.setItem(PIN_USER_KEY,JSON.stringify(currentUser));
-  document.getElementById('userLabel').textContent=(currentUser?.email||'').split('@')[0];
-  populateBudgetDropdowns();
-  populateDebtDropdown();
-  loadDocs();
-  setupRealtime();
-}
-
-/* ══════════════════════════════════════
-   SUPABASE DOCS
-══════════════════════════════════════ */
-async function loadDocs(){
-  setSyncDot('syncing');
-  const {data,error}=await sb.from('vault_docs').select('*').order('id',{ascending:false});
-  if(error){ console.error(error); setSyncDot('err'); return; }
-  docs=data||[];
-  setSyncDot('ok');
-  updateCounts();
+  document.getElementById('nav').style.display='flex';
+  document.getElementById('topMonth').textContent=curMonthLabel();
   renderAll();
 }
-async function saveDocToSb(doc){
-  setSyncDot('syncing');
-  const {error}=await sb.from('vault_docs').insert([doc]);
-  if(error){ setSyncDot('err'); toast('Sync error: '+error.message,'err'); return false; }
-  setSyncDot('ok'); return true;
+
+/* ══════════════ NAV ══════════════ */
+function go(view){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('show'));
+  document.getElementById('v-'+view).classList.add('show');
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on', b.dataset.view===view));
+  window.scrollTo(0,0);
+  render(view);
 }
-async function deleteDocFromSb(id){
-  setSyncDot('syncing');
-  const {error}=await sb.from('vault_docs').delete().eq('id',id);
-  if(error){ setSyncDot('err'); return false; }
-  setSyncDot('ok'); return true;
-}
-async function renameDocInSb(id,name){
-  await sb.from('vault_docs').update({name}).eq('id',id);
-}
-function setupRealtime(){
-  sb.channel('vault_docs_v5')
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'vault_docs'},p=>{
-      if(!docs.find(d=>d.id===p.new.id)){ docs.unshift(p.new); updateCounts(); renderAll(); toast('📄 New doc synced!'); }
-    })
-    .on('postgres_changes',{event:'DELETE',schema:'public',table:'vault_docs'},p=>{
-      docs=docs.filter(d=>d.id!==p.old.id); updateCounts(); renderAll();
-    })
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'vault_docs'},p=>{
-      const i=docs.findIndex(d=>d.id===p.new.id);
-      if(i>-1){ docs[i]=p.new; renderAll(); }
-    })
-    .subscribe();
-}
-function setSyncDot(s){
-  const d=document.getElementById('syncDot');
-  d.className='sync-dot'+(s==='syncing'?' syncing':s==='err'?' err':'');
+document.getElementById('nav').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(b) go(b.dataset.view);
+});
+
+/* ══════════════ RENDER DISPATCH ══════════════ */
+function renderAll(){ ['home','bills','scan','money','vault'].forEach(render); }
+function render(view){
+  if(view==='home') renderHome();
+  if(view==='bills') renderBills();
+  if(view==='scan') renderScan();
+  if(view==='money') renderMoney();
+  if(view==='vault') renderVault();
 }
 
-/* ══════════════════════════════════════
-   TAB SWITCHING
-══════════════════════════════════════ */
-function switchTab(id,btn){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  btn.classList.add('active');
-  if(id==='vault') renderVault();
-  if(id==='stats') renderStats();
-  if(id==='bills') renderBills();
-  if(id==='budget') renderBudget();
-  if(id==='debt') renderDebt();
-  if(id==='dash') renderDash();
-}
-function switchTabById(id){
-  const map={dash:0,scan:1,vault:2,bills:3,budget:4,debt:5,stats:6,tips:7};
-  const btns=document.querySelectorAll('.nav-btn');
-  switchTab(id,btns[map[id]]);
-}
+/* ══════════════ HOME ══════════════ */
+function renderHome(){
+  const mb=monthBills();
+  const paid=sum(mb.filter(b=>b.paid),'amount');
+  const owed=sum(mb.filter(b=>!b.paid),'amount');
+  const total=paid+owed;
+  const pct=total>0?Math.round(paid/total*100):0;
+  const ov=overdue();
+  const soon=dueSoon();
+  const debtTotal=sum(state.debts,'balance');
+  const nextBill=bills().filter(b=>!b.paid&&daysUntil(b.dueDate)!==null).sort((a,b)=>daysUntil(a.dueDate)-daysUntil(b.dueDate))[0];
 
-/* ══════════════════════════════════════
-   SEARCH
-══════════════════════════════════════ */
-function onSearch(){
-  searchQ=document.getElementById('gSearch').value.trim().toLowerCase();
-  if(document.getElementById('tab-vault').classList.contains('active')) renderVault();
-}
-function hl(s,q){
-  if(!q) return esc(s);
-  const safe=esc(s);
-  const re=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');
-  return safe.replace(re,m=>`<mark>${m}</mark>`);
-}
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-/* ══════════════════════════════════════
-   COUNTS & RENDER ALL
-══════════════════════════════════════ */
-function updateCounts(){
-  document.getElementById('navCount').textContent=docs.length;
-}
-function renderAll(){
-  renderDash(); renderVault(); renderBills(); renderBudget(); renderDebt(); renderStats();
-}
-
-/* ══════════════════════════════════════
-   DASHBOARD
-══════════════════════════════════════ */
-function renderDash(){
-  const total=docs.length;
-  const totalAmt=docs.reduce((s,d)=>s+(Number(d.amt)||0),0);
-  const totalDebt=debts.reduce((s,d)=>s+(Number(d.balance)||0),0);
-  const totalBills=bills.reduce((s,b)=>s+(Number(b.amt)||0),0);
-  const overdueBills=bills.filter(b=>isDueStatus(b)==='overdue');
-  const cats={};
-  docs.forEach(d=>{ cats[d.cat]=(cats[d.cat]||0)+1; });
-
-  // Alerts
-  const alerts=[];
-  overdueBills.forEach(b=>alerts.push(`⚠️ ${b.name} is OVERDUE — $${fmt(b.amt)}`));
-  bills.filter(b=>isDueStatus(b)==='soon').forEach(b=>alerts.push(`🔔 ${b.name} due in ${daysUntilDue(b)} days — $${fmt(b.amt)}`));
-  document.getElementById('alertsBox').innerHTML = alerts.length ? `
-    <div class="alert-box">
-      <div class="alert-title">⚠️ Attention Needed</div>
-      ${alerts.map(a=>`<div class="alert-item">${a}</div>`).join('')}
-    </div>` : '';
-
-  document.getElementById('dashKPIs').innerHTML=`
-    <div class="kpi"><div class="kpi-icon">📄</div><div class="kpi-val" style="color:var(--blue)">${total}</div><div class="kpi-label">Documents</div><div class="kpi-sub">in vault</div></div>
-    <div class="kpi"><div class="kpi-icon">💰</div><div class="kpi-val" style="color:var(--gold)">$${fmt(totalAmt)}</div><div class="kpi-label">Tracked</div><div class="kpi-sub">total value</div></div>
-    <div class="kpi"><div class="kpi-icon">🔔</div><div class="kpi-val" style="color:${overdueBills.length?'var(--red)':'var(--green)'}">${bills.length}</div><div class="kpi-label">Bills</div><div class="kpi-sub">${overdueBills.length} overdue</div></div>
-    <div class="kpi"><div class="kpi-icon">💳</div><div class="kpi-val" style="color:var(--red)">$${fmt(totalDebt)}</div><div class="kpi-label">Total Debt</div><div class="kpi-sub">${debts.length} accounts</div></div>
-    <div class="kpi"><div class="kpi-icon">📋</div><div class="kpi-val" style="color:var(--purple)">$${fmt(totalBills)}</div><div class="kpi-label">Monthly Bills</div><div class="kpi-sub">recurring</div></div>
-  `;
-
-  // Bills due soon on dash
-  const soon=[...bills.filter(b=>isDueStatus(b)==='overdue'),...bills.filter(b=>isDueStatus(b)==='soon')].slice(0,4);
-  document.getElementById('dashBills').innerHTML=soon.length
-    ? soon.map(b=>billRow(b)).join('')
-    : `<div class="empty" style="padding:20px"><div class="empty-icon">✅</div><p>No bills overdue or due soon!</p></div>`;
-
-  const recent=docs.slice(0,4);
-  document.getElementById('dashRecent').innerHTML=recent.length
-    ? `<div class="doc-list">${recent.map(d=>docRow(d,'')).join('')}</div>`
-    : `<div class="empty" style="padding:24px"><div class="empty-icon">📷</div><p>Scan a document to get started!</p></div>`;
-}
-
-/* ══════════════════════════════════════
-   SCAN / CLAUDE AI
-══════════════════════════════════════ */
-function triggerCamera(){ document.getElementById('fCam').click(); }
-function triggerGallery(){ document.getElementById('fGal').click(); }
-
-async function startScan(input){
-  const file=input.files[0]; if(!file) return;
-  const url=URL.createObjectURL(file);
-  document.getElementById('previewImg').src=url;
-  showEl('previewPanel'); hideEl('ocrPanel'); hideEl('savePanel');
-  setMsg('','');
-  ocrText='';
-  const orb=document.getElementById('scanOrb');
-  orb.textContent='⏳'; orb.classList.add('active');
-  setAiStatus(true,'Scanning document…',5,'Loading OCR engine…');
-
-  try{
-    const result = await analyzeWithTesseract(file, (pct, step) => {
-      setAiStatus(true, `Scanning… ${pct}%`, pct, step);
-    });
-
-    setAiStatus(false,100,'','');
-
-    if(!result||!result.text||result.text.length<5){
-      setMsg('err','⚠️ Could not extract text. Try better lighting or a clearer photo.');
-      orb.textContent='📄'; orb.classList.remove('active'); return;
-    }
-
-    ocrText=result.text;
-
-    // Auto-fill fields
-    if(result.name)     document.getElementById('fName').value=result.name;
-    if(result.category) document.getElementById('fCat').value=result.category;
-    if(result.amount)   document.getElementById('fAmt').value=Number(result.amount).toFixed(2);
-    if(result.due_date) document.getElementById('fDue').value=result.due_date;
-    if(result.vendor)   document.getElementById('fVendor').value=result.vendor;
-
-    // Show chips
-    const chips=[];
-    if(result.category) chips.push({text:`📂 ${CAT[result.category]?.label||result.category}`,cls:'cat'});
-    if(result.amount)   chips.push({text:`💰 $${fmt(result.amount)}`,cls:''});
-    if(result.due_date) chips.push({text:`📅 Due ${fmtDate(result.due_date)}`,cls:'date'});
-    if(result.vendor)   chips.push({text:`🏢 ${result.vendor}`,cls:''});
-    if(result.is_overdue) chips.push({text:'⚠️ OVERDUE',cls:'flag'});
-    chips.push({text:`📝 ${ocrText.length.toLocaleString()} chars`,cls:''});
-    document.getElementById('aiChips').innerHTML=chips.map(c=>`<div class="ai-chip ${c.cls}">${c.text}</div>`).join('');
-
-    document.getElementById('ocrBox').textContent=ocrText;
-    showEl('ocrPanel'); showEl('savePanel');
-    setMsg('ok',`✅ Scan complete — ${ocrText.length.toLocaleString()} characters extracted & auto-organized!`);
-
-  }catch(e){
-    setMsg('err','❌ Scan failed. Try again with better lighting and hold the camera steady.');
-    console.error(e); setAiStatus(false,0,'','');
-  }finally{
-    orb.textContent='📄'; orb.classList.remove('active');
-    input.value='';
-  }
-}
-
-function setAiStatus(show,pct,label,step){
-  const el=document.getElementById('aiStatus');
-  show?el.classList.add('show'):el.classList.remove('show');
-  document.getElementById('aiFill').style.width=pct+'%';
-  if(label) document.getElementById('aiLabel').textContent=label;
-  if(step)  document.getElementById('aiStep').textContent=step;
-}
-function setMsg(type,text){
-  const el=document.getElementById('scanMsg');
-  el.className='msg'+(type?' show ':' ')+type;
-  el.textContent=text;
-}
-function copyOcr(){ navigator.clipboard?.writeText(ocrText).then(()=>toast('Copied!')); }
-function clearScan(){
-  ocrText='';
-  hideEl('previewPanel'); hideEl('ocrPanel'); hideEl('savePanel');
-  setMsg('',''); setAiStatus(false,0,'','');
-  ['fName','fAmt','fDue','fVendor','fNotes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('fCat').value='bill';
-  document.getElementById('aiChips').innerHTML='';
-}
-
-/* ══════════════════════════════════════
-   SAVE DOC
-══════════════════════════════════════ */
-async function saveDoc(){
-  const name=document.getElementById('fName').value.trim();
-  if(!name){ toast('Please enter a document name','err'); return; }
-  if(!ocrText){ toast('No scanned text to save','err'); return; }
-  if(!currentUser){ toast('Not signed in','err'); return; }
-
-  const doc={
-    id:         Date.now(),
-    user_email: currentUser.email,
-    name,
-    cat:    document.getElementById('fCat').value,
-    amt:    parseFloat(document.getElementById('fAmt').value)||null,
-    due:    document.getElementById('fDue').value||null,
-    vendor: document.getElementById('fVendor').value.trim(),
-    notes:  document.getElementById('fNotes').value.trim(),
-    text:   ocrText,
-    chars:  ocrText.length,
-    saved:  new Date().toISOString(),
-  };
-
-  // Auto-add to budget if category selected
-  const budgetCatName=document.getElementById('fBudgetCat').value;
-  if(budgetCatName && doc.amt){
-    expenses.push({id:Date.now()+1,desc:doc.name,amt:doc.amt,cat:budgetCatName,date:new Date().toISOString().split('T')[0]});
-    localStorage.setItem(STORE_BEXPS,JSON.stringify(expenses));
-    toast(`Added $${fmt(doc.amt)} to ${budgetCatName} budget`);
+  let h='';
+  if(ov.length){
+    h+=`<div class="alert"><div class="ic">!</div><div class="tx">${ov.length} ${ov.length>1?'bills are':'bill is'} <b>overdue</b> — $${money(sum(ov,'amount'))} past due. Tap Bills to pay.</div></div>`;
   }
 
-  // Auto-add bill if it's a bill with due date
-  if(doc.cat==='bill' && doc.due && doc.amt){
-    const dueDay=new Date(doc.due).getDate();
-    const exists=bills.find(b=>b.name===doc.name);
-    if(!exists){
-      bills.push({id:Date.now()+2,name:doc.vendor||doc.name,amt:doc.amt,day:dueDay,cat:'Utilities',auto:'no',paid:[]});
-      localStorage.setItem(STORE_BILLS,JSON.stringify(bills));
-      toast('📅 Bill auto-added to Bills tracker!');
-    }
-  }
-
-  const ok=await saveDocToSb(doc);
-  if(!ok) return;
-  docs.unshift(doc);
-  updateCounts(); clearScan(); renderAll();
-  toast('✅ Saved & synced to both phones!');
-  setTimeout(()=>switchTabById('vault'),700);
-}
-
-/* ══════════════════════════════════════
-   VAULT
-══════════════════════════════════════ */
-function filterDocs(){
-  const cat=document.getElementById('vCat')?.value||'';
-  const sort=document.getElementById('vSort')?.value||'newest';
-  let list=docs.filter(d=>{
-    const mc=!cat||d.cat===cat;
-    const mq=!searchQ||
-      (d.name||'').toLowerCase().includes(searchQ)||
-      (d.text||'').toLowerCase().includes(searchQ)||
-      (d.notes||'').toLowerCase().includes(searchQ)||
-      (d.vendor||'').toLowerCase().includes(searchQ)||
-      CAT[d.cat]?.label.toLowerCase().includes(searchQ);
-    return mc&&mq;
-  });
-  if(sort==='newest') list.sort((a,b)=>b.id-a.id);
-  if(sort==='oldest') list.sort((a,b)=>a.id-b.id);
-  if(sort==='name')   list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
-  if(sort==='amount') list.sort((a,b)=>(Number(b.amt)||0)-(Number(a.amt)||0));
-  if(sort==='due')    list.sort((a,b)=>{ if(!a.due) return 1; if(!b.due) return -1; return a.due.localeCompare(b.due); });
-  return list;
-}
-function renderVault(){
-  const list=filterDocs();
-  const el=document.getElementById('vaultContent');
-  if(!list.length){
-    el.innerHTML=`<div class="empty"><div class="empty-icon">${searchQ?'🔍':'🗄️'}</div><h3>${searchQ?'No results for "'+esc(searchQ)+'"':'Vault is empty'}</h3><p>${searchQ?'Try different terms.':'Scan a document to get started.'}</p></div>`;
-    return;
-  }
-  const q=searchQ;
-  el.innerHTML=viewMode==='grid'
-    ?`<div class="doc-grid">${list.map(d=>docCard(d,q)).join('')}</div>`
-    :`<div class="doc-list">${list.map(d=>docRow(d,q)).join('')}</div>`;
-}
-function docCard(d,q){
-  const c=CAT[d.cat]||CAT.other;
-  const overdue=d.due&&new Date(d.due)<new Date()&&d.cat==='bill';
-  return `<div class="doc-card" onclick="openDoc(${d.id})">
-    <div class="doc-thumb" style="background:${c.bg}">
-      <span style="font-size:46px">${c.icon}</span>
-      ${overdue?'<div class="doc-overdue">OVERDUE</div>':''}
+  h+=`<div class="statement">
+    <div class="lbl">Due in ${curMonthLabel().split(' ')[0]}</div>
+    <div class="big"><span class="c">$</span>${money0(owed)}<span style="font-size:20px;color:rgba(255,255,255,.5)"> still owed</span></div>
+    <div class="progline">
+      <div class="track"><div class="fill" style="width:${pct}%"></div></div>
+      <div class="cap"><span>$${money0(paid)} paid</span><span>${pct}% of $${money0(total)}</span></div>
     </div>
-    <div class="doc-body">
-      <div class="doc-name">${hl(d.name||'',q)}</div>
-      <div class="doc-date">${fmtDate(d.saved)}${d.vendor?' · '+esc(d.vendor):''}</div>
-    </div>
-    <div class="doc-foot">
-      <span class="badge ${BDGE[d.cat]||'b-other'}">${c.label}</span>
-      ${d.amt?`<span class="doc-amt">$${fmt(d.amt)}</span>`:''}
+    <div class="row">
+      <div class="chip paid"><div class="k">Paid</div><div class="val">$${money0(paid)}</div></div>
+      <div class="chip owed"><div class="k">Owed</div><div class="val">$${money0(owed)}</div></div>
+      <div class="chip"><div class="k">Bills</div><div class="val">${mb.length}</div></div>
     </div>
   </div>`;
-}
-function docRow(d,q){
-  const c=CAT[d.cat]||CAT.other;
-  const owner=d.user_email===currentUser?.email?'You':d.user_email?.split('@')[0]||'';
-  const overdue=d.due&&new Date(d.due)<new Date()&&d.cat==='bill';
-  return `<div class="doc-row" onclick="openDoc(${d.id})">
-    <div class="row-icon" style="background:${c.bg}">${c.icon}</div>
-    <div class="row-body">
-      <div class="row-name">${hl(d.name||'',q)}${overdue?' <span style="color:var(--red);font-size:11px;font-weight:900">OVERDUE</span>':''}</div>
-      <div class="row-meta">
-        <span>${fmtDate(d.saved)}</span>
-        <span class="badge ${BDGE[d.cat]||'b-other'}">${c.label}</span>
-        <span>👤 ${owner}</span>
-        ${d.due?`<span>📅 Due ${fmtDate(d.due)}</span>`:''}
-        ${d.vendor?`<span>🏢 ${esc(d.vendor)}</span>`:''}
-      </div>
-      <div class="row-preview">${hl((d.text||'').substring(0,140),q)}</div>
-    </div>
-    ${d.amt?`<div class="row-amt">$${fmt(d.amt)}</div>`:''}
-    <div class="row-actions" onclick="event.stopPropagation()">
-      <button class="icon-btn" onclick="deleteDoc(${d.id})">🗑</button>
-    </div>
+
+  h+=`<div class="kpis">
+    <div class="kpi"><div class="k">Documents</div><div class="val">${state.docs.length}</div></div>
+    <div class="kpi"><div class="k">Overdue</div><div class="val ${ov.length?'red':''}">${ov.length}</div></div>
+    <div class="kpi"><div class="k">Due this week</div><div class="val ${soon.length?'gold':''}">${soon.length}</div></div>
+    <div class="kpi"><div class="k">Total debt</div><div class="val ${debtTotal?'red':'green'}">$${money0(debtTotal)}</div></div>
   </div>`;
-}
-function setView(mode,btn){
-  viewMode=mode;
-  document.querySelectorAll('.vbtn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on'); renderVault();
+
+  if(nextBill){
+    const du=daysUntil(nextBill.dueDate);
+    h+=`<div class="eyebrow">Next up</div>
+      ${billRow(nextBill)}`;
+  }
+
+  h+=`<div class="btn-row"><button class="btn btn-gold" onclick="go('scan')">＋ Scan a bill</button><button class="btn btn-ghost" onclick="addBillForm()">Add manually</button></div>`;
+
+  const upcoming=bills().filter(b=>!b.paid&&daysUntil(b.dueDate)!==null&&daysUntil(b.dueDate)>=0).sort((a,b)=>daysUntil(a.dueDate)-daysUntil(b.dueDate)).slice(0,4);
+  if(upcoming.length){
+    h+=`<div class="eyebrow">Upcoming bills</div><div class="list">${upcoming.map(billRow).join('')}</div>`;
+  }
+
+  document.getElementById('v-home').innerHTML=h;
 }
 
-/* ══════════════════════════════════════
-   BILLS
-══════════════════════════════════════ */
-function addBill(){
-  const name=v('bl_name'),amt=Number(v('bl_amt')),day=Number(v('bl_day')),cat=v('bl_cat'),auto=v('bl_auto');
-  if(!name||!amt||!day){ toast('Fill in name, amount and due day','err'); return; }
-  bills.push({id:Date.now(),name,amt,day,cat,auto,paid:[]});
-  localStorage.setItem(STORE_BILLS,JSON.stringify(bills));
-  clr('bl_name','bl_amt','bl_day');
-  renderBills(); renderDash(); toast('Bill added!');
-}
-function deleteBill(id){
-  bills=bills.filter(b=>b.id!==id);
-  localStorage.setItem(STORE_BILLS,JSON.stringify(bills));
-  renderBills(); renderDash(); toast('Bill deleted.');
-}
-function markBillPaid(id){
-  const b=bills.find(b=>b.id===id); if(!b) return;
-  const key=`${new Date().getFullYear()}-${new Date().getMonth()}`;
-  if(!b.paid) b.paid=[];
-  b.paid.includes(key)?b.paid=b.paid.filter(k=>k!==key):b.paid.push(key);
-  localStorage.setItem(STORE_BILLS,JSON.stringify(bills));
-  renderBills(); renderDash(); toast(b.paid.includes(key)?'Marked paid! ✅':'Marked unpaid');
-}
-function isDueStatus(b){
-  const today=new Date();
-  const dueDate=new Date(today.getFullYear(),today.getMonth(),b.day);
-  const key=`${today.getFullYear()}-${today.getMonth()}`;
-  if(b.paid&&b.paid.includes(key)) return 'paid';
-  const diff=Math.round((dueDate-today)/86400000);
-  if(diff<0) return 'overdue';
-  if(diff<=7) return 'soon';
-  return 'upcoming';
-}
-function daysUntilDue(b){
-  const today=new Date();
-  const dueDate=new Date(today.getFullYear(),today.getMonth(),b.day);
-  return Math.round((dueDate-today)/86400000);
+/* ══════════════ BILLS ══════════════ */
+function renderBills(){
+  const ov=overdue(), soon=dueSoon();
+  const rest=bills().filter(b=>!ov.includes(b)&&!soon.includes(b));
+  const unpaid=bills().filter(b=>!b.paid);
+  let h=`<div class="view-title serif">Bills</div><div class="view-sub">${bills().length} tracked · $${money(sum(unpaid,'amount'))} still owed</div>`;
+
+  if(unpaid.length>1){
+    h+=`<div class="statement" style="padding:16px 18px"><div class="lbl">Pay everything owed</div><div class="big" style="font-size:34px"><span class="c">$</span>${money0(sum(unpaid,'amount'))}</div><button class="btn btn-gold" style="margin-top:12px" onclick="payAll()">Mark all ${unpaid.length} as paid</button></div>`;
+  }
+
+  if(!bills().length){
+    h+=emptyState('🔔','No bills yet.<br>Scan one and it files itself.');
+  }
+  if(ov.length){ h+=`<div class="eyebrow" style="color:var(--red)">Overdue · ${ov.length}</div><div class="list">${ov.map(billRow).join('')}</div>`; }
+  if(soon.length){ h+=`<div class="eyebrow">Due this week · ${soon.length}</div><div class="list">${soon.map(billRow).join('')}</div>`; }
+  if(rest.length){ h+=`<div class="eyebrow">All bills</div><div class="list">${rest.map(billRow).join('')}</div>`; }
+
+  h+=`<div class="btn-row"><button class="btn btn-ghost" onclick="addBillForm()">＋ Add a bill manually</button></div>`;
+  document.getElementById('v-bills').innerHTML=h;
 }
 function billRow(b){
-  const status=isDueStatus(b);
-  const today=new Date();
-  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][today.getMonth()];
-  let statusBadge='';
-  if(status==='overdue') statusBadge='<span class="badge b-bill">OVERDUE</span>';
-  else if(status==='soon') statusBadge=`<span class="badge" style="background:var(--orange2);color:var(--orange);border-color:var(--orange)">Due in ${daysUntilDue(b)}d</span>`;
-  else if(status==='paid') statusBadge='<span class="badge b-receipt">PAID</span>';
-  return `<div class="bill-item ${status==='overdue'?'overdue':status==='soon'?'due-soon':status==='paid'?'paid':''}">
-    <div class="bill-due-box">
-      <div class="bill-due-day">${b.day}</div>
-      <div class="bill-due-mo">${mo}</div>
-    </div>
-    <div class="bill-info">
-      <div class="bill-name">${esc(b.name)} ${b.auto==='yes'?'<span style="font-size:11px;color:var(--muted)">(Auto)</span>':''}</div>
-      <div class="bill-meta"><span>${esc(b.cat)}</span>${statusBadge}</div>
-    </div>
-    <div class="bill-amt">$${fmt(b.amt)}</div>
-    <div class="bill-actions">
-      <button class="icon-btn" onclick="markBillPaid(${b.id})" title="${status==='paid'?'Mark Unpaid':'Mark Paid'}">${status==='paid'?'↩':'✔'}</button>
-      <button class="icon-btn" onclick="deleteBill(${b.id})">🗑</button>
-    </div>
-  </div>`;
+  const du=daysUntil(b.dueDate);
+  let pill='';
+  if(b.paid) pill=`<span class="pill paid">Paid</span>`;
+  else if(du!==null&&du<0) pill=`<span class="pill over">${Math.abs(du)}d late</span>`;
+  else if(du!==null&&du<=7) pill=`<span class="pill soon">${du===0?'Today':du+'d'}</span>`;
+  const auto=b.autopay?`<span class="pill auto">Auto</span>`:'';
+  return `<button class="item" onclick="openDoc('${b.id}')">
+    <div class="ic">${CAT_ICON[b.category]||'🔔'}</div>
+    <div class="mid"><div class="nm">${esc(b.vendor||b.name)}</div>
+    <div class="meta">${fmtD(b.dueDate)} ${pill} ${auto}</div></div>
+    <div class="amt" style="color:${b.paid?'var(--green)':(du!==null&&du<0?'var(--red)':'var(--ink-0)')}">$${money(b.amount)}</div>
+  </button>`;
 }
-function renderBills(){
-  const sorted=[...bills].sort((a,b)=>a.day-b.day);
-  const overdue=sorted.filter(b=>isDueStatus(b)==='overdue');
-  const soon=sorted.filter(b=>isDueStatus(b)==='soon');
-  const all=sorted;
-  document.getElementById('billsOverdue').innerHTML=overdue.length?overdue.map(billRow).join(''):'<p style="color:var(--muted);font-size:13px;padding:8px 0;font-weight:700">No overdue bills 🎉</p>';
-  document.getElementById('billsSoon').innerHTML=soon.length?soon.map(billRow).join(''):'<p style="color:var(--muted);font-size:13px;padding:8px 0;font-weight:700">No bills due in the next 7 days</p>';
-  document.getElementById('billsAll').innerHTML=all.length?all.map(billRow).join(''):'<div class="empty" style="padding:30px"><div class="empty-icon">🔔</div><p>No bills added yet.</p></div>';
-}
+function payAll(){ bills().forEach(b=>b.paid=true); save(); syncPush(); renderAll(); toast('All bills marked paid ✓'); }
 
-/* ══════════════════════════════════════
-   BUDGET
-══════════════════════════════════════ */
-function addBudgetCat(){
-  const name=v('bc_name'),icon=v('bc_icon')||'💰',budget=Number(v('bc_budget'));
-  if(!name||!budget){ toast('Fill in name and budget amount','err'); return; }
-  budgetCats.push({id:Date.now(),name,icon,budget});
-  localStorage.setItem(STORE_BCATS,JSON.stringify(budgetCats));
-  clr('bc_name','bc_icon','bc_budget');
-  populateBudgetDropdowns(); renderBudget(); toast('Category added!');
+/* ══════════════ SCAN ══════════════ */
+function renderScan(){
+  const v=document.getElementById('v-scan');
+  v.innerHTML=`<div class="view-title serif">Scan</div><div class="view-sub">Point at any bill, receipt, or card — Claude reads it and files it for you.</div>
+    <div class="scan-hero">
+      <div class="cam"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#20180a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3.4"/></svg></div>
+      <h3 class="serif">Snap or upload</h3>
+      <p>Take a clear, flat photo in good light. Fill the frame with the document.</p>
+      <button class="btn btn-gold" onclick="document.getElementById('fileInput').click()">Open camera / photos</button>
+      <div class="scan-steps"><span>Reads the amount</span><span>Finds the due date</span><span>Sets the category</span><span>Files it</span></div>
+    </div>
+    <div class="btn-row"><button class="btn btn-ghost" onclick="addBillForm()">Type it in instead</button></div>`;
 }
-function deleteBudgetCat(id){
-  budgetCats=budgetCats.filter(c=>c.id!==id);
-  localStorage.setItem(STORE_BCATS,JSON.stringify(budgetCats));
-  populateBudgetDropdowns(); renderBudget();
-}
-function addExpense(){
-  const desc=v('be_desc'),amt=Number(v('be_amt')),cat=v('be_cat'),date=v('be_date');
-  if(!desc||!amt||!date){ toast('Fill in all expense fields','err'); return; }
-  expenses.push({id:Date.now(),desc,amt,cat,date});
-  localStorage.setItem(STORE_BEXPS,JSON.stringify(expenses));
-  clr('be_desc','be_amt'); renderBudget(); toast('Expense logged!');
-}
-function deleteExpense(id){
-  expenses=expenses.filter(e=>e.id!==id);
-  localStorage.setItem(STORE_BEXPS,JSON.stringify(expenses));
-  renderBudget();
-}
-function populateBudgetDropdowns(){
-  ['be_cat','fBudgetCat'].forEach(id=>{
-    const s=document.getElementById(id); if(!s) return;
-    const cur=s.value;
-    if(id==='fBudgetCat') s.innerHTML='<option value="">— Don\'t add to budget —</option>';
-    else s.innerHTML='';
-    budgetCats.forEach(c=>{ const o=document.createElement('option'); o.value=c.name; o.text=`${c.icon} ${c.name}`; s.appendChild(o); });
-    if(cur) s.value=cur;
+document.getElementById('fileInput').addEventListener('change',handleFile);
+function handleFile(e){
+  const f=e.target.files[0]; if(!f) return;
+  e.target.value='';
+  // Downscale + compress in the browser BEFORE upload: keeps payload well under
+  // Vercel's 4.5MB body limit, speeds up scans, and lowers per-scan cost.
+  downscale(f).then(img=>{ scanImage=img; runScan(); }).catch(()=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{ scanImage={data:ev.target.result.split(',')[1],media:f.type||'image/jpeg',preview:ev.target.result}; runScan(); };
+    reader.readAsDataURL(f);
   });
 }
-function getMonthExpenses(){
-  const now=new Date();
-  return expenses.filter(e=>{ const d=new Date(e.date); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear(); });
-}
-function renderBudget(){
-  const me=getMonthExpenses();
-  const catSpend={};
-  me.forEach(e=>{ catSpend[e.cat]=(catSpend[e.cat]||0)+Number(e.amt); });
-  let html='';
-  budgetCats.forEach(c=>{
-    const spent=catSpend[c.name]||0;
-    const pct=Math.min(100,(spent/c.budget)*100);
-    const color=pct>=100?'var(--red)':pct>=80?'var(--orange)':'var(--green)';
-    html+=`<div class="budget-row">
-      <div class="budget-row-top">
-        <div class="budget-cat">${c.icon} ${c.name}</div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <div class="budget-amts">$${fmt(spent)} / $${fmt(c.budget)}</div>
-          <span class="budget-pct" style="color:${color}">${pct.toFixed(0)}%</span>
-          <button class="icon-btn" onclick="deleteBudgetCat(${c.id})">🗑</button>
-        </div>
-      </div>
-      <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${color}"></div></div>
-    </div>`;
+function downscale(file,max=1600,quality=0.82){
+  return new Promise((res,rej)=>{
+    const url=URL.createObjectURL(file);
+    const img=new Image();
+    img.onload=()=>{
+      let w=img.naturalWidth||img.width, h=img.naturalHeight||img.height;
+      if(w>max||h>max){ if(w>=h){ h=Math.round(h*max/w); w=max; } else { w=Math.round(w*max/h); h=max; } }
+      const c=document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);
+      try{ const d=c.toDataURL('image/jpeg',quality); res({data:d.split(',')[1],media:'image/jpeg',preview:d}); }
+      catch(err){ rej(err); }
+    };
+    img.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error('load')); };
+    img.src=url;
   });
-  document.getElementById('budgetList').innerHTML=html||'<div class="empty" style="padding:24px"><div class="empty-icon">📋</div><p>No budget categories yet. Add one above!</p></div>';
-  const sorted=[...me].sort((a,b)=>new Date(b.date)-new Date(a.date));
-  document.getElementById('expenseList').innerHTML=sorted.length
-    ?sorted.slice(0,20).map(e=>`
-      <div class="doc-row">
-        <div class="row-icon" style="background:var(--gold3)">💸</div>
-        <div class="row-body">
-          <div class="row-name">${esc(e.desc)}</div>
-          <div class="row-meta"><span>${e.cat}</span><span>${fmtDate(e.date)}</span></div>
-        </div>
-        <div class="row-amt">$${fmt(e.amt)}</div>
-        <div class="row-actions"><button class="icon-btn" onclick="deleteExpense(${e.id})">🗑</button></div>
-      </div>`).join('')
-    :'<div class="empty" style="padding:24px"><div class="empty-icon">💸</div><p>No expenses logged this month.</p></div>';
 }
-
-/* ══════════════════════════════════════
-   DEBT
-══════════════════════════════════════ */
-function addDebt(){
-  const name=v('d_name'),type=v('d_type'),balance=Number(v('d_bal')),rate=Number(v('d_rate')),min=Number(v('d_min'));
-  if(!name||!balance){ toast('Fill in name and balance','err'); return; }
-  debts.push({id:Date.now(),name,type,balance,originalBalance:balance,rate,min});
-  localStorage.setItem(STORE_DEBTS,JSON.stringify(debts));
-  clr('d_name','d_bal','d_rate','d_min'); populateDebtDropdown(); renderDebt(); toast('Debt account added!');
-}
-function deleteDebt(id){
-  if(!confirm('Delete this debt account?')) return;
-  debts=debts.filter(d=>d.id!==id);
-  localStorage.setItem(STORE_DEBTS,JSON.stringify(debts));
-  populateDebtDropdown(); renderDebt(); renderDash();
-}
-function populateDebtDropdown(){
-  const s=document.getElementById('p_debt'); if(!s) return;
-  s.innerHTML=debts.map(d=>`<option value="${d.id}">${d.name} ($${fmt(d.balance)})</option>`).join('');
-}
-function showPaymentForm(){
-  document.getElementById('paymentFormWrap').style.display='block';
-  document.getElementById('paymentFormWrap').scrollIntoView({behavior:'smooth'});
-}
-function logPayment(){
-  const debtId=Number(v('p_debt')),amt=Number(v('p_amt')),date=v('p_date');
-  if(!amt){ toast('Enter payment amount','err'); return; }
-  const d=debts.find(d=>d.id===debtId); if(!d) return;
-  d.balance=Math.max(0,d.balance-amt);
-  payments.push({id:Date.now(),debtId,name:d.name,amt,date});
-  localStorage.setItem(STORE_DEBTS,JSON.stringify(debts));
-  localStorage.setItem(STORE_PAYMENTS,JSON.stringify(payments));
-  document.getElementById('paymentFormWrap').style.display='none';
-  clr('p_amt'); populateDebtDropdown(); renderDebt(); renderDash();
-  toast(`Payment of $${fmt(amt)} logged! ✅`);
-}
-function renderDebt(){
-  const typeIcons={'Credit Card':'💳','Auto Loan':'🚗','Personal Loan':'💵','Medical':'🏥','Mortgage':'🏠','Student Loan':'🎓','Other':'📄'};
-  const sorted=[...debts].sort((a,b)=>Number(b.rate)-Number(a.rate));
-  document.getElementById('debtList').innerHTML=sorted.length?sorted.map(d=>{
-    const pct=Math.min(100,((d.originalBalance-d.balance)/Math.max(1,d.originalBalance))*100);
-    const monthsLeft=d.min>0?Math.ceil(d.balance/d.min):'?';
-    const color=pct>=75?'var(--green)':pct>=40?'var(--orange)':'var(--red)';
-    return `<div class="debt-card">
-      <div class="debt-header">
-        <div>
-          <div class="debt-name">${typeIcons[d.type]||'📄'} ${esc(d.name)}</div>
-          <div class="debt-type">${d.type}</div>
-        </div>
-        <div style="text-align:right">
-          <div class="debt-balance">$${fmt(d.balance)}</div>
-          <div style="font-size:11px;color:var(--muted);font-weight:700">remaining</div>
-        </div>
-      </div>
-      <div class="debt-info">
-        <div class="debt-stat"><label>Rate</label><span>${d.rate}% APR</span></div>
-        <div class="debt-stat"><label>Min Pay</label><span>$${fmt(d.min)}/mo</span></div>
-        <div class="debt-stat"><label>Est Payoff</label><span>${monthsLeft} mo</span></div>
-      </div>
-      <div style="margin-bottom:4px;display:flex;justify-content:space-between;font-size:12px;font-weight:800">
-        <span>Paid off</span><span style="color:${color}">${pct.toFixed(0)}%</span>
-      </div>
-      <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${color}"></div></div>
-      <div style="margin-top:12px;display:flex;gap:8px">
-        <button class="btn btn-green btn-sm" onclick="showPaymentForm()">💰 Log Payment</button>
-        <button class="btn btn-ghost btn-sm" onclick="deleteDebt(${d.id})">🗑 Remove</button>
-      </div>
-    </div>`;
-  }).join(''):'<div class="empty" style="padding:30px"><div class="empty-icon">🎉</div><h3>No Debt Tracked</h3><p>Add accounts above to track payoff progress.</p></div>';
-}
-
-/* ══════════════════════════════════════
-   STATS
-══════════════════════════════════════ */
-function renderStats(){
-  const total=docs.length;
-  const totalA=docs.reduce((s,d)=>s+(Number(d.amt)||0),0);
-  const chars=docs.reduce((s,d)=>s+(d.chars||0),0);
-  const cats={};
-  docs.forEach(d=>{ cats[d.cat]=(cats[d.cat]||0)+1; });
-  document.getElementById('statsKPI').innerHTML=`
-    <div class="sk"><div class="sk-icon">📄</div><div class="sk-val" style="color:var(--blue)">${total}</div><div class="sk-label">Documents</div></div>
-    <div class="sk"><div class="sk-icon">💰</div><div class="sk-val" style="color:var(--gold)">$${fmt(totalA)}</div><div class="sk-label">Total Value</div></div>
-    <div class="sk"><div class="sk-icon">📝</div><div class="sk-val" style="color:var(--green)">${(chars/1000).toFixed(1)}k</div><div class="sk-label">Text Stored</div></div>
-    <div class="sk"><div class="sk-icon">🗂️</div><div class="sk-val" style="color:var(--purple)">${Object.keys(cats).length}</div><div class="sk-label">Categories</div></div>
-  `;
-  const maxC=Math.max(...Object.values(cats),1);
-  document.getElementById('statsCats').innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat,n])=>`
-    <div class="cat-bar-row">
-      <div class="cat-bar-top"><span>${CAT[cat]?.icon||'📁'} ${CAT[cat]?.label||cat}</span><span>${n} doc${n!==1?'s':''}</span></div>
-      <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${Math.round(n/maxC*100)}%;background:${CAT_COLORS[cat]||'#6b7280'}"></div></div>
-    </div>`).join('')||'<p style="color:var(--muted);font-size:13px;font-weight:700">No documents yet.</p>';
-  const months={};
-  const now=new Date();
-  for(let i=5;i>=0;i--){ const d=new Date(now.getFullYear(),now.getMonth()-i,1); months[d.toISOString().slice(0,7)]=0; }
-  docs.forEach(d=>{ const k=(d.saved||'').slice(0,7); if(k in months) months[k]++; });
-  const maxM=Math.max(...Object.values(months),1);
-  document.getElementById('statsMonths').innerHTML=`<div style="display:flex;gap:8px;align-items:flex-end;height:80px;margin-bottom:6px">
-    ${Object.entries(months).map(([k,n])=>{
-      const h=Math.max(6,Math.round(n/maxM*70));
-      const lbl=new Date(k+'-02').toLocaleDateString('en-US',{month:'short'});
-      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-        <div style="font-size:11px;color:var(--muted);font-weight:800">${n||''}</div>
-        <div style="width:100%;height:${h}px;background:var(--gold);border-radius:4px 4px 0 0;border:1.5px solid #1a1a1a;opacity:${n?1:0.2}"></div>
-        <div style="font-size:10px;color:var(--muted);font-weight:800">${lbl}</div>
-      </div>`;
-    }).join('')}
+function runScan(){
+  const v=document.getElementById('v-scan');
+  v.innerHTML=`<div class="scanning">
+    <img class="scan-preview" src="${scanImage.preview}"/>
+    <div class="spinner"></div>
+    <h3 class="serif" style="font-size:20px">Reading your document…</h3>
+    <p style="font-size:13px;font-weight:600;color:var(--ink-2);margin-top:6px">Claude is finding the amount, due date, and vendor.</p>
   </div>`;
+  scanRequest();
+}
+async function scanRequest(){
+  try{
+    const res=await fetch(CONFIG.SCAN_ENDPOINT,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({image:scanImage.data, media:scanImage.media})
+    });
+    if(!res.ok) throw new Error('scan endpoint '+res.status);
+    const out=await res.json();
+    scanConfirm(out);
+  }catch(err){
+    // graceful fallback: let them fill it in with the photo attached
+    toast('Auto-read unavailable — fill it in','err');
+    scanConfirm({}, true);
+  }
+}
+function scanConfirm(data, manual){
+  data=data||{};
+  const type=data.docType||'bill';
+  const cat=CATS.includes(data.category)?data.category:'Other';
+  const sheet=document.getElementById('sheet');
+  sheet.innerHTML=`<div class="grip"></div>
+    <h3 class="serif">${manual?'Add document':'Here’s what I found'}</h3>
+    <div class="hint">${manual?'Auto-read wasn’t available — fill in what you can.':'Check it over, fix anything, then save. Bills auto-file into your tracker.'}</div>
+    <img class="detail-img" src="${scanImage.preview}"/>
+    <div class="field"><label>Type</label><select id="f-type">${TYPES.map(t=>`<option value="${t}" ${t===type?'selected':''}>${cap(t)}</option>`).join('')}</select></div>
+    <div class="field"><label>Vendor / name</label><input id="f-vendor" value="${esc(data.vendor||'')}" placeholder="e.g. NV Energy"/></div>
+    <div class="field two">
+      <div><label>Amount ($)</label><input id="f-amount" type="number" inputmode="decimal" value="${data.amount!=null?data.amount:''}" placeholder="0.00"/></div>
+      <div><label>Due date</label><input id="f-due" type="date" value="${data.dueDate||''}"/></div>
+    </div>
+    <div class="field"><label>Category</label><select id="f-cat">${CATS.map(c=>`<option ${c===cat?'selected':''}>${c}</option>`).join('')}</select></div>
+    ${data.accountNumber?`<div class="field"><label>Account #</label><input id="f-acct" value="${esc(data.accountNumber)}"/></div>`:`<input type="hidden" id="f-acct" value=""/>`}
+    <div class="btn-row"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-gold" onclick="saveScan()">Save to vault</button></div>`;
+  openModal();
+}
+function saveScan(){
+  const doc={
+    id:uid(), type:val('f-type'),
+    vendor:val('f-vendor')||'Untitled', name:val('f-vendor')||'Untitled',
+    amount:parseFloat(val('f-amount'))||0,
+    dueDate:val('f-due')||'',
+    category:val('f-cat'),
+    accountNumber:val('f-acct')||'',
+    image:scanImage?scanImage.preview:'',
+    paid:false, autopay:false, createdAt:new Date().toISOString()
+  };
+  state.docs.unshift(doc);
+  // auto-add to budget if it's a spend with an amount
+  if(doc.amount>0 && (doc.type==='bill'||doc.type==='receipt')){
+    state.expenses.unshift({id:uid(),category:doc.category,amount:doc.amount,note:doc.vendor,date:(doc.dueDate||new Date().toISOString().slice(0,10)),docId:doc.id});
+    ensureBudget(doc.category);
+  }
+  save(); syncPush(); closeModal(); scanImage=null;
+  go('home'); toast(doc.type==='bill'?'Bill filed & tracked ✓':'Saved to vault ✓');
 }
 
-/* ══════════════════════════════════════
-   MODAL
-══════════════════════════════════════ */
+/* ══════════════ MONEY (Budget / Debt / Stats) ══════════════ */
+function renderMoney(){
+  const v=document.getElementById('v-money');
+  v.innerHTML=`<div class="view-title serif">Money</div><div class="view-sub">Budget, debt payoff, and trends</div>
+    <div class="seg">
+      <button class="${moneyTab==='budget'?'on':''}" onclick="setMoney('budget')">Budget</button>
+      <button class="${moneyTab==='debt'?'on':''}" onclick="setMoney('debt')">Debt</button>
+      <button class="${moneyTab==='stats'?'on':''}" onclick="setMoney('stats')">Stats</button>
+    </div>
+    <div id="moneyBody"></div>`;
+  renderMoneyBody();
+}
+function setMoney(t){ moneyTab=t; renderMoney(); }
+function renderMoneyBody(){
+  const el=document.getElementById('moneyBody');
+  if(moneyTab==='budget') el.innerHTML=budgetHTML();
+  if(moneyTab==='debt') el.innerHTML=debtHTML();
+  if(moneyTab==='stats') el.innerHTML=statsHTML();
+}
+function ensureBudget(cat){ if(!state.budgets.find(b=>b.category===cat)) state.budgets.push({category:cat,limit:0}); }
+function budgetHTML(){
+  // spending this month by category
+  const spent={};
+  state.expenses.filter(e=>inCurMonth(e.date)).forEach(e=>{ spent[e.category]=(spent[e.category]||0)+Number(e.amount||0); });
+  const cats=[...new Set([...state.budgets.map(b=>b.category),...Object.keys(spent)])];
+  let h=`<div class="statement" style="padding:16px 18px"><div class="lbl">Spent in ${curMonthLabel().split(' ')[0]}</div><div class="big" style="font-size:34px"><span class="c">$</span>${money0(Object.values(spent).reduce((a,b)=>a+b,0))}</div></div>`;
+  if(!cats.length){ h+=emptyState('📊','No spending yet.<br>Scanned bills land here automatically.'); }
+  else{
+    h+='<div class="list" style="margin-top:16px">';
+    cats.sort((a,b)=>(spent[b]||0)-(spent[a]||0)).forEach(c=>{
+      const s=spent[c]||0; const lim=(state.budgets.find(b=>b.category===c)||{}).limit||0;
+      const pct=lim>0?Math.min(100,Math.round(s/lim*100)):0;
+      const cls=lim>0?(s>lim?'over':(s>lim*.8?'warn':'')):'';
+      h+=`<div class="bud"><div class="top"><div class="cat">${CAT_ICON[c]||'📄'} ${c}</div><div class="nums"><b>$${money0(s)}</b>${lim>0?` / $${money0(lim)}`:''}</div></div>
+        ${lim>0?`<div class="bar"><div class="f ${cls}" style="width:${pct}%"></div></div>`:`<div style="font-size:11px;font-weight:700;color:var(--ink-2)">Tap to set a monthly limit</div>`}
+      <button class="btn btn-sm btn-ghost" style="margin-top:10px" onclick="setLimitForm('${c}')">${lim>0?'Edit limit':'Set limit'}</button></div>`;
+    });
+    h+='</div>';
+  }
+  h+=`<div class="btn-row"><button class="btn btn-ghost" onclick="addExpenseForm()">＋ Log an expense</button></div>`;
+  return h;
+}
+function debtHTML(){
+  const total=sum(state.debts,'balance');
+  let h=`<div class="statement" style="padding:16px 18px"><div class="lbl">Total owed</div><div class="big" style="font-size:34px"><span class="c">$</span>${money0(total)}</div>${state.debts.length?`<div class="cap" style="opacity:.85;font-size:11px;font-weight:700;margin-top:10px">Sorted by highest interest — the avalanche method saves you the most.</div>`:''}</div>`;
+  if(!state.debts.length){ h+=emptyState('💳','No debts tracked.<br>Add a card or loan to plan the payoff.'); }
+  else{
+    h+='<div class="list" style="margin-top:16px">';
+    [...state.debts].sort((a,b)=>Number(b.apr||0)-Number(a.apr||0)).forEach(d=>{
+      const paid=sum(d.payments||[],'amount');
+      const start=Number(d.startBalance||d.balance)+paid;
+      const pct=start>0?Math.min(100,Math.round(paid/start*100)):0;
+      h+=`<div class="debt"><div class="hd"><div class="nm">${esc(d.name)}</div><div class="apr">${Number(d.apr||0)}% APR</div></div>
+        <div class="bal">$${money(d.balance)}</div>
+        <div class="bar"><div class="f" style="width:${pct}%"></div></div>
+        <div class="nums" style="font-size:11.5px;font-weight:700;color:var(--ink-2);margin-top:7px">$${money0(paid)} paid off · ${pct}%</div>
+        <button class="btn btn-sm btn-gold" style="margin-top:12px" onclick="logPaymentForm('${d.id}')">Log a payment</button></div>`;
+    });
+    h+='</div>';
+  }
+  h+=`<div class="btn-row"><button class="btn btn-ghost" onclick="addDebtForm()">＋ Add a debt</button></div>`;
+  return h;
+}
+function statsHTML(){
+  // last 6 months of bill spend
+  const now=new Date(); const buckets=[];
+  for(let i=5;i>=0;i--){ const d=new Date(now.getFullYear(),now.getMonth()-i,1); buckets.push({key:d.getMonth()+'-'+d.getFullYear(),lbl:d.toLocaleDateString('en-US',{month:'short'}),total:0,now:i===0}); }
+  state.docs.filter(d=>d.amount>0&&d.dueDate).forEach(d=>{
+    const dt=parseD(d.dueDate); if(!dt) return;
+    const b=buckets.find(x=>x.key===(dt.getMonth()+'-'+dt.getFullYear())); if(b) b.total+=Number(d.amount);
+  });
+  const max=Math.max(1,...buckets.map(b=>b.total));
+  const thisM=buckets[5].total, lastM=buckets[4].total;
+  const delta=lastM>0?Math.round((thisM-lastM)/lastM*100):0;
+  let h=`<div class="kpis"><div class="kpi"><div class="k">This month</div><div class="val">$${money0(thisM)}</div></div>
+    <div class="kpi"><div class="k">vs last month</div><div class="val ${delta>0?'red':'green'}">${delta>0?'+':''}${delta}%</div></div></div>
+    <div class="eyebrow">Spending · last 6 months</div>
+    <div class="card" style="padding:16px 14px 12px">
+      <div class="stat-bar">${buckets.map(b=>`<div class="col"><div class="b ${b.now?'now':''}" style="height:${Math.round(b.total/max*100)}%"></div></div>`).join('')}</div>
+      <div class="stat-lbls">${buckets.map(b=>`<span>${b.lbl}</span>`).join('')}</div>
+    </div>
+    <div class="eyebrow">Where it goes</div>`;
+  const byCat={};
+  state.docs.filter(d=>d.amount>0).forEach(d=>{ byCat[d.category]=(byCat[d.category]||0)+Number(d.amount); });
+  const top=Object.entries(byCat).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if(!top.length){ h+=emptyState('📈','Not enough data yet.'); }
+  else{ const mx=Math.max(...top.map(t=>t[1])); h+='<div class="list">'+top.map(([c,v])=>`<div class="bud"><div class="top"><div class="cat">${CAT_ICON[c]||'📄'} ${c}</div><div class="nums"><b>$${money0(v)}</b></div></div><div class="bar"><div class="f" style="width:${Math.round(v/mx*100)}%"></div></div></div>`).join('')+'</div>'; }
+  return h;
+}
+
+/* ══════════════ VAULT ══════════════ */
+let vaultQuery='';
+function renderVault(){
+  const v=document.getElementById('v-vault');
+  let list=[...state.docs];
+  if(vaultQuery){ const q=vaultQuery.toLowerCase(); list=list.filter(d=>((d.vendor||'')+' '+(d.category||'')+' '+(d.type||'')).toLowerCase().includes(q)); }
+  let h=`<div class="view-title serif">Vault</div><div class="view-sub">${state.docs.length} documents · synced${sb?' ✓':' (local)'}</div>
+    <input class="search" id="vsearch" placeholder="Search vendor, category…" value="${esc(vaultQuery)}" oninput="vaultQuery=this.value;renderVault();document.getElementById('vsearch').focus()"/>`;
+  if(!list.length){ h+=emptyState('🗄️', state.docs.length?'Nothing matches that search.':'Your vault is empty.<br>Scan your first document.'); }
+  else{
+    h+='<div class="vgrid">'+list.map(d=>`<button class="vcard" onclick="openDoc('${d.id}')">
+      <div class="thumb">${d.image?`<img src="${d.image}"/>`:(TYPE_ICON[d.type]||'📄')}<span class="tag">${cap(d.type)}</span></div>
+      <div class="bd"><div class="nm">${esc(d.vendor||d.name)}</div><div class="meta">${d.amount>0?'$'+money(d.amount)+' · ':''}${fmtD(d.dueDate)||''}</div></div>
+    </button>`).join('')+'</div>';
+  }
+  document.getElementById('v-vault').innerHTML=h;
+}
+
+/* ══════════════ DOC DETAIL ══════════════ */
 function openDoc(id){
-  const d=docs.find(x=>x.id===id); if(!d) return;
-  openId=id;
-  const c=CAT[d.cat]||CAT.other;
-  const owner=d.user_email===currentUser?.email?'Scanned by you':'Scanned by '+d.user_email?.split('@')[0];
-  document.getElementById('modalCat').innerHTML=`<span class="badge ${BDGE[d.cat]||'b-other'}">${c.icon} ${c.label}</span> · ${owner}`;
-  document.getElementById('modalTitle').textContent=d.name;
-  document.getElementById('modalText').textContent=d.text;
-  document.getElementById('modalMeta').innerHTML=[
-    `📅 ${fmtDate(d.saved)}`,
-    d.amt?`💰 $${fmt(d.amt)}`:'',
-    d.due?`🗓 Due ${fmtDate(d.due)}`:'',
-    d.vendor?`🏢 ${esc(d.vendor)}`:'',
-    d.chars?`📝 ${Number(d.chars).toLocaleString()} chars`:'',
-  ].filter(Boolean).map(x=>`<span style="font-size:13px;color:var(--text2);font-weight:700">${x}</span>`).join('');
-  const nn=document.getElementById('modalNotes');
-  if(d.notes){ nn.innerHTML=`<strong>📌 Notes:</strong> ${esc(d.notes)}`; nn.classList.add('show'); } else nn.classList.remove('show');
-  document.getElementById('modalDel').onclick=()=>deleteDoc(id);
-  document.getElementById('docOverlay').classList.add('show');
+  const d=state.docs.find(x=>x.id===id); if(!d) return;
+  const du=daysUntil(d.dueDate);
+  const sheet=document.getElementById('sheet');
+  sheet.innerHTML=`<div class="grip"></div>
+    <h3 class="serif">${esc(d.vendor||d.name)}</h3>
+    <div class="hint">${cap(d.type)}${d.paid?' · Paid':(du!==null&&du<0?' · Overdue':'')}</div>
+    ${d.image?`<img class="detail-img" src="${d.image}"/>`:''}
+    ${d.amount>0?`<div class="detail-row"><span class="k">Amount</span><span class="v" style="font-family:Georgia,serif;font-size:18px">$${money(d.amount)}</span></div>`:''}
+    ${d.dueDate?`<div class="detail-row"><span class="k">Due date</span><span class="v">${fmtD(d.dueDate)}${du!==null?` (${du<0?Math.abs(du)+'d late':du===0?'today':du+'d)'} `:''}</span></div>`:''}
+    <div class="detail-row"><span class="k">Category</span><span class="v">${CAT_ICON[d.category]||''} ${d.category}</span></div>
+    ${d.accountNumber?`<div class="detail-row"><span class="k">Account #</span><span class="v">${esc(d.accountNumber)}</span></div>`:''}
+    <div class="detail-row"><span class="k">Added</span><span class="v">${fmtD((d.createdAt||'').slice(0,10))}</span></div>
+    ${d.type==='bill'?`<div class="btn-row">
+      <button class="btn ${d.paid?'btn-ghost':'btn-green'}" onclick="togglePaid('${d.id}')">${d.paid?'Mark unpaid':'Mark as paid ✓'}</button>
+      <button class="btn btn-ghost btn-sm" onclick="toggleAuto('${d.id}')" style="flex:0 0 auto">${d.autopay?'Auto ✓':'Autopay'}</button>
+    </div>`:''}
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="renameDoc('${d.id}')">Rename</button>
+      <button class="btn btn-red" onclick="deleteDoc('${d.id}')">Delete</button>
+    </div>`;
+  openModal();
 }
-function overlayClick(e){ if(e.target===document.getElementById('docOverlay')) closeModal(); }
-function closeModal(){ document.getElementById('docOverlay').classList.remove('show'); openId=null; }
-function copyModal(){ navigator.clipboard?.writeText(document.getElementById('modalText').textContent).then(()=>toast('Copied!')); }
-async function editDocName(){
-  const d=docs.find(x=>x.id===openId); if(!d) return;
-  const n=prompt('Rename document:',d.name);
-  if(n&&n.trim()){ d.name=n.trim(); await renameDocInSb(d.id,d.name); document.getElementById('modalTitle').textContent=d.name; renderVault(); renderDash(); toast('Renamed!'); }
+function togglePaid(id){ const d=state.docs.find(x=>x.id===id); if(!d)return; d.paid=!d.paid; save(); syncPush(); closeModal(); renderAll(); toast(d.paid?'Marked paid ✓':'Marked unpaid'); }
+function toggleAuto(id){ const d=state.docs.find(x=>x.id===id); if(!d)return; d.autopay=!d.autopay; save(); syncPush(); openDoc(id); renderAll(); }
+function renameDoc(id){ const d=state.docs.find(x=>x.id===id); if(!d)return; const n=prompt('Rename:',d.vendor||d.name); if(n&&n.trim()){ d.vendor=n.trim(); d.name=n.trim(); save(); syncPush(); openDoc(id); renderAll(); toast('Renamed ✓'); } }
+function deleteDoc(id){ if(!confirm('Delete this document from the vault?'))return; state.docs=state.docs.filter(x=>x.id!==id); state.expenses=state.expenses.filter(e=>e.docId!==id); save(); syncPush(); closeModal(); renderAll(); toast('Deleted'); }
+
+/* ══════════════ FORMS ══════════════ */
+function addBillForm(){
+  const sheet=document.getElementById('sheet');
+  sheet.innerHTML=`<div class="grip"></div><h3 class="serif">Add a bill</h3><div class="hint">Enter it by hand — it files into your tracker.</div>
+    <div class="field"><label>Vendor / name</label><input id="f-vendor" placeholder="e.g. Cox Communications"/></div>
+    <div class="field two"><div><label>Amount ($)</label><input id="f-amount" type="number" inputmode="decimal" placeholder="0.00"/></div>
+    <div><label>Due date</label><input id="f-due" type="date"/></div></div>
+    <div class="field"><label>Category</label><select id="f-cat">${CATS.map(c=>`<option>${c}</option>`).join('')}</select></div>
+    <input type="hidden" id="f-type" value="bill"><input type="hidden" id="f-acct" value="">
+    <div class="btn-row"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-gold" onclick="saveManualBill()">Save bill</button></div>`;
+  openModal();
+}
+function saveManualBill(){
+  scanImage=null;
+  const doc={id:uid(),type:'bill',vendor:val('f-vendor')||'Untitled',name:val('f-vendor')||'Untitled',amount:parseFloat(val('f-amount'))||0,dueDate:val('f-due')||'',category:val('f-cat'),accountNumber:'',image:'',paid:false,autopay:false,createdAt:new Date().toISOString()};
+  state.docs.unshift(doc);
+  if(doc.amount>0){ state.expenses.unshift({id:uid(),category:doc.category,amount:doc.amount,note:doc.vendor,date:(doc.dueDate||new Date().toISOString().slice(0,10)),docId:doc.id}); ensureBudget(doc.category); }
+  save(); syncPush(); closeModal(); renderAll(); go('bills'); toast('Bill added ✓');
+}
+function addExpenseForm(){
+  const sheet=document.getElementById('sheet');
+  sheet.innerHTML=`<div class="grip"></div><h3 class="serif">Log an expense</h3><div class="hint">Add spending that didn’t come from a scan.</div>
+    <div class="field"><label>What was it?</label><input id="e-note" placeholder="e.g. Groceries at Smith's"/></div>
+    <div class="field two"><div><label>Amount ($)</label><input id="e-amt" type="number" inputmode="decimal" placeholder="0.00"/></div>
+    <div><label>Date</label><input id="e-date" type="date" value="${new Date().toISOString().slice(0,10)}"/></div></div>
+    <div class="field"><label>Category</label><select id="e-cat">${CATS.map(c=>`<option>${c}</option>`).join('')}</select></div>
+    <div class="btn-row"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-gold" onclick="saveExpense()">Save</button></div>`;
+  openModal();
+}
+function saveExpense(){
+  const amt=parseFloat(val('e-amt'))||0; if(amt<=0){ toast('Enter an amount','err'); return; }
+  state.expenses.unshift({id:uid(),category:val('e-cat'),amount:amt,note:val('e-note')||'Expense',date:val('e-date')||new Date().toISOString().slice(0,10)});
+  ensureBudget(val('e-cat')); save(); syncPush(); closeModal(); renderMoney(); toast('Logged ✓');
+}
+function setLimitForm(cat){
+  const cur=(state.budgets.find(b=>b.category===cat)||{}).limit||'';
+  const n=prompt(`Monthly limit for ${cat} ($):`,cur);
+  if(n===null) return; ensureBudget(cat);
+  state.budgets.find(b=>b.category===cat).limit=parseFloat(n)||0; save(); syncPush(); renderMoney(); toast('Limit set ✓');
+}
+function addDebtForm(){
+  const sheet=document.getElementById('sheet');
+  sheet.innerHTML=`<div class="grip"></div><h3 class="serif">Add a debt</h3><div class="hint">Card, loan, or anything you’re paying down.</div>
+    <div class="field"><label>Name</label><input id="d-name" placeholder="e.g. Chase Visa"/></div>
+    <div class="field two"><div><label>Balance ($)</label><input id="d-bal" type="number" inputmode="decimal" placeholder="0.00"/></div>
+    <div><label>Interest (APR %)</label><input id="d-apr" type="number" inputmode="decimal" placeholder="0"/></div></div>
+    <div class="field"><label>Minimum payment ($)</label><input id="d-min" type="number" inputmode="decimal" placeholder="0.00"/></div>
+    <div class="btn-row"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-gold" onclick="saveDebt()">Save debt</button></div>`;
+  openModal();
+}
+function saveDebt(){
+  const bal=parseFloat(val('d-bal'))||0;
+  state.debts.push({id:uid(),name:val('d-name')||'Debt',balance:bal,startBalance:bal,apr:parseFloat(val('d-apr'))||0,minPayment:parseFloat(val('d-min'))||0,payments:[]});
+  save(); syncPush(); closeModal(); renderMoney(); toast('Debt added ✓');
+}
+function logPaymentForm(id){
+  const d=state.debts.find(x=>x.id===id); if(!d)return;
+  const n=prompt(`Payment to ${d.name} ($):`,d.minPayment||'');
+  if(n===null)return; const amt=parseFloat(n)||0; if(amt<=0)return;
+  d.payments=d.payments||[]; d.payments.push({amount:amt,date:new Date().toISOString().slice(0,10)});
+  d.balance=Math.max(0,Number(d.balance)-amt);
+  save(); syncPush(); renderMoney(); toast(d.balance<=0?'Paid off! 🎉':'Payment logged ✓');
 }
 
-/* ══════════════════════════════════════
-   DELETE
-══════════════════════════════════════ */
-async function deleteDoc(id){
-  if(!confirm('Delete this document from the vault?')) return;
-  const ok=await deleteDocFromSb(id); if(!ok) return;
-  docs=docs.filter(d=>d.id!==id);
-  updateCounts(); closeModal(); renderAll(); toast('Document deleted.');
+/* ══════════════ MODAL / TOAST / HELPERS ══════════════ */
+function openModal(){ document.getElementById('modal').classList.add('show'); }
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+document.getElementById('modal').addEventListener('click',e=>{ if(e.target.id==='modal') closeModal(); });
+let _tt; function toast(m,type='ok'){ const t=document.getElementById('toast'); t.textContent=m; t.className='show '+type; clearTimeout(_tt); _tt=setTimeout(()=>t.className='',2600); }
+function val(id){ const el=document.getElementById(id); return el?(el.value||'').trim():''; }
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function cap(s){ return s?s.charAt(0).toUpperCase()+s.slice(1):''; }
+function emptyState(ic,txt){ return `<div class="empty"><div class="ic">${ic}</div><p>${txt}</p></div>`; }
+
+/* ══════════════ OPTIONAL SUPABASE SYNC ══════════════ */
+async function initSync(){
+  if(!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_ANON_KEY) return;
+  try{
+    await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
+    sb=window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY);
+    // pull shared state
+    const {data}=await sb.from('fv_state').select('data').eq('household',CONFIG.HOUSEHOLD).maybeSingle();
+    if(data&&data.data){ state=Object.assign({docs:[],expenses:[],budgets:[],debts:[]},data.data); save(); renderAll(); }
+    else{ await syncPush(); }
+    // live updates from the other phone
+    sb.channel('fv').on('postgres_changes',{event:'*',schema:'public',table:'fv_state',filter:`household=eq.${CONFIG.HOUSEHOLD}`},payload=>{
+      if(payload.new&&payload.new.data){ state=Object.assign({docs:[],expenses:[],budgets:[],debts:[]},payload.new.data); save(); renderAll(); }
+    }).subscribe();
+  }catch(e){ console.warn('Sync off:',e); }
+}
+async function syncPush(){
+  if(!sb) return;
+  try{ await sb.from('fv_state').upsert({household:CONFIG.HOUSEHOLD,data:state,updated_at:new Date().toISOString()},{onConflict:'household'}); }catch(e){}
+}
+function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
+
+/* ══════════════ THEME ENGINE ══════════════ */
+const THEMES={
+  patriotic:{name:'Patriotic',desc:'Navy · red · cream',sw:'sw-patriotic'},
+  midnight:{name:'Midnight',desc:'Black · pink · mint · lavender',sw:'sw-midnight'},
+  vintage:{name:'Vintage',desc:'Cream · bronze · olive'}
+};
+function setTheme(t){
+  if(!THEMES[t]) t='vintage';
+  document.documentElement.setAttribute('data-theme',t);
+  try{ localStorage.setItem('fv_theme',t); }catch(e){}
+  document.querySelectorAll('#tpRow .tp').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--bar-a').trim()||'#14110D');
+  if(document.getElementById('app').classList.contains('show')){ renderAll(); }
+}
+function currentTheme(){ return document.documentElement.getAttribute('data-theme')||'vintage'; }
+function openThemeSheet(){
+  const cur=currentTheme();
+  const sheet=document.getElementById('sheet');
+  sheet.innerHTML=`<div class="grip"></div><h3 class="serif">Choose a look</h3><div class="hint">Kathy's three designs. Tap one — it changes everywhere instantly.</div>
+    <div class="list">${Object.entries(THEMES).map(([k,v])=>`
+      <button class="item" onclick="setTheme('${k}');toast('${v.name} ✓');closeModal()" style="border-color:${k===cur?'var(--accent)':'var(--line)'}">
+        <span class="sw ${v.sw||'sw-vintage'}" style="width:52px;height:34px;border-radius:9px;flex-shrink:0"></span>
+        <div class="mid"><div class="nm">${v.name}${k===cur?' ✓':''}</div><div class="meta">${v.desc}</div></div>
+      </button>`).join('')}</div>`;
+  openModal();
 }
 
-/* ══════════════════════════════════════
-   HELPERS
-══════════════════════════════════════ */
-function showEl(id){ document.getElementById(id).classList.add('show'); }
-function hideEl(id){ document.getElementById(id).classList.remove('show'); }
-function v(id){ return (document.getElementById(id)?.value||'').trim(); }
-function clr(...ids){ ids.forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; }); }
-function fmtDate(iso){
-  if(!iso) return '';
-  try{ return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }catch{ return iso; }
-}
-function fmt(n){ return Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-let _tt;
-function toast(msg,type='ok'){
-  const el=document.getElementById('toast');
-  el.textContent=msg; el.className='show '+type;
-  clearTimeout(_tt); _tt=setTimeout(()=>el.className='',3200);
-}
+/* ══════════════ BOOT ══════════════ */
+setTheme('patriotic');
+load(); buildPad();
+if(sessionStorage.getItem('fv_unlocked')==='1') unlock();
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('lock').style.display==='none') return;
+  if(e.key>='0'&&e.key<='9') pressPin(e.key);
+  else if(e.key==='Backspace'){ pinBuf=pinBuf.slice(0,-1); renderDots(); }
+});
+initSync();
 </script>
 </body>
 </html>
