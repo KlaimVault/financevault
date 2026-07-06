@@ -324,15 +324,7 @@ h1,h2,h3{line-height:1.15}
 .hidden{display:none!important}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (min-width:600px){.vgrid{grid-template-columns:1fr 1fr 1fr}}
-.signin{width:100%;max-width:340px;margin-top:10px}
-.authinput{width:100%;background:#fff;border:2px solid rgba(22,35,74,.25);border-radius:14px;padding:15px 16px;font-size:16px;font-weight:700;color:#16234A;text-align:center}
-.authinput:focus{outline:none;border-color:#C41E3A}
-.authbtn{width:100%;margin-top:10px;background:linear-gradient(135deg,#E2465C,#C41E3A);color:#fff;font-weight:800;font-size:15px;border-radius:14px;padding:15px}
-.authbtn:active{transform:scale(.97)}
-.authstatus{font-size:12.5px;font-weight:700;color:#16234A;margin-top:12px;line-height:1.5;min-height:18px;max-width:320px}
-.signoutbtn{font-size:11px;font-weight:800;letter-spacing:.4px;color:var(--bar-text);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:6px 11px}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 
@@ -381,11 +373,9 @@ h1,h2,h3{line-height:1.15}
     </svg>
   </div>
   <div class="famline">Kat &amp; Steve's Family Vault</div>
-  <div class="signin">
-    <input id="emailInput" type="email" inputmode="email" autocomplete="email" placeholder="your email" class="authinput"/>
-    <button class="authbtn" onclick="sendLink()">Email me a sign-in link</button>
-    <div id="authStatus" class="authstatus">Private — only Kat &amp; Steve can enter.</div>
-  </div>
+  <div class="prompt">Enter your PIN</div>
+  <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+  <div class="pad" id="pad"></div>
 </div>
 
 <!-- ══════════════════ APP ══════════════════ -->
@@ -396,7 +386,6 @@ h1,h2,h3{line-height:1.15}
       Finance<span class="vault">Vault</span>
     </div>
     <div class="right">
-      <button class="signoutbtn" onclick="signOut()">Sign out</button>
       <div class="month" id="topMonth">—</div>
     </div>
   </div>
@@ -449,10 +438,10 @@ h1,h2,h3{line-height:1.15}
    CONFIG  —  edit these two lines to turn on 2-phone sync
 ══════════════════════════════════════════════════════════════════ */
 const CONFIG = {
+  PIN: '2580',
   SCAN_ENDPOINT: '/api/scan',
   SUPABASE_URL: 'https://awqkzrtdnjdvptjfqbaq.supabase.co',
-  SUPABASE_KEY: 'sb_publishable_3jbzCaMk_PhqjUK9njIOuw_EBZOlg8M',
-  ALLOWED_EMAILS: ['sgustafson6209@gmail.com','kgustafson6209@gmail.com'],
+  SUPABASE_ANON_KEY: 'sb_publishable_3jbzCaMk_PhqjUK9njIOuw_EBZOlg8M',
   HOUSEHOLD: 'kat-steve'
 };
 
@@ -493,34 +482,37 @@ function dueSoon(){ return bills().filter(b=>!b.paid && daysUntil(b.dueDate)!==n
 function monthBills(){ return bills().filter(b=>inCurMonth(b.dueDate)); }
 function sum(a,k){ return a.reduce((t,x)=>t+Number(x[k]||0),0); }
 
-/* ══════════════ AUTH (magic-link email) ══════════════ */
-let user=null, pushTimer=null;
-function initAuth(){
-  if(!window.supabase){ setStatus('Sign-in service failed to load — check your connection and reload.', true); return; }
-  sb=window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY, {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-  sb.auth.onAuthStateChange((event,session)=>{ if(session&&session.user) onSignedIn(session.user); else showLock(); });
-  sb.auth.getSession().then(({data})=>{ if(data&&data.session&&data.session.user) onSignedIn(data.session.user); else showLock(); }).catch(()=>showLock());
+/* ══════════════ LOCK SCREEN ══════════════ */
+function buildPad(){
+  const pad = document.getElementById('pad');
+  const keys = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
+  pad.innerHTML='';
+  keys.forEach(k=>{
+    const b=document.createElement('button');
+    if(k===''){ b.className='key blank'; }
+    else if(k==='⌫'){ b.className='key util'; b.textContent='⌫'; b.onclick=()=>{ pinBuf=pinBuf.slice(0,-1); renderDots(); }; }
+    else { b.className='key'; b.textContent=k; b.onclick=()=>pressPin(k); }
+    pad.appendChild(b);
+  });
 }
-function onSignedIn(u){
-  const email=(u.email||'').toLowerCase();
-  if(CONFIG.ALLOWED_EMAILS.indexOf(email)<0){ signOut(); setStatus('That email isn\u2019t allowed on this vault.', true); return; }
-  user=u; unlock(); pullState(); subscribeRealtime();
+function pressPin(k){
+  if(pinBuf.length>=4) return;
+  pinBuf+=k; renderDots();
+  if(pinBuf.length===4) setTimeout(checkPin,120);
 }
-async function sendLink(){
-  const email=(document.getElementById('emailInput').value||'').trim().toLowerCase();
-  if(!email||email.indexOf('@')<1){ setStatus('Enter a valid email.', true); return; }
-  if(CONFIG.ALLOWED_EMAILS.indexOf(email)<0){ setStatus('This email isn\u2019t on the vault — only Kat & Steve can sign in.', true); return; }
-  if(!sb){ setStatus('Sign-in service not ready — reload and try again.', true); return; }
-  setStatus('Sending your sign-in link…');
-  try{
-    const {error}=await sb.auth.signInWithOtp({email, options:{emailRedirectTo:location.href.split('#')[0].split('?')[0]}});
-    if(error) setStatus('Couldn\u2019t send: '+error.message, true);
-    else setStatus('✓ Link sent! Open your email on THIS device and tap the sign-in link.');
-  }catch(e){ setStatus('Couldn\u2019t send — try again.', true); }
+function renderDots(){
+  document.querySelectorAll('#lock .dot').forEach((d,i)=>d.classList.toggle('on', i<pinBuf.length));
 }
-function setStatus(msg,err){ const el=document.getElementById('authStatus'); if(el){ el.textContent=msg; el.style.color=err?'#C41E3A':'#16234A'; } }
-function showLock(){ document.getElementById('lock').style.display='flex'; document.getElementById('app').classList.remove('show'); document.getElementById('nav').style.display='none'; }
-async function signOut(){ try{ if(sb) await sb.auth.signOut(); }catch(e){} user=null; showLock(); }
+function checkPin(){
+  if(pinBuf===CONFIG.PIN){
+    sessionStorage.setItem('fv_unlocked','1');
+    unlock();
+  } else {
+    const lock=document.getElementById('lock');
+    lock.classList.add('err');
+    setTimeout(()=>{ lock.classList.remove('err'); pinBuf=''; renderDots(); },420);
+  }
+}
 function unlock(){
   document.getElementById('lock').style.display='none';
   document.getElementById('app').classList.add('show');
@@ -962,30 +954,27 @@ function esc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;
 function cap(s){ return s?s.charAt(0).toUpperCase()+s.slice(1):''; }
 function emptyState(ic,txt){ return `<div class="empty"><div class="ic">${ic}</div><p>${txt}</p></div>`; }
 
-/* ══════════════ CLOUD SYNC (shared vault) ══════════════ */
-async function pullState(){
-  if(!sb) return;
+/* ══════════════ OPTIONAL SUPABASE SYNC ══════════════ */
+async function initSync(){
+  if(!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_ANON_KEY) return;
   try{
+    await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
+    sb=window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY);
+    // pull shared state
     const {data}=await sb.from('fv_state').select('data').eq('household',CONFIG.HOUSEHOLD).maybeSingle();
-    if(data&&data.data){ state=Object.assign({docs:[],expenses:[],budgets:[],debts:[]},data.data); localStorage.setItem(LS,JSON.stringify(state)); renderAll(); }
-    else { await syncPush(); }
-  }catch(e){ console.warn('pull',e); }
-}
-function subscribeRealtime(){
-  if(!sb) return;
-  try{
+    if(data&&data.data){ state=Object.assign({docs:[],expenses:[],budgets:[],debts:[]},data.data); save(); renderAll(); }
+    else{ await syncPush(); }
+    // live updates from the other phone
     sb.channel('fv').on('postgres_changes',{event:'*',schema:'public',table:'fv_state',filter:`household=eq.${CONFIG.HOUSEHOLD}`},payload=>{
-      if(payload.new&&payload.new.data){ state=Object.assign({docs:[],expenses:[],budgets:[],debts:[]},payload.new.data); localStorage.setItem(LS,JSON.stringify(state)); renderAll(); }
+      if(payload.new&&payload.new.data){ state=Object.assign({docs:[],expenses:[],budgets:[],debts:[]},payload.new.data); save(); renderAll(); }
     }).subscribe();
-  }catch(e){}
+  }catch(e){ console.warn('Sync off:',e); }
 }
 async function syncPush(){
-  if(!sb||!user) return;
-  clearTimeout(pushTimer);
-  pushTimer=setTimeout(async()=>{
-    try{ await sb.from('fv_state').upsert({household:CONFIG.HOUSEHOLD,data:state,updated_at:new Date().toISOString()},{onConflict:'household'}); }catch(e){ console.warn('push',e); }
-  },400);
+  if(!sb) return;
+  try{ await sb.from('fv_state').upsert({household:CONFIG.HOUSEHOLD,data:state,updated_at:new Date().toISOString()},{onConflict:'household'}); }catch(e){}
 }
+function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
 
 /* ══════════════ THEME ENGINE ══════════════ */
 const THEMES={
@@ -1017,8 +1006,14 @@ function openThemeSheet(){
 
 /* ══════════════ BOOT ══════════════ */
 setTheme('patriotic');
-load();
-initAuth();
+load(); buildPad();
+if(sessionStorage.getItem('fv_unlocked')==='1') unlock();
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('lock').style.display==='none') return;
+  if(e.key>='0'&&e.key<='9') pressPin(e.key);
+  else if(e.key==='Backspace'){ pinBuf=pinBuf.slice(0,-1); renderDots(); }
+});
+initSync();
 </script>
 </body>
 </html>
